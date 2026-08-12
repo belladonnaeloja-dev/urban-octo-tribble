@@ -685,6 +685,24 @@ and still need to be authored before the workflow above can run end-to-end:
   `winninghunter.com`** — a Claude Code cloud session cannot reach that domain (confirmed
   `EGRESS_BLOCKED` on both `winninghunter.com` and `app.winninghunter.com`), so Step 0.5 onward
   cannot execute from a cloud session no matter how the script or key are configured.
+- **Update 2026-08-12 — WinningHunter MCP connected in a cloud session and confirmed live**
+  (`check_credits` → 994 credits remaining). Its actual tool surface
+  (`find_winning_products`, `search_facebook_ads`, TikTok search/detail tools, `daily_radar`,
+  brand/store tracking, etc.) has not yet been diff'd against what Steps 0.5–0.7 of this doc
+  assume — in particular there is no obviously Pinterest-specific tool in the list, so it's
+  unconfirmed whether Pinterest sourcing is covered by this connector at all or needs
+  `pinterest-search.ps1`'s raw REST approach instead. Verify tool schemas before the next real
+  run. Also note the credit balance (994) is far below the ~20,000/month this doc assumes —
+  check your plan before running a full 14-market sweep.
+- **Update 2026-08-12 — canonical Google Sheet confirmed, but not connectable from a cloud
+  session.** The sheet at the hardcoded URL in Step 9 is real, matches this doc (10 runs / 85
+  products, newest 2026-08-11 at time of check), and the user confirmed it's the correct one to
+  keep using. It's owned by a different Google account (`bargaouiecom@gmail.com`) than the
+  operator's own, shared as "anyone with the link can edit." A Claude Code cloud session's
+  Google Drive access is read/metadata/copy/create-new-file only — there is no cell-level
+  `batch_update`/`values.append` capability, so Step 9's append procedure cannot run from a
+  cloud session regardless of the sheet's own permissions. This needs a Google Sheets connector
+  with write scope, connected from Claude Desktop.
 
 `assets/pinterest-search.ps1` now exists and implements Step 0.5's market/keyword sweep plus the
 client-side video-only, dropship-only, and price-band filters — **but it is UNVERIFIED against
