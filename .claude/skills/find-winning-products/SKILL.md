@@ -678,9 +678,24 @@ and still need to be authored before the workflow above can run end-to-end:
 - `references/winninghunter-filters.md` — full niche-code reference, filter semantics, metric
   caveats (e.g. InvariantCulture price parsing).
 - `references/brand-blocklist.md` — established brands to exclude from dropship candidates.
-- `assets/pinterest-search.ps1` — the Pinterest market-sweep helper script.
 - `assets/build-workbook.ps1` — the local `.xlsx` workbook builder.
 - A configured WinningHunter API key, plus TikTok Shop and Google Sheets connector access, are
   assumed by the workflow and are environment-specific — not something a skill file can carry.
+- **This skill folder must run from Claude Desktop on a machine with real network egress to
+  `winninghunter.com`** — a Claude Code cloud session cannot reach that domain (confirmed
+  `EGRESS_BLOCKED` on both `winninghunter.com` and `app.winninghunter.com`), so Step 0.5 onward
+  cannot execute from a cloud session no matter how the script or key are configured.
+
+`assets/pinterest-search.ps1` now exists and implements Step 0.5's market/keyword sweep plus the
+client-side video-only, dropship-only, and price-band filters — **but it is UNVERIFIED against
+the live API.** It was written from this doc's description of the API, not from WinningHunter's
+own API docs (none were available when it was written), and it could not be tested from the
+session that wrote it (egress blocked, see above). Before relying on it:
+1. Run it once with `-DryRun` to sanity-check the request URLs.
+2. Run it once for real with `-RawJsonOut <dir>` against a single market/page and inspect the
+   saved JSON — confirm the auth scheme it auto-detects is right, and confirm the response field
+   names match what `Get-Field` calls in the script expect (`data`/`results`/`items` for the row
+   array; `shopify_shopifydomain`, `media_type`/`video`, `daysrunning`, etc. for row fields).
+   Fix any mismatches in the script before trusting its filtered output.
 
 `ledger.md` and `master-history.tsv` (header row only) have been created as empty scaffolds.
