@@ -189,6 +189,22 @@ seeds are exhausted, never as the primary net.
    **Expect to ask again mid-run.** The connection drops, and AliExpress may serve a
    slide-to-verify CAPTCHA. **Never solve a CAPTCHA** — ask the user to clear it and wait.
 
+   **CAPTURE PRICE + SHIPPING FEE FOR EVERY SUPPLIER LINK — not just the URL.** For each of the
+   10 products, once the real AliExpress item page is open (via the Chrome extension), record the
+   listed unit price and the shipping fee shown for the destination the operator ships from, and
+   write both into the sheet/report alongside the link (a `AD` column next to the supplier link is
+   fine — `price | shipping`). This is required every run, not optional enrichment — it's what lets
+   the operator compute margin at a glance instead of opening 10 tabs.
+
+   **Do not fabricate or approximate these two numbers from search snippets.** Confirmed
+   2026-08-14: neither `WebFetch` nor `WebSearch` can retrieve a live AliExpress price or shipping
+   fee — `WebFetch` is blocked outright by egress policy in a cloud session, and `WebSearch`'s
+   index does not carry price/shipping in its snippets (they're rendered client-side on the live
+   product page, destination-dependent, and vary with quantity/coupons). Only a real, connected
+   browser session (Claude in Chrome, confirmed via `list_connected_browsers`) can read them. If
+   Chrome isn't connected, mark price and shipping `pending — not retrievable in this session`
+   for every row, exactly as the plain supplier-link gate does — never estimate a number here.
+
 2. **FASHION IS IN EVERY RUN.** Fashion and accessories are always searched, regardless of what
    the rotation seed selects. The seed only decides *which slice* of fashion. Fashion is also
    the single most Pinterest-native category, so it usually supplies the top-ranked products.
