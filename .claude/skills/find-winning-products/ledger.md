@@ -13,4 +13,16 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - Aetheria Magical Fairy Lamp Wall Accent — wishinglams.us — 8780317425822 — Lighting — Tier A — TEST NOW
 - Car Seat Cover Set (9-piece) — munichsunny.com — 10508417368352 — Car Accessories — Tier A — WATCH
 
+## 2026-08-17 (seed 1, keyword-sweep method, all ten niches searched)
+- Backless Cami Dress — shecurve.com — 14768242917746 — Women's Fashion — Tier B — TEST NOW
+- Wondeea Electric Airbrush Kit with Compressor — wondeea.com — 10343687061816 — Hobbies — Tier B — TEST NOW
+- Color-Changing Foundation (Lumine Skin) — trylumineskin.com — 15638440575356 — Beauty — Tier B — TEST NOW
+- StayFit Push-Up Training Board — formafitness.co — 8120945311881 — Fitness — Tier B — TEST NOW
+- Wireless Car Interior Ambient Lights — auraspec.co — 10897499455834 — Car Accessories — Tier A — TEST NOW
+- Anrdre Military-Inspired Analog-Digital Watch — anrdre.com — 10215194525997 — Men's Fashion — Tier B — TEST NOW
+- Lumeppo Men's Stretch Straight-Leg Jeans — lumeppo.com — 9393140105472 — Men's Fashion — Tier B — TEST NOW
+- LEVIDE Knee Massager — levidecupp.com — 9900231950657 — Healthcare — Tier B — TEST NOW
+- Comfit BH-1 Comfort Bra — comfit-underwear.com — 8365428212055 — Underwear — Tier B — TEST NOW
+- Full-View Car Dashcam System — axolunee.shop — 15316455260535 — Car Accessories — Tier B — WATCH
+
 ## Archive (names only)
