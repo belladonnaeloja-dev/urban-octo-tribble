@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__WinningHunter__*",
+      "mcp__WinningHunter__find_winning_products",
+      "mcp__WinningHunter__search_facebook_ads",
+      "mcp__WinningHunter__get_tiktok_trending_products",
+      "mcp__WinningHunter__search_tiktok_products",
+      "mcp__WinningHunter__list_tiktok_category_top",
+      "mcp__WinningHunter__check_credits",
+      "WebSearch",
+      "Agent",
+      "Bash(jq *)"
+    ]
+  }
+}
