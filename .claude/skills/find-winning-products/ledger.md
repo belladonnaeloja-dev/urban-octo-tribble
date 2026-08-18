@@ -37,4 +37,16 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - Triangle Bralette (Curvvvy) — curvvvy.com — 9325152469180 — Underwear — Tier B — TEST NOW
 - Spruka Orthopedic Sciatica Relief Seat Cushion — spruka.com — 7078842302536 — Healthcare — Tier A — TEST NOW
 
+## 2026-08-18 (run 2, day 230, keyword-sweep method, 30-day floor applied)
+- Brilliance Cordless Table Lamp — popular.lighting — 7337374974138 — Lighting — Tier B — TEST NOW
+- Lemyon Retro Camcorder — thatonestreet.com — 7666193498205 — Hobbies — Tier B — TEST NOW
+- Over-the-Door Shoe Rack Organizer — roseionly.com — 10294387474714 — Home Care — Tier B — TEST NOW
+- Bow-Accent Slingback Flat Sandals — londyx.com — 9178484670690 — Women's Fashion — Tier B — TEST NOW
+- Nelux Hyaluronic Acid Lip Plumper — neluxcosmetics.com — 8204123766965 — Beauty — Tier B — TEST NOW
+- Shapecurve Heart Print High-Waist Panties 6-Pack — shape-curve.com — 7816381136982 — Underwear — Tier B — TEST NOW
+- VelorBoard — velorhealth.com — 8922689175811 — Fitness — Tier B — TEST NOW
+- King&Fifth Men's Workout Hat — kingandfifth.com — 6630046728370 — Men's Fashion — Tier B — TEST NOW
+- Snatched & Co. Men's Razor Blade Set — snatchedco.co — 14817609187700 — Men's Fashion — Tier B — TEST NOW
+- Fuel Injector Tester & Cleaner Kit — flippeng.com — 8148277821549 — Car Accessories — Tier A — WATCH
+
 ## Archive (names only)
