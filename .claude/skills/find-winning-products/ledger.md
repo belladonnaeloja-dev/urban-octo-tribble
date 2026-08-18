@@ -25,4 +25,16 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - Comfit BH-1 Comfort Bra — comfit-underwear.com — 8365428212055 — Underwear — Tier B — TEST NOW
 - Full-View Car Dashcam System — axolunee.shop — 15316455260535 — Car Accessories — Tier B — WATCH
 
+## 2026-08-18 (day 230, keyword-sweep method, all ten niches searched)
+- LED Cherry Blossom Lights — tryreviv.com — 15442035507532 — Lighting — Tier B — TEST NOW
+- Blazer-Wrap Striped Jumpsuit — moonighty.com — 10206043472167 — Women's Fashion — Tier B — TEST NOW
+- Advanced Hair Growth Roll-On Serum — aparthy.com — 9051708850434 — Beauty — Tier B — TEST NOW
+- Gabrielle Drawer — hoomier.com — 7999519260750 — Home Care — Tier A — TEST NOW
+- Tiny Adventurers Jigsaw Puzzle (1000 pcs) — pickforu.store — 15793172709457 — Hobbies — Tier B — TEST NOW
+- André Ferran Cargo Denim Jeans — andreferran.com — 10449980457293 — Men's Fashion — Tier B — TEST NOW
+- Abdominal Roller Wheel Disc with Knee Mat — aimtoyou.com — 10491293204755 — Fitness — Tier A — TEST NOW
+- LORZOR Tactical Wallet — lorzor.com — 10030393000257 — Men's Fashion — Tier B — TEST NOW
+- Triangle Bralette (Curvvvy) — curvvvy.com — 9325152469180 — Underwear — Tier B — TEST NOW
+- Spruka Orthopedic Sciatica Relief Seat Cushion — spruka.com — 7078842302536 — Healthcare — Tier A — TEST NOW
+
 ## Archive (names only)
