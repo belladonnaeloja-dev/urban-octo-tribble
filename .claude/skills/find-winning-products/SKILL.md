@@ -1,13 +1,48 @@
 ---
 name: find-winning-products
-description: Daily winning-product research run using WinningHunter. Queries ALL THREE sources every run — the PINTEREST ads API first (swept across every major market, Germany leading), then TikTok, then Meta; none of them is optional, because Pinterest alone cannot fill a run. Dropshipping products only, never established brands, priced 25-200. Delivers 10 products per run across TEN fixed niches only — hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting — sourced by MULTI-LANGUAGE KEYWORD SEARCH (English first, then French, German, Spanish, Dutch, Italian) rather than niche codes, with up to 2 men's fashion products every run. Always asks the user to open the Claude in Chrome extension before sourcing suppliers, so every product gets a real AliExpress item link. Prioritises brand-new products already scaling, then proven scalers, then a wildcard outside the usual niches. Enforces hard quantitative gates (active ads, ad spend, days running, rank momentum, Pinterest fit) and never repeats a product returned on a previous run — a persistent ledger plus a date-driven rotation seed guarantee fresh results every day. Appends each run to a cumulative spreadsheet. Use when the user asks to find winning products, do product research, "what should I test", daily product hunt, or scaling/trending product ideas.
+description: Daily winning-product research run using WinningHunter. Queries ALL THREE sources every run — the PINTEREST ads API first (swept across every major market, Germany leading), then TikTok, then Meta; none of them is optional, because Pinterest alone cannot fill a run. Dropshipping products only, never established brands, priced 25-200. Delivers 10 products per run across TEN fixed niches only — hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting — sourced by MULTI-LANGUAGE KEYWORD SEARCH (English first, then French, German, Spanish, Dutch, Italian) rather than niche codes, with up to 2 men's fashion products every run. Sources a real AliExpress item link for every product automatically via the in-app browser — EUR prices, English titles, ships to Germany — with no extension or user action needed. Every supplier link is rewritten to the de.aliexpress.com domain and carries a confidence tag (LOAD-TESTED / INDEX-OK / EQUIVALENT / n/a) so a broken or approximate link can never masquerade as a verified one. Delivers the 10 products RANKED BY TESTING MERIT, best first, on Pinterest fit then traction, margin, saturation and killer risk — the order is the recommendation. Prioritises brand-new products already scaling, then proven scalers, then a wildcard outside the usual niches. A "winner" is defined by the operator's rule: running at least 30 days AND clearing a Pinterest traction floor of 50+ repins with 10+ ads on the advertiser (repins stand in for ad spend, which the Pinterest API does not expose and whose filters it silently ignores). Also enforces hard gates on price, video creative, dropship-only and Pinterest fit, and never repeats a product returned on a previous run — a persistent ledger plus a date-driven rotation seed guarantee fresh results every day. Appends each run to a cumulative spreadsheet. Use when the user asks to find winning products, do product research, "what should I test", daily product hunt, or scaling/trending product ideas.
 ---
 
 # Find Winning Products (WinningHunter daily run)
 
 Act as a senior product researcher who has scaled 7-figure dropshipping brands. Cynical, evidence-driven. Every claim must trace back to a WinningHunter field or a live URL. **Never invent a number.**
 
-## Two standing rules that override everything below
+## Standing rules that override everything below
+
+0. **THE DEFINITION OF A WINNER (operator rule, set 2026-08-17). THIS IS THE GATE.**
+
+   A product ships only if it is a **Pinterest winner** meeting BOTH:
+
+   | Gate | Value | How to enforce |
+   |---|---|---|
+   | **Days running** | **≥ 30** | `mindays=30` server-side **and** recompute from `started` |
+   | **Traction floor** | **`repin_count` ≥ 50 AND `adscount` ≥ 10** | client-side |
+
+   **The operator originally asked for "ad spend ≥ 1,000". THAT IS NOT ENFORCEABLE ON PINTEREST
+   AND YOU MUST NOT PRETEND IT IS.** Verified 2026-08-17:
+   - `total_adspend`, `revenue`, `dailyadspend`, `adspend_history` exist on `/pinterest-ads` rows
+     and are **empty on 100% of them** (0 of 160 across DE/US/FR/NL/GB/IT/ES/AT).
+   - `minadspend`, `min_ad_spend`, `minspend`, `adspend` are **accepted and silently ignored** —
+     `minadspend=100000` returns rows byte-identical to the unfiltered baseline. A run written that
+     way looks filtered and is not. **Always diff the returned ids to prove a filter did something.**
+   - Cross-checking spend on Meta does not rescue it and actively **biases the result the wrong way**:
+     in the 2026-08-17 test, **12 of 22 survivors had no Meta ads at all** — those are the
+     Pinterest-native advertisers, exactly the ones worth copying. Applying the literal rule that day
+     produced **ZERO** deliverable products.
+
+   **`repin_count` is the spend substitute.** Calibrated on 140 dropship rows: 66% are 0, only 16%
+   clear 50, 9% clear 200. So `repin_count ≥ 50` is roughly a top-sixth traction bar.
+   **Use `repin_count`, never `save_count`** — `save_count` is 0 on essentially every row.
+
+   Report the real repin/ads/days numbers for every Pinterest product. Never print a spend figure
+   for a Pinterest ad, and never imply a Meta spend number says anything about this channel.
+
+   **`mindays=30` is nearly free** — it dropped 0 rows in an 8,700-row sweep; the index skews old
+   (median survivor ~120 days, long-runners of 500–1,100 days are common). If a run needs tightening,
+   raise days to 60/90 before touching anything else.
+
+   **If this rule leaves you short of 10, say so and name the near-misses with the gate each failed.**
+   Do not quietly drop the floor to fill slots.
 
 1. **PINTEREST FIRST, ALWAYS — SWEPT ACROSS EVERY MAJOR MARKET, DE LEADING.**
    Pinterest is the operator's ad channel, and WinningHunter's REST API exposes it directly at
@@ -106,7 +141,7 @@ itself localises the result.
 Run the same keyword ladder across all three sources in order: **Pinterest → TikTok → Meta.**
 
 ```
-https://app.winninghunter.com/api/v1/pinterest-ads?page=1&adscorefilter=winning&mindays=21&keyword=<TERM>
+https://app.winninghunter.com/api/v1/pinterest-ads?page=1&adscorefilter=winning&mindays=30&keyword=<TERM>
 ```
 
 ### Two things that will bite you
@@ -167,44 +202,116 @@ seeds are exhausted, never as the primary net.
    Enforced by the helper (Shopify store required, blocklist, >2M-visit stores dropped) and by
    [references/brand-blocklist.md](references/brand-blocklist.md), which you **extend every run**.
 
-5. **ALWAYS ASK THE USER TO OPEN THE CLAUDE IN CHROME EXTENSION — EVERY RUN, BEFORE SOURCING.**
+5. **SOURCE SUPPLIERS AUTOMATICALLY VIA THE IN-APP BROWSER — DO NOT ASK THE USER FOR ANYTHING.**
 
-   Supplier links come from the browser. Without Chrome connected there is no way to reach
-   AliExpress, and the supplier column ends up full of `pending` cells or — worse — search
-   links, which the operator has rejected outright.
+   *(Rewritten 2026-08-17. This rule used to require asking the operator to open the Claude in
+   Chrome extension every run. That is no longer necessary and you should not ask.)*
 
-   **When to ask:** as soon as the 10 products are locked and *before* you start sourcing. Do not
-   wait until you hit a failure. Say it plainly:
+   Supplier links come from `mcp__Claude_Browser__*`, which needs no extension, no logged-in
+   session and no user action. Read
+   [references/aliexpress-sourcing.md](references/aliexpress-sourcing.md) before sourcing — it
+   carries the locale cookies, the extraction JS, and the match-verification procedure.
 
-   > "I've got the 10 products. Please open the Claude in Chrome extension and make sure it's
-   > connected — I need it to pull the AliExpress supplier links. Tell me when it's on."
+   **The locale is a hard requirement (operator, 2026-08-17): EUR prices · English titles ·
+   ships to Germany.** Set the `aep_usuc_f` cookies *before* navigating, or the box geo-defaults
+   to Arabic titles and TND prices. Verify the first row's price and title before trusting a batch.
 
-   Then confirm with `list_connected_browsers` before the first navigation.
+   **Read `window._dida_config_`, never the DOM.** The old DOM extractor returns zero rows
+   silently — see the reference doc.
 
-   **If Chrome is not available**, say so immediately and explicitly, deliver the 10 products
-   with the supplier column marked `pending — Chrome not connected`, and do **not** substitute a
-   search URL. A missing link the operator knows about is fine; a search page dressed up as a
-   supplier is not.
+   **Claude in Chrome is now the fallback**, for when the in-app browser hits a CAPTCHA or empty
+   grids. Only then ask the user, and confirm with `list_connected_browsers`.
 
-   **Expect to ask again mid-run.** The connection drops, and AliExpress may serve a
-   slide-to-verify CAPTCHA. **Never solve a CAPTCHA** — ask the user to clear it and wait.
+   **Never solve a CAPTCHA** — ask the user to clear it and wait. If sourcing fails entirely,
+   mark the supplier column `pending — <reason>` and do **not** substitute a search URL. A missing
+   link the operator knows about is fine; a search page dressed up as a supplier is not.
 
-2. **FASHION IS IN EVERY RUN.** Fashion and accessories are always searched, regardless of what
+   Because supplier cost now arrives as a real EUR figure, the `**Economics:**` line in Step 7
+   carries a **computed** margin, not an estimate:
+
+   ```
+   Economics: €4.49 supplier (10,000+ sold, 4.9★) | €39.95 their price | 89% margin | €35.46/order
+   ```
+
+   **Open the item page to confirm the price before writing that line.** The listed figure is
+   usually a **time-limited promo** with an expiry date — quote the expiry alongside it. And the
+   € appears both before *and* after the number on AliExpress DE, so a careless prefix-only regex
+   grabs the strikethrough original and overstates COGS ~2×. Both traps are documented in the
+   reference.
+
+6. **FASHION IS IN EVERY RUN.** Fashion and accessories are always searched, regardless of what
    the rotation seed selects. The seed only decides *which slice* of fashion. Fashion is also
    the single most Pinterest-native category, so it usually supplies the top-ranked products.
 
-3. **THE DAILY TARGET IS 10 PRODUCTS — AND 10 MEANS 10.** Every run delivers **10**, split
+7. **THE DAILY TARGET IS 10 PRODUCTS — AND 10 MEANS 10.** Every run delivers **10**, split
    **4 Tier A / 4 Tier B / 2 Tier C**. If the user names a different number, that wins.
    Do not stop at 2 or 3 because the seed's market is thin — **work the ladder to rung 6 and
    switch markets.** A thin seed market is a reason to change market, not to under-deliver.
    The only acceptable reason to ship fewer than 10 is that the remaining candidates would be
    SKIP-rated, and you must then say exactly what the binding constraint was.
 
-4. **PRICE CEILING: 200 (EUR or USD). HARD.** The operator cannot run high-ticket. Pass
+8. **PRICE CEILING: 200 (EUR or USD). HARD.** The operator cannot run high-ticket. Pass
    **`max_price=200` on every query** alongside `min_price=25`. Anything above 200 is dropped —
    do not report it, do not add it to the sheet, and do not argue for it on strong metrics.
    (A EUR 979 ergonomic chair passed every other gate on 2026-07-30 and had to be pulled.)
    Combined with the floor, the sellable band is **25–200**.
+
+9. **RANK BY TESTING MERIT — BEST FIRST, WEAKEST LAST (operator rule, set 2026-08-18).**
+
+   The 10 products are delivered as an **ordered list**: #1 is the one you would spend the first
+   euro on, #10 is the one you would test only after the others. The operator reads the sheet
+   top-down and tests in that order, so the order IS the recommendation.
+
+   **Rank on this, in priority order:**
+   1. **Pinterest Fit /10** — this is the operator's channel. A 9/10 outranks a 5/10 almost
+      regardless of what else is true.
+   2. **Traction** — repins, days running, ad count on the advertiser. Real demand, not a guess.
+   3. **Margin headroom** — sell price vs the AliExpress COGS you sourced. A 6x beats a 2x.
+   4. **Low saturation** — few distinct domains running it.
+   5. **Low killer risk** — sizing returns, bulk/freight, CE/medical claims, trademark. A serious
+      killer pushes a product DOWN even when the metrics are good.
+
+   **Write the rank into BOTH `priority` and `test_order`**, 1–10, no ties and no gaps.
+   `TEST NOW` products must all rank above every `WATCH` product — never interleave them.
+
+   **Say why #1 is #1** in one line, and **say why #10 is last** in one line. If the ranking is
+   close between two, say so rather than implying false precision.
+
+   This replaces the old habit of listing in Tier A → B → C order. **Tier is not rank** — a Tier B
+   product with 9/10 Pinterest Fit outranks a Tier A product at 4/10.
+
+10. **EVERY LINK MUST WORK, AND EVERY CELL MUST STATE HOW SURE YOU ARE (operator rule, 2026-08-18).**
+
+   The operator opened supplier links and hit 404s. An audit of all 39 item links in the sheet
+   found dead ones scattered through three runs, and the whole 2026-08-16 block was `.us` URLs
+   from a US-locale session that do not resolve from Germany.
+
+   **Two absolute rules:**
+   - **Never store a `[www.aliexpress.us](https://www.aliexpress.us)` URL.** Rewrite every supplier link to
+     `https://de.aliexpress.com/item/<ID>.html` before it touches the sheet.
+   - **Never write a bare URL.** Every supplier cell is a `=HYPERLINK(...)` whose label carries
+     the item ID, order count, star rating, and the confidence tag below.
+
+   **The confidence tags — use exactly these:**
+
+   | Tag | Means |
+   |---|---|
+   | `LOAD-TESTED` | You opened the item page and it rendered a real product. Strongest. |
+   | `INDEX-OK` | Live in the DE/EUR search index today with current price/rating/orders, page load not confirmed. |
+   | `EQUIVALENT` | Right category, different variant — **name the difference in the label** ("suede not confirmed", "7-pack vs 6-pack"). |
+   | `no qualifying supplier` | Nothing clears ≥200 orders AND ≥4.5★. Say so; do not downgrade the floor silently. |
+   | `n/a - <reason>` | POD, own formulation, trademark risk. |
+   | `DEAD LINK (was <id>) - verified <date>` | You confirmed a 404 by reading the page body. |
+   | `UNVERIFIED - recheck` | The read was blocked/inconclusive. **Keep the original link.** |
+
+   **A blocked read is NEVER a dead verdict.** See the throttle signatures in
+   [references/aliexpress-sourcing.md](references/aliexpress-sourcing.md): a throttled page and a
+   404 look identical unless you read the body. On 2026-08-18, judging on tab title alone marked
+   **15 live links dead**, and they had to be reverted. Confirm dead only on an explicit
+   "can not be found" string.
+
+   **Prefer an honest weaker tag over an empty cell.** The operator wants the column filled; a
+   labelled `INDEX-OK` is useful, a blank is not, and an unlabelled guess is worse than both.
 
 ## Step 0 — Load state (always do this first)
 
@@ -225,11 +332,9 @@ If the user passed arguments (a specific niche, country, price range, or "more l
 is the operator's real channel, so this runs FIRST, every run.
 
 **Run the helper:**
-
 ```
-powershell -File "C:\Users\lenovo\.claude\skills\find-winning-products\assets\pinterest-search.ps1" -Niches "CG,JY,BG" -Countries "DE" -MinDays 21
+powershell -File "C:\Users\lenovo\.claude\skills\find-winning-products\assets\pinterest-search.ps1" -Keyword "led strip lights" -ProductPagesOnly
 ```
-
 It reads the API key from `C:\Users\lenovo\.claude\.winninghunter-api-key` (deliberately OUTSIDE
 the skill folder so the key never travels if the skill is shared), prints gate-ready rows, and
 reports the remaining credit balance. 1 credit per request; balance was 19,988/20,000 on setup.
@@ -247,8 +352,9 @@ reports the remaining credit balance. 1 credit per request; balance was 19,988/2
 
 ### Fields worth having
 
-`save_count` / `repin_count` (+ `_timeseries`) — **real Pinterest save data, the leading
-indicator**; `adscore` + `adscore_reasons`; `daysrunning`; `adscount` (ads on the advertiser's
+`repin_count` (+ `_timeseries`) — **the real engagement signal and the Rule 0 traction gate.**
+(`save_count` exists but is always 0 — ignore it.) `adscore` + `adscore_reasons`; `started` (trust
+this, NOT `daysrunning`, which disagrees with it); `adscount` (ads on the advertiser's
 page); `pin_url`; `link` (destination); `domain`; `shopify_shopifydomain` / `shopify_productid` /
 `shopify_productprice` / `shopify_currency`; `countries`; `language`; `store_traffic`.
 
@@ -257,8 +363,13 @@ page); `pin_url`; `link` (destination); `domain`; `shopify_shopifydomain` / `sho
 1. **The Pinterest index is dominated by big brands, not dropshippers.** A DE run returned
    Tchibo, Dyson, Ticketmaster, Teckentrup. **Filter to rows that have a non-empty
    `shopify_shopifydomain`** to find dropship-style advertisers, and drop household names.
-2. **`save_count` is frequently 0** even on long-running ads — the index is sparse. A zero is
-   "not measured", not "nobody saved it". Do not rank on saves alone or report 0 as a finding.
+2. **`save_count` is effectively ALWAYS 0 — use `repin_count` instead.** Not "frequently sparse":
+   it was 0 on all 77 rows (2026-08-16) and all 140 dropship rows (2026-08-17). `repin_count` is
+   populated and is the real engagement signal, and it is the **traction gate in Rule 0**. Never
+   rank on saves and never report a 0 save_count as a finding.
+2b. **There is NO spend data and spend filters are silently ignored** — see Rule 0. `total_adspend`,
+   `revenue`, `dailyadspend` are empty on 100% of rows, and `minadspend=100000` returns the
+   unfiltered baseline. Prove any filter worked by diffing the returned ids.
 3. **`niche_v2` misclassifies.** A Dyson hair styler came back tagged `JY` (Jewellery),
    Ticketmaster likewise. Treat the niche filter as a coarse net and verify by reading the
    title/link, never by trusting the tag.
@@ -356,7 +467,7 @@ Call `find_winning_products` with:
 | `min_active_ads` | `10` | **must set explicitly** — otherwise US auto-applies 50 and kills every young page |
 | `min_active_ads_growth` | `50` | +50% active ads |
 | `active_ads_growth_period` | `1m` | over the last month |
-| `min_days_running` | `10` | survived past the testing phase |
+| `min_days_running` | `30` | operator rule 2026-08-17 — was 10, raised to match the winner rule |
 | `technology` | `SH` | Shopify only |
 | `media_type` | `videos` | video creatives = the scalable format |
 | `niches` | **fashion codes ALWAYS** + the rest of today's SEED families | see rotation table |
@@ -365,7 +476,7 @@ Call `find_winning_products` with:
 
 `ad_score=winning`, `page_type=products` and `adstatus=active` are forced by the tool — don't pass them.
 
-**Aim for 4 Tier A products.** If the run returns fewer than 4 after dedupe, loosen in this order and say which knob you loosened: `min_active_ads_growth` 50→25 → `product_created` window 60d→90d → `min_days_running` 10→7. Never loosen `scaling` or `technology`.
+**Aim for 4 Tier A products.** If the run returns fewer than 4 after dedupe, loosen in this order and say which knob you loosened: `min_active_ads_growth` 50→25 → `product_created` window 60d→90d. **`min_days_running` is NO LONGER a loosening knob — 30 is the operator's floor and must not be lowered.** Never loosen `scaling` or `technology`.
 
 **Pre-filter the proxy server-side on non-EU markets.** When the market is US/CA/AU (no EU spend
 data), the proxy gate is `ads ≥ 40 AND growth > 0 AND rank ≤ 50`. Pass `max_ad_rank=50` and
@@ -377,7 +488,7 @@ to enforce the margin floor server-side. This is the single biggest lever for hi
 
 Same six priority niches, no newness requirement. These are safer, more competitive.
 
-Change from Tier A: drop `product_created_*`, set `min_active_ads=50`, `min_days_running=21`, `min_active_ads_growth=25`, `scaling=rising`, `sort_by=adspend` desc, and add `min_ad_spend=1000` + `ad_spend_timeframe=30` **only when the market is European** (see caveat below).
+Change from Tier A: drop `product_created_*`, set `min_active_ads=50`, `min_days_running=30`, `min_active_ads_growth=25`, `scaling=rising`, `sort_by=adspend` desc, and add `min_ad_spend=1000` + `ad_spend_timeframe=30` **only when the market is European** (see caveat below).
 
 **Aim for 4 Tier B products.**
 
@@ -393,7 +504,8 @@ strongly Pinterest-native — reach for them when the seed's wildcard column run
 Work down this list, in order, and **say in the report which rungs you used**:
 
 1. Fill 4 / 4 / 2 as specified.
-2. Tier A short? Apply its loosening ladder (growth 50→25, window 60→90d, days 10→7).
+2. Tier A short? Apply its loosening ladder (growth 50→25, window 60→90d). **Not days running —
+   30 is the operator's floor, see Rule 0.**
 3. Still short? **Backfill the shortfall from Tier B and Tier C** — a 2/5/3 split that reaches 10
    is better than a 1/4/2 that reaches 7. Report the real split, never relabel a Tier B product
    as Tier A to make the shape look right.
@@ -432,11 +544,23 @@ spend was discarded by that single gate.
 
 A candidate ships only if **all** of these hold:
 
+**Pinterest-sourced products use the Rule 0 gates, NOT the Meta gates below.** For Pinterest:
+`repin_count` ≥ 50 **AND** `adscount` ≥ 10 **AND** days running ≥ 30 (from `started`), plus the
+price band, dropship, video and dedupe rules. `activeSeen`, `ad_rank`, rank momentum and
+`total_eu_adspend` **do not exist on the Pinterest endpoint** — do not invent them, do not report
+them as `n/a` gates that were "checked", and never gate a Pinterest run on spend (see Rule 0).
+
+The remaining bullets apply to **TikTok- and Meta-sourced** candidates:
+
 - `total_active_ads_on_page` ≥ 10
 - `activeSeen` ≥ 3 (the specific ad is being served repeatedly, not a one-off)
-- days running ≥ 10 (Tier A) / ≥ 21 (Tier B, C) — compute from `started` vs today
+- days running **≥ 30 for every tier** — compute from `started` vs today. (Operator rule 2026-08-17;
+  this supersedes the old 10-day Tier A / 21-day Tier B+C split.)
 - rank momentum: `rank_history` trending toward a lower number, or `total_active_ads_on_page_growth_1m` > 0
 - **Spend gate:** `total_eu_adspend` ≥ 1000 in the 30d window — **but this field is only populated for EU-targeted ads.** For US/CA/AU/GB ads it is blank, and blank is NOT a failure. When it's blank, substitute this proxy and say so in the output: `total_active_ads_on_page` ≥ 40 AND growth_1m > 0 AND `ad_rank` ≤ 50.
+  **On REST the field is named `total_adspend`; only the MCP connector calls it `total_eu_adspend`.**
+  Reading the MCP name off a REST response silently yields 0 for every row and looks exactly like
+  "this advertiser has no spend data". Check `alladsadspend` as a fallback.
 - `shopify_productprice` **between 25 and 200** (in `shopify_currency`). If the field is `False`/missing, open the product URL and read the real price — do not guess. Under 25 = margin risk, flag rather than auto-drop. **Over 200 = automatic drop, no exceptions** — the operator cannot run high-ticket. Enforce it server-side with `max_price=200`.
 - **Pinterest Fit ≥ 4/10** to be eligible for TEST NOW. Below 4 it still ships in the report — with its real numbers and its rank — but capped at WATCH, with one line explaining that it is strong on Meta and wrong for this channel. Score it using the table in the Pinterest playbook.
 
@@ -466,7 +590,9 @@ For each product that made it through:
 
 Lead with a one-line summary: date, seed, rotation slice, how many products per tier, and the single best pick.
 
-Then one block per product, ordered Tier A → B → C:
+Then one block per product, **ordered by testing merit — rank #1 first, rank #10 last** (standing
+rule 9). Do NOT order by tier; tier is a sourcing label, not a recommendation. Print the rank
+number in the heading, and close the report by naming why #1 leads and why #10 trails:
 
 ```
 ## [Tier A|B|C] N. <Product name> — <Niche> — <Market>
@@ -484,7 +610,7 @@ Then one block per product, ordered Tier A → B → C:
 **Problem it kills:** stated the way the customer would say it
 **Why now:** the trend/season/mechanism driving it — remember Pinterest runs 4–8 weeks EARLY
 **Buyer:** age, gender, where they are online
-**Economics:** supplier cost estimate | their sell price | your margin at that price | profit/order
+**Economics:** real AliExpress supplier cost in EUR (+ promo expiry) | their sell price | your margin | profit/order
 **Their hook (Meta):** the actual first line of their ad copy, quoted
 **Pin concept:** 2:3 vertical still — describe the shot, plus the text overlay headline to burn in
 **Board it belongs to:** the Pinterest board a user would save it to
@@ -601,13 +727,48 @@ previous run's, tagged with the run date. Never start a fresh sheet.
    - `spreadsheet_id` = `1ha9uILlG-VetpFMqHCkP3F9P_o7k4nUrZS-zAk3pZJ4`
    - sheet/tab name = `Winning Products`, `sheetId` (gid) = `461357650`
    - Layout: title row 1, subtitle row 2, blank row 3, **header row 4**, data from **row 5**.
-     27 columns, `A`–`AA`, in master-history.tsv order.
+
+   **READ THE HEADER ROW BEFORE EVERY WRITE — THE COLUMNS MOVE.** Do
+   `get_sheet_data` on `V4:AF4` and map the columns by *name* every single run. Never write to a
+   remembered letter.
+
+   As of 2026-08-18 the layout is:
+
+   | Col | Header |
+   |---|---|
+   | U | Verdict |
+   | V | Main killer / risk |
+   | W | Their hook |
+   | X | Open in WinningHunter |
+   | Y | Product page |
+   | Z | The winning ad |
+   | AA | All their live ads |
+   | **AB** | **(blank spacer — do NOT write here)** |
+   | **AC** | **AliExpress supplier** |
+   | **AD** | **COGS EUR** |
+   | AE | Listed On Asana |
+
+   **Why this is a hard rule.** On 2026-08-18 a column was inserted between runs, moving
+   AliExpress from AB→AC and COGS from AC→AD. Writing to the remembered letters put COGS numbers
+   *on top of four supplier links and destroyed them*. It was caught only by reading the cells
+   back. The old note here said "27 columns, A–AA", which was already stale and is what made the
+   remembered letters look authoritative.
+
+   **Always `get_sheet_formulas` on the written range afterwards and confirm each cell holds what
+   you intended** — a `batch_update_cells` call reports success even when it wrote to the wrong
+   column, and it has silently failed to persist at least once (row 85, 2026-08-11).
 
    **Do not create a replacement sheet or mint a new URL.** Offer it only if the user asks.
 
    The append procedure, in order:
-   1. `get_sheet_data` on a narrow range (e.g. `A30:E60`) to find the **last populated row**.
-      Never assume — rows get added and deleted between runs.
+   1. `get_sheet_data` on a narrow range (e.g. `A130:E170`) to find the **last populated row**,
+      and read column A to see the **most recent run date**. Never assume — rows get added and
+      deleted between runs.
+
+      **"The last run" means the bottom of the sheet, not what you remember.** On 2026-08-18 a
+      whole day was spent finalising the 2026-08-11 block because a stale summary called it "the
+      last list" — five newer runs sat below it, and the operator saw nothing change. Read the
+      sheet, find the newest `run_date`, and say which rows you are working on before you start.
    2. `batch_update_cells` writing `A<next>:AA<next+n-1>`. Numbers as numbers; the four link
       columns as `=HYPERLINK("url","label")` with labels `WinningHunter` / `Open shop` /
       `View ad` / `All ads` to match existing rows.
@@ -628,6 +789,21 @@ previous run's, tagged with the run date. Never start a fresh sheet.
       - `TEST NOW` → background `{0.22, 0.463, 0.114}` (#38761D), **bold white** text
       - `WATCH` → background `{1, 0.898, 0.6}` (#FFE599), **bold black** text
       Both centred, vertically middle. Verify visually — the user checks this.
+
+      **THIS HAS REGRESSED TWICE (2026-07-30 and 2026-08-18) AND THE OPERATOR CAUGHT IT BOTH
+      TIMES.** The failure mode is always the same: the format copy in step 3 paints the whole
+      block with the source row's colour, so a run of TEST NOW rows comes out amber. Green is the
+      signal the operator scans for — amber TEST NOW makes the sheet unreadable at a glance.
+
+      **Do it like this, every run, no exceptions:**
+      1. `get_sheet_data` on `U<first>:U<last>` and read the actual verdict strings back.
+      2. Group the contiguous runs of `TEST NOW` and `WATCH`.
+      3. Issue one `repeatCell` per group with `fields:
+         "userEnteredFormat(backgroundColor,horizontalAlignment,verticalAlignment,textFormat)"`.
+      4. Column U is index **20** in the API's 0-based `startColumnIndex` — but confirm U is
+         still `Verdict` in the header first (see the column-drift rule above).
+
+      Never assume the verdicts alternate or match last run's pattern — read them.
    5. Update the row-2 subtitle with the new run and product counts.
    6. `get_sheet_data` on the written range to verify, then report the row numbers written.
 
@@ -669,8 +845,8 @@ Entries newer than 120 days go under dated headings above the archive, in this f
 
 ## Known gaps in this skill folder (fill in before relying on this skill)
 
-This SKILL.md was committed on its own; the files it references were not supplied alongside it
-and still need to be authored before the workflow above can run end-to-end:
+The files this SKILL.md references still need to be authored before the workflow above can run
+end-to-end:
 
 - `references/pinterest-playbook.md` — Pinterest Fit scoring table, ranking formula,
   early-seasonality rule, Pinterest test cadence.
@@ -678,6 +854,11 @@ and still need to be authored before the workflow above can run end-to-end:
 - `references/winninghunter-filters.md` — full niche-code reference, filter semantics, metric
   caveats (e.g. InvariantCulture price parsing).
 - `references/brand-blocklist.md` — established brands to exclude from dropship candidates.
+- `references/aliexpress-sourcing.md` — **new as of the 2026-08-17 rewrite of Rule 5.** Must carry
+  the `aep_usuc_f` locale-cookie setup (EUR / English / ships-to-Germany), the
+  `window._dida_config_` extraction JS, the match-verification procedure, the promo-expiry and
+  double-€-symbol traps referenced above, and the throttle-vs-404 signatures referenced in Rule 10.
+  Does not exist yet — author it before the next real run, or Rule 5/10 cannot be followed as written.
 - `assets/build-workbook.ps1` — the local `.xlsx` workbook builder.
 - A configured WinningHunter API key, plus TikTok Shop and Google Sheets connector access, are
   assumed by the workflow and are environment-specific — not something a skill file can carry.
@@ -703,6 +884,11 @@ and still need to be authored before the workflow above can run end-to-end:
   `batch_update`/`values.append` capability, so Step 9's append procedure cannot run from a
   cloud session regardless of the sheet's own permissions. This needs a Google Sheets connector
   with write scope, connected from Claude Desktop.
+- **Update 2026-08-17 — Rule 5 rewritten to source via `mcp__Claude_Browser__*` (an in-app
+  browser) instead of asking the operator to open the Claude in Chrome extension every run.**
+  That tool's actual availability in a given session (cloud vs. desktop) has not been re-verified
+  against the same egress constraints noted above for WinningHunter — confirm it is reachable
+  before the next run, and fall back to Claude in Chrome per Rule 5 if it is not.
 
 `assets/pinterest-search.ps1` now exists and implements Step 0.5's market/keyword sweep plus the
 client-side video-only, dropship-only, and price-band filters — **but it is UNVERIFIED against
