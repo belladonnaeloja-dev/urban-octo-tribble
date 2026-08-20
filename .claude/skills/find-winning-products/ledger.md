@@ -36,4 +36,24 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - Car accessories: only 1 qualifier found (CarTablet Pro Max) despite 2 dedicated sweeps — most candidates fail on activeSeen<3.
 - Home care: 0 qualifiers this run despite a dedicated GB sweep (HE,FR,SH,FK niches) — everything in the pool failed activeSeen<3.
 
+## 2026-08-20 (second real run — same session constraints: Pinterest and AliExpress unavailable)
+- HaloSphere™ Aurora (aurora/northern-lights lamp) — thehalosphere.com — 427717733467699 — Lighting — Tier B — SOURCE: Meta — TEST NOW
+- Wooden Puzzle Alphabet Blocks Language Toy — TikTok 1730065936542044986 — Hobbies — Tier B — SOURCE: TikTok — TEST NOW
+- 7CODE Transparent Shoe Box Storage Set — TikTok 1731828360487408467 — Home care — Tier B — SOURCE: TikTok — TEST NOW
+- Minimax - The Roomiest Mini Backpack — emmafy.com — 2388836651607755 — Women's fashion — Tier B — SOURCE: Meta — TEST NOW
+- Personalized Custom Men's Watch (USA Anniversary Eagle) — almagems.com — 2084654069149338 — Men's fashion — Tier B — SOURCE: Meta — TEST NOW
+- Luxury Square Rhinestone Watch — dailyardmax.com — 1574577720762023 — Women's fashion — Tier A — SOURCE: Meta — TEST NOW
+- Skin-Friendly & Dirt-Repellent Leather Seat Cushions — porschahouse.store — 4285378428393132 — Car accessories — Tier B — SOURCE: Meta — TEST NOW
+- Lymphoria Drainage Drops — lymphoria.co — 1009134445160035 — Healthcare — Tier B — SOURCE: Meta — TEST NOW
+- Uclips — homegymsetups.myshopify.com/uclips.co — 607581361868265 — Fitness — Tier B — SOURCE: Meta — TEST NOW
+- 7-Pack Bamboo Fiber Boxer Briefs (Buy 7 Get 7 Free) — TikTok 1731821905264284323 — Underwear — Tier B — SOURCE: TikTok — TEST NOW
+
+### Rejected candidates (2026-08-20)
+- Luxury Leather MagCase (iPhone case) — gudeen.com/f85c61-4.myshopify.com — 865530393013178 — SKIP: stale/inactive data — ad ended 2026-01-21 (daysrunning=1, adscore="Testing" not "Winning"), not actually live/scaling despite appearing in a "seen 7x" sweep row.
+- TrackVibe Black Carbon Suede Steering Wheel Cover — tekiep.com/0fbe44-19.myshopify.com — 1389621249721655 — SKIP: Trustpilot 2.5/5, explicit "total scam", "scammers", non-delivery complaints across 6 reviews.
+- TikTok shapewear category (SHAPERX, YIANNA, SHAPSHE, SHAPELLX, FeelinGirl) — swept for Underwear niche, all results are established branded shapewear sellers with heavy multi-SKU catalogues, not dropship-sourceable generics. SHAPELLX already blocklisted 2026-08-19. Whole category skipped this run; used `boxer briefs` keyword instead and found a qualifying generic.
+
+### Persistent gaps (2026-08-20)
+- Underwear (women's/shapewear specifically): TikTok "shapewear" search is dominated by established brands (see rejected list above) — filled the niche slot with a men's boxer-briefs product instead.
+
 ## Archive (names only)
