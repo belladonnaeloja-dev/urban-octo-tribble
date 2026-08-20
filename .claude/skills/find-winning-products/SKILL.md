@@ -1,6 +1,6 @@
 ---
 name: find-winning-products
-description: Daily winning-product research run using WinningHunter. Queries ALL THREE sources every run — the PINTEREST ads API first (swept across every major market, Germany leading), then TikTok, then Meta; none of them is optional, because Pinterest alone cannot fill a run. Dropshipping products only, never established brands, priced 25-200. Delivers 10 products per run across TEN fixed niches only — hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting — sourced by MULTI-LANGUAGE KEYWORD SEARCH (English first, then French, German, Spanish, Dutch, Italian) rather than niche codes, with up to 2 men's fashion products every run. Sources a real AliExpress item link for every product automatically via the in-app browser — EUR prices, English titles, ships to Germany — with no extension or user action needed. Every supplier link is rewritten to the de.aliexpress.com domain and carries a confidence tag (LOAD-TESTED / INDEX-OK / EQUIVALENT / n/a) so a broken or approximate link can never masquerade as a verified one. Delivers the 10 products RANKED BY TESTING MERIT, best first, on Pinterest fit then traction, margin, saturation and killer risk — the order is the recommendation. Prioritises brand-new products already scaling, then proven scalers, then a wildcard outside the usual niches. A "winner" is defined by the operator's rule: running at least 30 days AND clearing a Pinterest traction floor of 50+ repins with 10+ ads on the advertiser (repins stand in for ad spend, which the Pinterest API does not expose and whose filters it silently ignores). Also enforces hard gates on price, video creative, dropship-only and Pinterest fit, and never repeats a product returned on a previous run — a persistent ledger plus a date-driven rotation seed guarantee fresh results every day. Appends each run to a cumulative spreadsheet. Use when the user asks to find winning products, do product research, "what should I test", daily product hunt, or scaling/trending product ideas.
+description: Daily winning-product research run using WinningHunter. Queries ALL THREE sources every run — the PINTEREST ads API first (swept across every major market, Germany leading), then TikTok, then Meta; none of them is optional, because Pinterest alone cannot fill a run. The Pinterest sweep runs TWICE to maximise the number of Pinterest winners: once for what is scaling live, and once for the SAME CALENDAR PERIOD LAST YEAR (e.g. August 2025 when run in August 2026) via a mindays+maxdays start-date window, which surfaces 12-month survivors carrying seasonal proof — Pinterest search peaks 4-8 weeks before the buying moment, so last year's winners are an early signal, not a late one. Dropshipping products only, never established brands, priced 25-200. Delivers 10 products per run across TEN fixed niches only — hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting — sourced by MULTI-LANGUAGE KEYWORD SEARCH (English first, then French, German, Spanish, Dutch, Italian) rather than niche codes, with up to 2 men's fashion products every run. Sources a real AliExpress item link for every product automatically via the in-app browser — EUR prices, English titles, ships to Germany — with no extension or user action needed. Every supplier link is rewritten to the de.aliexpress.com domain and carries a confidence tag (LOAD-TESTED / INDEX-OK / EQUIVALENT / n/a) so a broken or approximate link can never masquerade as a verified one. Delivers the 10 products RANKED BY TESTING MERIT, best first, on Pinterest fit then traction, margin, saturation and killer risk — the order is the recommendation. Prioritises brand-new products already scaling, then proven scalers, then a wildcard outside the usual niches. A "winner" is defined by the operator's rule: running at least 30 days AND clearing a Pinterest traction floor of 50+ repins with 10+ ads on the advertiser (repins stand in for ad spend, which the Pinterest API does not expose and whose filters it silently ignores). Also enforces hard gates on price, video creative, dropship-only and Pinterest fit, and never repeats a product returned on a previous run — a persistent ledger plus a date-driven rotation seed guarantee fresh results every day. Appends each run to a cumulative spreadsheet. Use when the user asks to find winning products, do product research, "what should I test", daily product hunt, or scaling/trending product ideas.
 ---
 
 # Find Winning Products (WinningHunter daily run)
@@ -51,8 +51,18 @@ Act as a senior product researcher who has scaled 7-figure dropshipping brands. 
    in that priority order. The goal is to surface the **maximum possible number of Pinterest
    winners**, then rank them; never stop at one market.
 
+   **THE PINTEREST SWEEP IS TWO PASSES, NOT ONE (operator rule, 2026-08-19):**
+   1. **Live pass** — what is scaling right now (Step 0.5).
+   2. **Same-period-last-year pass** — `-LastYear`, what was scaling this month a year ago and is
+      still running (Step 0.5b).
+
+   Pass 2 is not optional and is not a fallback for a thin pass 1. It exists because the live
+   dropship pool is only ~5–11 distinct advertisers per market cluster, so **one pass structurally
+   cannot maximise Pinterest winners.** Run both every time, then rank the combined set.
+
    Then **TikTok**. Then, and only then, **Meta** as backfill. Label every product
-   `SOURCE: Pinterest` / `SOURCE: TikTok` / `SOURCE: Meta` and report the split.
+   `SOURCE: Pinterest` / `SOURCE: Pinterest (last-year <MONTH YYYY>)` / `SOURCE: TikTok` /
+   `SOURCE: Meta` and report the split.
 
    Read [references/pinterest-playbook.md](references/pinterest-playbook.md) before ranking.
    The **Pinterest Fit (1–10)** score is a substitute for missing data — apply it to
@@ -342,7 +352,17 @@ reports the remaining credit balance. 1 credit per request; balance was 19,988/2
 ### Verified filters (2026-08-03 — all confirmed to change the returned rows)
 
 `countries` (ISO2) · `niches` (**same two-letter codes as Meta**) · `languages` · `adscorefilter`
-(winning/scaling/testing) · `mindays` · `keyword` · `page` · `scroll`
+(winning/scaling/testing) · `mindays` · **`maxdays`** · `keyword` · `page` · `scroll`
+
+**`maxdays` is undocumented but REAL (verified 2026-08-19).** Paired with `mindays` it isolates a
+**start-date window**, which is the only way to reach a specific historical period — see Step 0.5b.
+Proof: `mindays=353&maxdays=383` on 2026-08-19 returned `started` dates of 2025-08-03, -06, -07
+and -31 — all August 2025, and `daysrunning` bounded at 353–382 exactly.
+
+**There is NO date-range filter.** `startdate`/`enddate`, `mindate`/`maxdate`, `datefrom`/`dateto`,
+`ad_created_from`/`ad_created_to`, `createdfrom`/`createdto` and `minstarted`/`maxstarted` were all
+tested on 2026-08-19 and **all eight returned the unfiltered baseline byte-for-byte**. Same trap as
+`minadspend`. Never reach for them.
 
 - **`total` is capped at 10000 — it is NOT a real count.** Never report it as one. Judge filter
   effectiveness by inspecting returned rows, not by `total`.
@@ -401,6 +421,59 @@ If a household name still slips through, drop it and add it to the list. The tes
 **could you get a quote for an equivalent from a supplier tomorrow?** If no, it is not a
 dropshipping product, however good the numbers look.
 
+## Step 0.5b — THE SAME-PERIOD-LAST-YEAR SWEEP (operator rule, set 2026-08-19)
+
+**Run this immediately after the live Pinterest sweep, every run, before touching TikTok.**
+
+**Why it exists:** the goal is the **maximum number of Pinterest winners**, and the live pool is
+structurally thin — only ~5–11 distinct dropship advertisers per market cluster, and the ledger
+burns through it. Last year's same period is a **second, non-overlapping seam** in the same index,
+and it is the only one that carries seasonal proof. A product that was scaling in August 2025 is
+evidence about what sells in August, and Pinterest search peaks **4–8 weeks before** the buying
+moment, so acting on it now is early rather than late.
+
+### How to run it
+
+```
+powershell -File "C:\Users\lenovo\.claude\skills\find-winning-products\assets\pinterest-search.ps1" -LastYear
+powershell -File "...\pinterest-search.ps1" -LastYear -SpanMonths 3     # the whole season ahead
+```
+
+`-LastYear` computes the window itself: it takes the current calendar month, drops back one year,
+and converts that date range into `mindays`/`maxdays`. On 2026-08-19 it emits
+`mindays=354 maxdays=384` = ads that started 2025-08-01 → 2025-08-31, and prints the window so the
+run is auditable. **`-SpanMonths 3` widens it to last year's Aug–Oct** — the season you are about
+to enter, which is usually the more valuable sweep of the two. Run the plain one first, then the
+wide one if you still need products.
+
+Everything else is unchanged: same market ladder, same dropship filter, same video-only rule, same
+`repin_count ≥ 50` / `adscount ≥ 10` traction floor, same ledger dedupe.
+
+### WHAT THIS ACTUALLY FINDS — say this plainly in the report
+
+**The Pinterest index only holds ads that are STILL RUNNING.** So this sweep returns ads that
+started in the target month last year **and are live today** — 12-month survivors. That is a
+*stronger* signal than a dead seasonal spike, not a weaker one:
+
+- it has crossed a full seasonal cycle and is still being paid for
+- the creative and the landing page are live, so you can still study and copy them
+- 350+ days running is the most punishing longevity filter in the whole skill
+
+**It does NOT find products that spiked last August and then stopped.** There is no way to reach
+those from this endpoint — the index has no dead-ad history and no date-range filter. If you want
+dead historical ads, that is `search_facebook_ads` on the Meta side, and it is a different
+question. **Do not imply the last-year sweep found "what scaled and ended last season".**
+
+### Label and rank them
+
+- Tag every product from this sweep `SOURCE: Pinterest (last-year <MONTH YYYY>)` and report its
+  count in the source split, e.g. "4 Pinterest live, 2 Pinterest last-year, 2 TikTok, 2 Meta".
+- **A 12-month survivor is a genuine ranking boost under standing rule 9's traction criterion** —
+  it is proven demand across a full cycle. Say so in the one-line justification when it lifts a
+  product up the order.
+- Watch for the one real downside: a product live for a year is usually **more saturated**. Check
+  distinct domains before ranking it #1, and let saturation pull it back down if it is crowded.
+
 ## Step 0.6 — TIKTOK (MANDATORY every run, never skipped)
 
 Run this on **every** run, immediately after the Pinterest sweep — regardless of how many
@@ -427,7 +500,8 @@ to `0`, silently failing every Meta row. See the filter reference.
 
 | Order | Source | Label | Status |
 |---|---|---|---|
-| 1 | **Pinterest API sweep** | `SOURCE: Pinterest` | Primary channel. Leads the report. No Pinterest Fit score needed — report real metrics. |
+| 1 | **Pinterest sweep — live** | `SOURCE: Pinterest` | Primary channel. Leads the report. No Pinterest Fit score needed — report real metrics. |
+| 1b | **Pinterest sweep — same period last year** (`-LastYear`) | `SOURCE: Pinterest (last-year <MONTH YYYY>)` | **MANDATORY** — the second seam in the same index. 12-month survivors, seasonal proof. |
 | 2 | **TikTok Shop tools** | `SOURCE: TikTok` | **MANDATORY** — early product-market fit. |
 | 3 | **Meta `find_winning_products`** | `SOURCE: Meta` | **MANDATORY** — deep, reliable pool. |
 
@@ -901,5 +975,17 @@ session that wrote it (egress blocked, see above). Before relying on it:
    names match what `Get-Field` calls in the script expect (`data`/`results`/`items` for the row
    array; `shopify_shopifydomain`, `media_type`/`video`, `daysrunning`, etc. for row fields).
    Fix any mismatches in the script before trusting its filtered output.
+- **Update 2026-08-19 — `-LastYear` / `-SpanMonths` (Step 0.5b) are new flags on the same script
+  and carry the same unverified status**, plus an additional untested piece: the script's own
+  month-window → `mindays`/`maxdays` arithmetic. Before trusting it, confirm with `-DryRun` that
+  the emitted `mindays`/`maxdays` pair actually maps to the calendar month you expect (off-by-one
+  month/day errors here would silently pull the wrong period), and cross-check a handful of
+  returned `started` dates fall inside that window, the way Step 0.5's own doc text verifies it.
+
+**Neither this WinningHunter access route (`pinterest-search.ps1`'s raw REST) nor the MCP
+connector's tool surface has been confirmed to expose Pinterest data at all in a live session —
+see the 2026-08-12 update above.** If the MCP connector turns out not to cover Pinterest, Step
+0.5/0.5b cannot run there either, `-LastYear` included, until the REST script is verified per the
+above from a session with real egress to `winninghunter.com`.
 
 `ledger.md` and `master-history.tsv` (header row only) have been created as empty scaffolds.
