@@ -93,4 +93,37 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - **Sheet/ledger integrity finding**: a full history read of the Google Sheet (rows 5–164) turned up product names/domains that do not appear anywhere in this ledger file (e.g. a 2026-08-18 run: Shapecurve, VelorBoard, King and Fifth hat, Snatched & Co razor set, Fuel Injector Tester) — this ledger has no dated section for that run or earlier ones, only an empty "Archive" list below. Dedupe this run was therefore done against the **live sheet's full column D/G history**, not just this file. Recommend backfilling the missing pre-2026-08-19 run names into the Archive section on a future pass so ledger.md alone is dependable for dedupe again.
 - Also confirmed via direct sheet read: **the 2026-08-20 run (10 products, already in ledger.md and master-history.tsv above) was never actually written to the Google Sheet**, despite a prior session's subtitle text claiming rows 165–174. This run backfills those 10 rows plus its own 10 — see the report for row numbers.
 
+## 2026-08-24 (fourth real run — Pinterest still unreachable, general web egress confirmed blocked entirely)
+- Aiyoumoi Sequin Patchwork Slit Maxi Dress — aiyoumoi.myshopify.com (aiyoumoi.com) — 1273995051596343 — Women's fashion — Tier B — SOURCE: Meta — TEST NOW
+- Bivelle Hair Remover (facial) — 440d0b-fd.myshopify.com (bivelle.com) — 1462600748793574 — Beauty — Tier B — SOURCE: Meta — TEST NOW
+- Fleecies (fleece-lined tights) — b8d9f8.myshopify.com (myfleecies.com) — 1778967526424283 — Women's fashion — Tier B — SOURCE: Meta — TEST NOW
+- Andre Ferran Cargo Denim Jeans — www.andreferran.com — 890815750330585 — Men's fashion — Tier B — SOURCE: Meta — TEST NOW
+- Bassdash UPF 50 Fishing/Hunting Hoodie — bassdash-fishing-gear.myshopify.com (bassdash.com) — 842372032249518 — Hobbies — Tier B — SOURCE: Meta — TEST NOW
+- Nordic Stretch MobilityStick — 1u8cpd-m1.myshopify.com (nordicstretch.com) — 27204659665884398 — Healthcare — Tier B — SOURCE: Meta — TEST NOW
+- Beshap Shorty Gainant (shapewear shorts) — ad8dn2-v8.myshopify.com (beshap.com) — 25509169695422489 — Underwear — Tier B — SOURCE: Meta — TEST NOW
+- Shecurve EasySlide™ Sculpting Bodysuit — shecurve.com — 1420169873273921 — Underwear — Tier B — SOURCE: Meta — TEST NOW (price unverified, see killer note)
+
+### Rejected candidates (2026-08-24)
+- HelloCup menstrual cup — hellocup.myshopify.com — SKIP: established brand (HelloCup is a real NZ-based menstrual-cup company), not a generic dropship item.
+- rem beauty Glossy Balm Trio — rapid-prod.myshopify.com/rembeauty.com — SKIP: established celebrity-owned brand (Rihanna's Fenty/rem beauty line).
+- Popilush Built-In Shapewear Dress — www.popilush.com — SKIP: established DTC shapewear brand, not dropship-sourceable.
+- SHAPELLX (shapellx.com / shapellx.myshopify.com) — SKIP: already blocklisted 2026-08-19, resurfaced under `shapewear` keyword and skipped again.
+- Healeaze Zeolite Kids Gummies — d3ab06.myshopify.com — SKIP: children's "detox" supplement claims, same medical-claim-targeting-minors risk as the Saphire Happy Chews rejection (2026-08-19).
+- Celinva™ Orthopedic Cushion — 2jtkin-w9.myshopify.com — SKIP: same core problem as the already-delivered "Ergonomic Seat Cushion (sciatica/tailbone relief)" in the sheet's pre-2026-08-19 history — a different brand selling the same posture-corrector cushion is a repeat, not a new find (Rule 5).
+- Macorner Friendship Puzzle Hearts Necklace — 46338f-fd.myshopify.com — SKIP: same advertiser page (page_id 102971998671051 = "Macorner") as the already-delivered Personalized Solar Garden Light (2026-08-19) — one product per advertiser per ledger, not per literal `shopify_shopifydomain` string.
+- CarTablet-store dashcam (16968b-2.myshopify.com) — SKIP: same store/page as the already-delivered CarTablet Pro Max (2026-08-19).
+- Lumelle Smart Dimmable Night Light Kit — getlumelle.com/k1yrn1-5k.myshopify.com — SKIP: exact name match to a pre-2026-08-19 sheet entry, caught via the full sheet-history dedupe.
+- Luceko table lamp, LUNARA sweatpants, HAUS tank 3-pack, Uclips — resurfaced across today's Lighting/Fitness page-2 sweeps — all exact dupes of the 2026-08-22 run, excluded.
+
+### Persistent gaps (2026-08-24)
+- **Home care: 0 qualifiers, third run in a row.** Three fresh keywords tried this run (`storage organizer`, `kitchen organizer`, `closet organizer`) — the only activeSeen≥3 hit had a blank store domain and blank price (unusable, no way to verify or link it). TikTok's `home organizer` keyword still finds strong candidates (see 2026-08-22 gap note) but remains undeliverable — no real product-page link obtainable this session.
+- **Car accessories: 0 qualifiers.** `car dashcam` returned only a dupe of the existing CarTablet store; `car seat cushion` returned a genuine hit (Celinva) but it was rejected as a same-core-problem repeat of an already-delivered posture cushion, not a car-specific product anyway (fuzzy keyword match, per Rule 3b's warning).
+- **Men's fashion: 1 of up to 2.** `mens wallet` and `mens sneakers` both surfaced the same off-target result (Andre Ferran cargo jeans — a real menswear item despite the keyword mismatch, so it was kept); `mens hoodie` surfaced a fishing/hunting gear store (bassdash), fuzzy-matched and reclassified to Hobbies rather than padding the men's slot with non-apparel. No second qualifying men's-fashion apparel item found this run.
+
+### Sourcing-availability note (2026-08-24, unchanged from 2026-08-22)
+- **Pinterest**: reverified live immediately before this run — no Pinterest tool on the WinningHunter MCP connector (checked the tool schema directly), and `curl` to `app.winninghunter.com/api/v1/pinterest-ads` through this session's proxy still returns a blocked connection. 0 Pinterest products this run.
+- **TikTok**: queried per Step 0.6 (`mens fashion` keyword) — found qualifying candidates by revenue but excluded, same undeliverable-proxy-link reason as 2026-08-22.
+- **AliExpress / general web egress**: still fully blocked for arbitrary merchant domains (confirmed again this run) — no live price/dead-link verification was possible for any of today's 8 products; all URLs are the raw unmodified `urlStore` field. All 8 AliExpress supplier cells are `pending — no browser/web-egress tool available this session`.
+- Shecurve's price field came back empty (`shopify_productprice: ""`) and the landing page could not be opened to read the real price — shipped with `n/a - unverified (egress blocked)` rather than guessed, per the honesty rules. Its rank-history shows #1 sustained for roughly a month, which is why it still made the cut despite the unverified price.
+
 ## Archive (names only)
