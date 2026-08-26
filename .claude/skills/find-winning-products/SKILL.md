@@ -7,6 +7,32 @@ description: Daily winning-product research run using WinningHunter. Queries ALL
 
 Act as a senior product researcher who has scaled 7-figure dropshipping brands. Cynical, evidence-driven. Every claim must trace back to a WinningHunter field or a live URL. **Never invent a number.**
 
+## Which environment is this running in? (read before Step 0.5)
+
+This skill pulls from WinningHunter through **two separate paths that are not interchangeable** —
+check which one applies before you start:
+
+- **Meta + TikTok → the WinningHunter MCP connector.** Works from a cloud session with no key
+  file needed: the connector authenticates itself. Confirmed live 2026-08-26 (`check_credits` →
+  real balance returned). Use its tools directly — `find_winning_products`,
+  `search_facebook_ads`, the TikTok search/detail tools, `daily_radar`, etc. — for Steps 0.6–0.7.
+- **Pinterest → `assets/pinterest-search.ps1` (local only, needs a key file).** The MCP tool
+  surface has **no Pinterest-specific tool** (checked against the live schema 2026-08-26) — the
+  only way to query `GET /api/v1/pinterest-ads` is the raw REST call the script wraps, and that
+  requires:
+  - **Real network egress to `winninghunter.com`.** A Claude Code **cloud session cannot reach
+    that domain** (`EGRESS_BLOCKED`, confirmed 2026-08-03 and 2026-08-12) — Step 0.5 cannot run
+    from here no matter how the script or key are set up. It only works from a machine with real
+    egress (e.g. Claude Desktop on a local install).
+  - **A local API key file**, not anything committed to this repo. Save the raw key, nothing
+    else, to `~/.claude/.winninghunter-api-key` (`C:\Users\lenovo\.claude\.winninghunter-api-key`
+    on Windows) — deliberately outside this skill folder so it never travels if the skill is
+    shared or the repo is pushed. **Never put the key itself in a file tracked by git.**
+
+**If you're in a cloud session: skip Step 0.5 entirely, go straight to Step 0.6 (TikTok, via
+MCP), and say in the final report that Pinterest was skipped and why.** Only run Step 0.5 from a
+local session where the key file above is already in place.
+
 ## Two standing rules that override everything below
 
 1. **PINTEREST FIRST, ALWAYS — SWEPT ACROSS EVERY MAJOR MARKET, DE LEADING.**
@@ -220,9 +246,12 @@ If the user passed arguments (a specific niche, country, price range, or "more l
 
 ## Step 0.5 — PINTEREST SOURCING (do this BEFORE any Meta query)
 
+**Local sessions only — see "Which environment is this running in?" above.** In a cloud
+session this step is not executable (`EGRESS_BLOCKED` on `winninghunter.com`); skip to Step 0.6.
+
 **SOLVED 2026-08-03 — Pinterest is now queryable directly.** WinningHunter's REST API exposes
 `GET /api/v1/pinterest-ads`, "the same filters as the in-app Pinterest Ads dashboard". Pinterest
-is the operator's real channel, so this runs FIRST, every run.
+is the operator's real channel, so this runs FIRST, every run — when running locally.
 
 **Run the helper:**
 
@@ -679,21 +708,16 @@ and still need to be authored before the workflow above can run end-to-end:
   caveats (e.g. InvariantCulture price parsing).
 - `references/brand-blocklist.md` — established brands to exclude from dropship candidates.
 - `assets/build-workbook.ps1` — the local `.xlsx` workbook builder.
-- A configured WinningHunter API key, plus TikTok Shop and Google Sheets connector access, are
-  assumed by the workflow and are environment-specific — not something a skill file can carry.
-- **This skill folder must run from Claude Desktop on a machine with real network egress to
-  `winninghunter.com`** — a Claude Code cloud session cannot reach that domain (confirmed
-  `EGRESS_BLOCKED` on both `winninghunter.com` and `app.winninghunter.com`), so Step 0.5 onward
-  cannot execute from a cloud session no matter how the script or key are configured.
-- **Update 2026-08-12 — WinningHunter MCP connected in a cloud session and confirmed live**
-  (`check_credits` → 994 credits remaining). Its actual tool surface
-  (`find_winning_products`, `search_facebook_ads`, TikTok search/detail tools, `daily_radar`,
-  brand/store tracking, etc.) has not yet been diff'd against what Steps 0.5–0.7 of this doc
-  assume — in particular there is no obviously Pinterest-specific tool in the list, so it's
-  unconfirmed whether Pinterest sourcing is covered by this connector at all or needs
-  `pinterest-search.ps1`'s raw REST approach instead. Verify tool schemas before the next real
-  run. Also note the credit balance (994) is far below the ~20,000/month this doc assumes —
-  check your plan before running a full 14-market sweep.
+- TikTok Shop and Google Sheets connector access with write scope are assumed by the workflow
+  and are environment-specific — not something a skill file can carry.
+- **The local/cloud split for WinningHunter access is now resolved — see "Which environment is
+  this running in?" near the top of this doc for the authoritative explanation.** Summary:
+  Meta + TikTok run through the MCP connector from any session (no key needed, confirmed live
+  2026-08-26 — `check_credits` → 17,633/20,000 credits remaining); Pinterest still requires the
+  local `pinterest-search.ps1` script, a local API key file, and real egress to
+  `winninghunter.com`, none of which a cloud session has. The MCP tool surface was diff'd against
+  Steps 0.5–0.7 on 2026-08-26 and confirmed to have **no Pinterest-specific tool** — Pinterest
+  sourcing cannot be done through MCP, full stop, not just "unconfirmed."
 - **Update 2026-08-12 — canonical Google Sheet confirmed, but not connectable from a cloud
   session.** The sheet at the hardcoded URL in Step 9 is real, matches this doc (10 runs / 85
   products, newest 2026-08-11 at time of check), and the user confirmed it's the correct one to
