@@ -537,6 +537,32 @@ Facebook page ID. Always build and include all three:
 - the exact ad in Meta's Ad Library → `https://www.facebook.com/ads/library/?id=<productid>`
 - everything that advertiser is running → `https://www.facebook.com/ads/library/?view_all_page_id=<page_id>&active_status=active&ad_type=all`
 
+**Pinterest ad links are mandatory too — capture the row `id`, not just `pin_url`.** Every row
+returned by `GET /api/v1/pinterest-ads` carries a numeric `id` field, and it is the SAME id used
+for both links below — WinningHunter's own deep link and the live pin on Pinterest itself:
+
+- **open it in WinningHunter** → `https://app.winninghunter.com/ad/<id>?platform=pinterest`
+- the live pin → `https://www.pinterest.com/pin/<id>`
+
+**Capture `id` at the moment you read the row, in every code path — market sweep AND keyword
+search alike.** `pinterest-search.ps1`'s `ConvertTo-GateReadyRow` previously only kept `pin_url`
+and `link` and silently dropped `id`; when `pin_url` itself came back null (which the keyword
+path does more often than the market-sweep path), the product shipped to the sheet with no
+Pinterest link at all — logged as "pin id not captured in keyword sweep" on rows 216 and 219 of
+the master sheet (2026-08-25 run) even though 7 of the 9 rows in that same batch worked, because
+those 7 happened to carry `id` through. Do not let it be optional or path-dependent:
+
+1. Read `id` off the raw API row the same call you read `domain`/`price`/`daysrunning` off —
+   never derive it later from `pin_url` alone (it may be null even when `id` is populated, and
+   vice versa; if only `pin_url` is present, extract the trailing digits from it as a fallback).
+2. Build both links immediately and carry them as first-class fields on the gate-ready row
+   (`winninghunter_link`, `pinterest_link`), not as something reconstructed by hand while writing
+   the sheet later — that hand-off is exactly where 216/219 lost it.
+3. If `id` truly cannot be found on a row (neither the field nor a parseable `pin_url`), that is
+   the same class of defect as a dead product-page link under the Meta rule above: say so
+   explicitly (`n/a - pin id not returned by API for this row`) rather than leaving it to guess,
+   and prefer re-querying that specific ad before dropping it.
+
 Also close the report with a consolidated **table** of all products: name, store, FB page, tier,
 price, active ads + growth, seen, rank, spend, days live, and the three links above.
 
@@ -694,6 +720,22 @@ and still need to be authored before the workflow above can run end-to-end:
   `pinterest-search.ps1`'s raw REST approach instead. Verify tool schemas before the next real
   run. Also note the credit balance (994) is far below the ~20,000/month this doc assumes —
   check your plan before running a full 14-market sweep.
+- **Update 2026-08-26 — re-checked from a cloud session: confirmed, still no Pinterest tool.**
+  Full tool list from the connected WinningHunter MCP server this session: `scan_ad`,
+  `get_ad_transcript`, `analyze_tracked_brand`/`list_tracked_brands`/`track_brand`, `track_store`,
+  `find_similar_shops`/`find_similar_stores_by_image`, `find_winning_products`,
+  `search_facebook_ads`, `search_shopify_stores`/`search_shops`/`list_shopify_store_filter_options`,
+  `daily_radar`, `save_ad`, `creative_inspiration_pack`, `brief_competitor`, exploding-topics
+  tools, and the TikTok search/detail family. Nothing Pinterest-shaped. So **Step 0.5 still has
+  to run as a raw REST call against `app.winninghunter.com`**, which a cloud session cannot
+  reach (see the `EGRESS_BLOCKED` note above) — Pinterest sourcing still only works where
+  `pinterest-search.ps1` and the local API-key file live, i.e. the operator's own machine, not a
+  cloud run of this skill. This is also why the two 2026-08-25 rows lost their Pinterest link
+  while seven others in the same batch kept theirs: `ConvertTo-GateReadyRow` never captured the
+  row's `id` field at all (only `pin_url`), so any row whose `pin_url` came back null shipped
+  with no way to build either Pinterest link after the fact. Fixed below — `id` is now captured
+  directly, `winninghunter_link`/`pinterest_link` are built at read time, and a row with neither
+  is flagged instead of silently shipping blank.
 - **Update 2026-08-12 — canonical Google Sheet confirmed, but not connectable from a cloud
   session.** The sheet at the hardcoded URL in Step 9 is real, matches this doc (10 runs / 85
   products, newest 2026-08-11 at time of check), and the user confirmed it's the correct one to

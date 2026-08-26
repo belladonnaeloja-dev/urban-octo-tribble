@@ -24,12 +24,14 @@
     #      succeeds first is reported and reused for the rest of the run. If all
     #      three fail, check WinningHunter's API docs for the real scheme and fix
     #      Invoke-WHRequest below.
-    #   2. Response field names — save_count, repin_count, adscore, daysrunning,
+    #   2. Response field names — id, save_count, repin_count, adscore, daysrunning,
     #      adscount, pin_url, link, domain, shopify_* fields, media_type/video, and
     #      any credit-balance field are read defensively (missing = printed as
     #      "n/a", never fabricated) but the exact names may differ from what's
     #      actually returned. Run once with -RawJsonOut to capture a real response
-    #      and adjust the field names below to match.
+    #      and adjust the field names below to match. `id` in particular is load-bearing:
+    #      it is the only source for winninghunter_link and pinterest_link (Get-PinterestAdId
+    #      below) — confirm its real name against a raw response before trusting either link.
     #
     # Do not trust the "gate-ready" filtering to be correct until you've confirmed
     # the field names against a real response.
@@ -270,30 +272,54 @@ function Get-PriceStatus {
     return @{ Price = $priceNum; Status = 'in band' }
 }
 
+function Get-PinterestAdId {
+    # The row's own numeric id — SAME id used for both the WinningHunter deep link
+    # (.../ad/<id>?platform=pinterest) and the live pin (pinterest.com/pin/<id>). Read it
+    # directly off the row first; only fall back to scraping it out of pin_url/link when the
+    # field itself is missing, since either one alone can be null on a given row (see SKILL.md
+    # "Pinterest ad links are mandatory too").
+    param($Row)
+    $id = Get-Field $Row @('id', 'ad_id', 'adid', 'pin_id', 'pinid')
+    if ($id) { return $id.ToString() }
+    foreach ($urlField in @('pin_url', 'link')) {
+        $url = Get-Field $Row @($urlField)
+        if ($url -and $url -match '/pin/(\d+)') { return $Matches[1] }
+    }
+    return $null
+}
+
 function ConvertTo-GateReadyRow {
     param($Row, [string]$Market, [string]$SourceLabel)
 
+    $adId = Get-PinterestAdId $Row
+
     [pscustomobject]@{
-        source           = 'Pinterest'
-        market_queried   = $Market
-        query_label      = $SourceLabel
-        domain           = Get-Field $Row @('domain')
-        shopify_domain   = Get-Field $Row @('shopify_shopifydomain', 'shopify_domain')
-        shopify_productid = Get-Field $Row @('shopify_productid')
-        price            = (Get-PriceStatus $Row).Price
-        price_status     = (Get-PriceStatus $Row).Status
-        currency         = Get-Field $Row @('shopify_currency')
-        media_type       = Get-Field $Row @('media_type', 'mediatype')
-        is_video         = Test-IsVideo $Row
-        daysrunning      = Get-Field $Row @('daysrunning', 'days_running')
-        adscount         = Get-Field $Row @('adscount', 'ads_count')
-        adscore          = Get-Field $Row @('adscore')
-        save_count       = Get-Field $Row @('save_count')
-        repin_count      = Get-Field $Row @('repin_count')
-        pin_url          = Get-Field $Row @('pin_url')
-        link             = Get-Field $Row @('link')
-        niche_v2         = Get-Field $Row @('niche_v2', 'niche')
-        language         = Get-Field $Row @('language')
+        source              = 'Pinterest'
+        market_queried      = $Market
+        query_label         = $SourceLabel
+        domain              = Get-Field $Row @('domain')
+        shopify_domain      = Get-Field $Row @('shopify_shopifydomain', 'shopify_domain')
+        shopify_productid   = Get-Field $Row @('shopify_productid')
+        price               = (Get-PriceStatus $Row).Price
+        price_status        = (Get-PriceStatus $Row).Status
+        currency            = Get-Field $Row @('shopify_currency')
+        media_type          = Get-Field $Row @('media_type', 'mediatype')
+        is_video            = Test-IsVideo $Row
+        daysrunning         = Get-Field $Row @('daysrunning', 'days_running')
+        adscount            = Get-Field $Row @('adscount', 'ads_count')
+        adscore             = Get-Field $Row @('adscore')
+        save_count          = Get-Field $Row @('save_count')
+        repin_count         = Get-Field $Row @('repin_count')
+        pin_url             = Get-Field $Row @('pin_url')
+        link                = Get-Field $Row @('link')
+        niche_v2            = Get-Field $Row @('niche_v2', 'niche')
+        language            = Get-Field $Row @('language')
+        # Carried as first-class fields from the moment the row is read — never reconstructed
+        # by hand later while writing the sheet, which is where 216/219 lost them (2026-08-25).
+        pin_ad_id           = $adId
+        winninghunter_link  = if ($adId) { "https://app.winninghunter.com/ad/${adId}?platform=pinterest" } else { $null }
+        pinterest_link      = if ($adId) { "https://www.pinterest.com/pin/$adId" } else { $null }
+        pin_link_status     = if ($adId) { 'ok' } else { 'n/a - pin id not returned by API for this row' }
     }
 }
 
@@ -391,9 +417,19 @@ if ($gateReady.Count -eq 0) {
 
 $gateReady | Sort-Object -Property @{Expression = 'daysrunning'; Descending = $true} |
     Format-Table -AutoSize -Property market_queried, domain, shopify_domain, price, price_status, `
-        currency, is_video, daysrunning, adscount, adscore, save_count, niche_v2, link
+        currency, is_video, daysrunning, adscount, adscore, save_count, niche_v2, link, `
+        pin_ad_id, pinterest_link
+
+$missingPinLink = ($gateReady | Where-Object { -not $_.pin_ad_id }).Count
+if ($missingPinLink -gt 0) {
+    Write-Warning "$missingPinLink row(s) have no pin_ad_id and therefore no winninghunter_link " +
+                   "or pinterest_link — per SKILL.md, write 'n/a - pin id not returned by API " +
+                   "for this row' for those, do not guess a URL, and prefer re-querying the ad " +
+                   "before dropping it."
+}
 
 Write-Host "`nDone. $($gateReady.Count) gate-ready row(s) after client-side filtering. Open each " +
-           "'link' to verify price/handle before delivering, per SKILL.md's mandatory link check."
+           "'link' and 'pinterest_link' to verify price/handle before delivering, per SKILL.md's " +
+           "mandatory link check."
 
 return $gateReady
