@@ -189,6 +189,34 @@ seeds are exhausted, never as the primary net.
    **Expect to ask again mid-run.** The connection drops, and AliExpress may serve a
    slide-to-verify CAPTCHA. **Never solve a CAPTCHA** — ask the user to clear it and wait.
 
+   ### Chrome Extension Bridge — one-time setup (do this once, not per run)
+
+   The bridge is a Claude Code / Claude Desktop feature, not something this skill configures.
+   There is no API call to make — it's an install-and-connect step on whichever machine actually
+   runs this skill (the operator's own machine, not a cloud session — see the known gap below).
+
+   1. **Requirements:** Google Chrome, Edge, or another Chromium browser (Brave, Arc, Vivaldi,
+      Opera) — **not supported in WSL**. [Claude in Chrome](https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn)
+      extension v1.0.36+. Claude Code signed in via `/login` on a **direct Pro/Max/Team/Enterprise
+      plan** — an API key or a `claude setup-token` long-lived token keeps Chrome integration off
+      even with `--chrome`. Not available through Bedrock/Vertex/Foundry.
+   2. **Install once:** add the extension from the Chrome Web Store, sign into the same Anthropic
+      account Claude Code uses.
+   3. **Connect:** launch with `claude --chrome`, or run `/chrome` → "Enabled by default" so the
+      flag isn't needed every session. Accept the one-time permissions dialog on first launch —
+      it writes a native-messaging host config file that Chrome only reads at startup, so
+      **restart Chrome once** if the extension isn't detected immediately.
+   4. **Verify:** run `/chrome` any time — connected looks like `Status: Enabled` /
+      `Extension: Installed`. That's also where you reconnect or pick a browser if more than one
+      is connected. This is the check to run before the first navigation each run (referred to
+      above as confirming with `list_connected_browsers`).
+   5. **If it drops mid-run:** `/chrome` → "Reconnect extension", then retry. "Receiving end does
+      not exist" means the extension's service worker went idle — same fix.
+
+   **Cloud/remote sessions cannot do any of this** — there is no browser to bridge to. This only
+   works from a local Claude Code CLI or Claude Desktop install, which is why rule 5 above asks
+   the user to open the extension rather than trying to connect to it automatically.
+
 2. **FASHION IS IN EVERY RUN.** Fashion and accessories are always searched, regardless of what
    the rotation seed selects. The seed only decides *which slice* of fashion. Fashion is also
    the single most Pinterest-native category, so it usually supplies the top-ranked products.
