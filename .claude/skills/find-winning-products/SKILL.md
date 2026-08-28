@@ -9,29 +9,35 @@ Act as a senior product researcher who has scaled 7-figure dropshipping brands. 
 
 ## Which environment is this running in? (read before Step 0.5)
 
-This skill pulls from WinningHunter through **two separate paths that are not interchangeable** —
-check which one applies before you start:
+**Update 2026-08-27 — Pinterest is now covered by the MCP connector too.** The MCP tool surface
+gained `search_pinterest_ads` and `get_pinterest_ad` (not present when this doc last checked on
+2026-08-26) — verified live against real data (a DE `led strip lights`, `mindays=21` query
+returned real Pinterest ad rows with `save_count`/`repin_count`, `adscore`, `daysrunning`,
+`pin_url`, `shopify_*` fields — the same shape as the raw REST endpoint below). **This means all
+three sources now work from a cloud session with no key file and no local script.** The
+local-only path is still documented below for reference (e.g. if the MCP tool is ever pulled or
+rate-limited), but it is no longer the only way to run Step 0.5.
 
-- **Meta + TikTok → the WinningHunter MCP connector.** Works from a cloud session with no key
-  file needed: the connector authenticates itself. Confirmed live 2026-08-26 (`check_credits` →
-  real balance returned). Use its tools directly — `find_winning_products`,
-  `search_facebook_ads`, the TikTok search/detail tools, `daily_radar`, etc. — for Steps 0.6–0.7.
-- **Pinterest → `assets/pinterest-search.ps1` (local only, needs a key file).** The MCP tool
-  surface has **no Pinterest-specific tool** (checked against the live schema 2026-08-26) — the
-  only way to query `GET /api/v1/pinterest-ads` is the raw REST call the script wraps, and that
-  requires:
+- **Meta + TikTok + Pinterest → the WinningHunter MCP connector.** Works from a cloud session
+  with no key file needed: the connector authenticates itself. Meta/TikTok confirmed live
+  2026-08-26, Pinterest confirmed live 2026-08-27. Use `find_winning_products`,
+  `search_facebook_ads`, the TikTok search/detail tools, `daily_radar`, and now
+  `search_pinterest_ads` / `get_pinterest_ad`, for Steps 0.5–0.7.
+- **Fallback: `assets/pinterest-search.ps1` (local only, needs a key file).** Only relevant if
+  `search_pinterest_ads` is ever unavailable. It wraps the raw REST endpoint
+  `GET /api/v1/pinterest-ads` directly and requires:
   - **Real network egress to `winninghunter.com`.** A Claude Code **cloud session cannot reach
-    that domain** (`EGRESS_BLOCKED`, confirmed 2026-08-03 and 2026-08-12) — Step 0.5 cannot run
-    from here no matter how the script or key are set up. It only works from a machine with real
-    egress (e.g. Claude Desktop on a local install).
+    that domain** (`EGRESS_BLOCKED`, confirmed 2026-08-03 and 2026-08-12) — this script cannot
+    run from here regardless. It only works from a machine with real egress (e.g. Claude Desktop
+    on a local install).
   - **A local API key file**, not anything committed to this repo. Save the raw key, nothing
     else, to `~/.claude/.winninghunter-api-key` (`C:\Users\lenovo\.claude\.winninghunter-api-key`
     on Windows) — deliberately outside this skill folder so it never travels if the skill is
     shared or the repo is pushed. **Never put the key itself in a file tracked by git.**
 
-**If you're in a cloud session: skip Step 0.5 entirely, go straight to Step 0.6 (TikTok, via
-MCP), and say in the final report that Pinterest was skipped and why.** Only run Step 0.5 from a
-local session where the key file above is already in place.
+**So: run Step 0.5 via the MCP `search_pinterest_ads` / `get_pinterest_ad` tools in every
+session, cloud or local.** Only fall back to the `.ps1` script (local session only) if those MCP
+tools stop being available.
 
 ## Two standing rules that override everything below
 
@@ -246,14 +252,17 @@ If the user passed arguments (a specific niche, country, price range, or "more l
 
 ## Step 0.5 — PINTEREST SOURCING (do this BEFORE any Meta query)
 
-**Local sessions only — see "Which environment is this running in?" above.** In a cloud
-session this step is not executable (`EGRESS_BLOCKED` on `winninghunter.com`); skip to Step 0.6.
+**Runs in every session now — see "Which environment is this running in?" above.** Use the MCP
+tools `search_pinterest_ads` (filters: `keyword`, `country`, `days_min`/`days_max`, `ad_score`,
+`date_from`/`date_to`, `traffic_min`/`traffic_max`, `promoter_name`, `technologies`) and
+`get_pinterest_ad` for single-ad detail. Confirmed live 2026-08-27 with real data. Pinterest is
+the operator's real channel, so this runs FIRST, every run.
 
-**SOLVED 2026-08-03 — Pinterest is now queryable directly.** WinningHunter's REST API exposes
-`GET /api/v1/pinterest-ads`, "the same filters as the in-app Pinterest Ads dashboard". Pinterest
-is the operator's real channel, so this runs FIRST, every run — when running locally.
+**SOLVED 2026-08-03 — Pinterest is now queryable directly**, and as of 2026-08-27 that includes
+MCP, not just the raw REST API at `GET /api/v1/pinterest-ads` ("the same filters as the in-app
+Pinterest Ads dashboard").
 
-**Run the helper:**
+**Local-only fallback (only if `search_pinterest_ads` is unavailable), run the helper:**
 
 ```
 powershell -File "C:\Users\lenovo\.claude\skills\find-winning-products\assets\pinterest-search.ps1" -Niches "CG,JY,BG" -Countries "DE" -MinDays 21
@@ -711,13 +720,13 @@ and still need to be authored before the workflow above can run end-to-end:
 - TikTok Shop and Google Sheets connector access with write scope are assumed by the workflow
   and are environment-specific — not something a skill file can carry.
 - **The local/cloud split for WinningHunter access is now resolved — see "Which environment is
-  this running in?" near the top of this doc for the authoritative explanation.** Summary:
-  Meta + TikTok run through the MCP connector from any session (no key needed, confirmed live
-  2026-08-26 — `check_credits` → 17,633/20,000 credits remaining); Pinterest still requires the
-  local `pinterest-search.ps1` script, a local API key file, and real egress to
-  `winninghunter.com`, none of which a cloud session has. The MCP tool surface was diff'd against
-  Steps 0.5–0.7 on 2026-08-26 and confirmed to have **no Pinterest-specific tool** — Pinterest
-  sourcing cannot be done through MCP, full stop, not just "unconfirmed."
+  this running in?" near the top of this doc for the authoritative explanation.** Summary: as of
+  2026-08-27, **all three sources (Meta, TikTok, Pinterest) run through the MCP connector from
+  any session**, no key file needed. The 2026-08-26 finding that MCP had "no Pinterest-specific
+  tool" is now **stale** — `search_pinterest_ads` / `get_pinterest_ad` appeared in the tool
+  surface on 2026-08-27 and were verified live against real ad data. The local
+  `pinterest-search.ps1` script + API key file + egress requirement is now only a fallback for
+  if those MCP tools ever become unavailable, not the primary path.
 - **Update 2026-08-12 — canonical Google Sheet confirmed, but not connectable from a cloud
   session.** The sheet at the hardcoded URL in Step 9 is real, matches this doc (10 runs / 85
   products, newest 2026-08-11 at time of check), and the user confirmed it's the correct one to
