@@ -126,4 +126,41 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - **AliExpress / general web egress**: still fully blocked for arbitrary merchant domains (confirmed again this run) — no live price/dead-link verification was possible for any of today's 8 products; all URLs are the raw unmodified `urlStore` field. All 8 AliExpress supplier cells are `pending — no browser/web-egress tool available this session`.
 - Shecurve's price field came back empty (`shopify_productprice: ""`) and the landing page could not be opened to read the real price — shipped with `n/a - unverified (egress blocked)` rather than guessed, per the honesty rules. Its rank-history shows #1 sustained for roughly a month, which is why it still made the cut despite the unverified price.
 
+## 2026-08-29 (fifth real run — PINTEREST BECAME REACHABLE THIS RUN, first real Pinterest data ever sourced)
+
+**Breakthrough:** `mcp__WinningHunter__search_pinterest_ads` and `get_pinterest_ad` appeared in this session's tool list mid-run — WinningHunter added Pinterest to the MCP connector. Confirmed live with real data (repin_count, adscount, started, shopify_shopifydomain, media_type all populated exactly as Rule 0 needs).
+
+**Filter reality check (new tool, verified by diffing returned ad ids across calls — same discipline Rule 0 already demands of the REST endpoint):** `keyword`, `sort_by`, `country`, `ad_score`, `technologies`, and `promoter_name` are all **silently ignored** — 10 different keyword queries returned byte-identical results (same MD5). Only `days_min`/`days_max` actually filter. This means niche/market targeting on Pinterest is currently impossible through this tool — every candidate had to be found by pulling day-window slices and manually reading titles/domains, exactly like the keyword-fuzziness problem Rule 3b already warns about, except total instead of partial. Reported to the operator; worth flagging to WinningHunter as a bug since the tool's own parameter list implies these work.
+
+- Verlimo (TM) PowerBands (full-body resistance bands) — verlimo.de (79549f-b9.myshopify.com) — 687297281223 — Fitness — SOURCE: Pinterest (last-year Aug 2025) — repin_count 229, adscount 26, days running 362 (12-month survivor) — TEST NOW
+- Patricia Sicardi Boutique Blouse en Dentelle a Col Carre avec Manches Bouffantes — patriciasicardi.com (071xmn-jt.myshopify.com) — 687308612638 — Women's fashion — SOURCE: Pinterest (live) — repin_count 53, adscount 162, days running 112 — TEST NOW
+- Lumine Skin Color-Changing Foundation Stick — trylumineskin.com — 1800871317235406 — Beauty — Tier B — SOURCE: Meta — TEST NOW
+- Gold Urban 14K Gold-Plated Men's Byzantine Chain — goldurban-com.myshopify.com (goldurban.com) — 2056229398665524 — Men's fashion — Tier B — SOURCE: Meta — TEST NOW
+- Cranky Croc Car Seat Hat Holder — crankycroc.myshopify.com (crankycroc.com.au) — 26406624729014261 — Car accessories — Tier B — SOURCE: Meta — TEST NOW
+- Dr. Groot Scalp Revitalizing Roll-On — Hair Solutions page / trydrgroot.com — 838804362157154 — Healthcare — Tier B — SOURCE: Meta — TEST NOW
+- Sundaye (TM) Smooth Bra — fpwkfn-zz.myshopify.com (sundaye.co) — 2145585706194041 — Underwear — Tier B — SOURCE: Meta — TEST NOW
+
+### Rejected candidates (2026-08-29)
+- StudioBrushes "Digital Interior Design Kit for Procreate" — d1d781-dc.myshopify.com — SKIP despite clearing every numeric Pinterest gate (repin 582, adscount 83, days 166): it's a digital download (iPad app brushes/textures), not a physical product a supplier can quote — fails the dropship test outright.
+- Celinva(TM) Orthopedic Cushion — 2jtkin-w9.myshopify.com — SKIP: same core problem as the pre-2026-08-19 "Ergonomic Seat Cushion (sciatica/tailbone relief)" already in the sheet.
+- The Healthier Home / CalmCarry(R) Kids Mini Bear — glow-dermal.myshopify.com — SKIP: branded kids' product resold by an intermediary account, ambiguous product safety profile, better candidates available this run.
+- MAKEY leather key/car-remote organizer, TieBoss kayak sling, Joybos folding shelf/trash can, Velocirax bike racks, Pineapplea/Kanga Kargo/Roverhaul/Amhomey car organizers — all genuine Home care / Car accessories candidates by copy and price, but every single row's `activeSeen` was 1-2, never clearing the ≥3 floor, despite large `total_active_ads_on_page` counts. Named as near-misses below.
+- Ovantii Built-In Bra Tank Top — q8bcbp-9v.myshopify.com — SKIP: activeSeen 3 cleared, but price $19.99 is under the 25 floor.
+- Cornet Barcelona wine glasses, Hematix hematite bracelet, MyLove MyTreasure tennis bracelet, Häxan descaler, Not Consumed math curriculum, faith puzzle/book products (Iconic Puzzles PSG puzzle, James Carter Bible study, Sny Maluszka) — all off-target fuzzy-keyword hits (see the filter-reality-check note above — every query is really an unfiltered day-window pull) or established/licensed-brand products; none fit the ten niches or the dropship test.
+- Melissa & Doug Spanish See & Spell — SKIP: established brand.
+- Macorner Friendship Puzzle Hearts Necklace — resurfaced again under `puzzle` — same advertiser as the already-delivered Solar Garden Light, excluded again (see 2026-08-24 note).
+- Lumelle Night Light Kit, HaloSphere Aurora (both variants), Nordic Stretch MobilityStick — resurfaced, confirmed exact dupes of existing sheet/ledger entries, excluded.
+
+### Persistent gaps (2026-08-29)
+- **Home care: 0 qualifiers, fourth run in a row.** `garage storage` keyword found several genuine home-organization products (Joybos shelving/trash can, TieBoss kayak sling, Velocirax bike racks) with real prices and large ad accounts, but every one caps at `activeSeen` 1-2 — the specific ad just isn't being re-served enough to clear the floor, even though the advertiser's overall account is clearly winning. This is now a distinct pattern from "no candidates exist" — worth considering whether `activeSeen` ≥3 is too strict for Home care specifically in a future skill review.
+- **Hobbies: 0 qualifiers.** `craft kit`/`puzzle` returned 113+ rows, overwhelmingly kids' toys, licensed-IP puzzles, or Macorner (dupe) — nothing new clearing activeSeen ≥3.
+- **Lighting: 0 new qualifiers.** Every activeSeen≥3 hit was an exact dupe (HaloSphere x2, Lumelle) or a personalized/POD gift-lamp with unverifiable price.
+- Shipped 7 of 10 — see Honesty Rules: "8 real products beat 10 with two you'd rate SKIP" applied at 7 instead, since Home care/Hobbies/Lighting had zero real survivors this run despite genuine multi-keyword attempts in each.
+
+### Sourcing-availability note (2026-08-29)
+- **Pinterest: REACHABLE for the first time.** See the breakthrough note above. 2 Pinterest products delivered this run (1 live, 1 last-year-survivor) — thin, but real, and consistent with the skill's own "~5-11 distinct dropship advertisers per market cluster" expectation once you account for the tool only being able to slice by day-window, not by market or niche.
+- **TikTok**: still queried, still excluded for undeliverable proxy-only links (unchanged).
+- **AliExpress / general web egress**: still fully blocked — all 7 supplier cells `pending`.
+- A new TikTok-ads tool (`search_tiktok_ads`) also appeared this run alongside the Pinterest tools, but returned `total:0` on every query tried — either unpopulated or tier-gated on this account. Worth re-checking on a future run.
+
 ## Archive (names only)
