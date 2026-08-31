@@ -202,4 +202,23 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - **Underwear: 0 delivered.** BOXR near-miss on price verification (pass 1); Shapellx/Popilush (established brands) and Basic+Ally/KHAIZEN (established brands) were the only activeSeen≥3 hits on `shapewear`/`boxershorts` this pass — none dropship-eligible.
 - Shipped 8 of 10 across both passes: 3 Pinterest (live), 5 Meta. Men's fashion and Underwear are the two niches that came up genuinely empty today despite exhaustive multi-keyword, multi-language sweeps in both passes — not from under-effort.
 
+### AliExpress sourcing — WORKING METHOD FOUND (2026-08-31, third pass same day)
+The operator asked to find the cheapest AliExpress link for all 8 delivered products and fill columns AE (supplier) / AF (COGS EUR). Re-tested live rather than assuming the earlier-session block still held, and found a real, repeatable method:
+
+- `curl` through the proxy to `https://de.aliexpress.com/w/wholesale-<query>.html?g=y`, sending the locale cookie `aep_usuc_f=site=deu&c_tp=EUR&region=DE&b_locale=en_US` on **every** request (not just the first — setting it once via `-H "Cookie:"` does not persist into the curl cookie jar; it must be passed with `-b` on each call). No anti-bot punish page was hit across 8 searches this run.
+- The search-results page is server-side rendered: the product grid (`productId`, `displayTitle`, `originalPrice`/`salePrice` with `currencyCode`+`minPrice`, `trade.tradeDesc` ["X sold"], `evaluation.starRating`) is embedded as a JS object literal assigned to `window._dida_config_._init_data_` (NOT the bootstrap-check occurrences of the same string earlier in the file — there are several decoy occurrences of `_init_data_`; find the one immediately followed by `= { data: {"hierarchy"...`). It is not valid JSON (unquoted keys) so it can't be `json.loads`'d directly, but every product's fields sit within ~3000 chars after its `"productId":"..."` match, so a per-field regex scoped to that window is enough — no fragile top-level parse needed.
+- With the locale cookie set, `originalPrice`/`salePrice.currencyCode` come back `EUR` and prices are realistic for the DE market (confirmed against ~8 independent searches, 400-600+ results total).
+- Rewrite every result to `https://de.aliexpress.com/item/<productId>.html` before writing it to the sheet, per Rule 10.
+- **Caveat: this is index-level data, not a confirmed page load.** No individual item page was opened this run to verify it renders (that would upgrade the tag from `INDEX-OK` to `LOAD-TESTED`) — time-boxed to the search-page method for 8 products in one sitting. Also unconfirmed whether this method holds up on a future run or was a transient anti-bot window — **re-verify fresh each run, don't assume it stays open.**
+- **Keyword-relevance filtering matters as much as on WinningHunter.** A blind "cheapest qualifying" pass surfaces off-target matches (e.g. `alarm clock` returned generic desk clocks instead of the novelty car-shaped item; `necklace` returned generic fashion chains instead of the actual quit-smoking product) — always re-filter candidates by a category keyword before ranking by price, not just by the original search term.
+- Supplier links added this run — all `INDEX-OK` unless noted, cheapest item found that clears ≥200 sold **and** ≥4.5★ where one exists:
+  - Karseell hair mask → 1005011587367040, €1.35, 10,000+ sold, 4.9★
+  - VOCO Trousers → 1005006863749738, €6.09, 3,000+ sold, 4.9★ — `EQUIVALENT`: ninth-length harem cut, not a straight wide-leg trouser
+  - Hypercar Alarm Clock → 1005012321394186, €36.99, 8 sold, no rating — `no qualifying supplier`: this is a genuinely niche novelty category, nothing in it clears 200 sold/4.5★; this is the cheapest real same-product match, and at €36.99 COGS against a $38.98 sell price the margin is razor-thin — worth flagging as an added killer risk on top of the one already on file.
+  - FlyHugz Travel Neck Pillow → 1005007524498028, €6.79, 5,000+ sold, 4.7★
+  - Vilya FortiLock → 1005010439380397, €11.19, 5,000+ sold, 4.9★
+  - NightSky Galaxy Lamp → 1005012918252632, €7.49, 5,000+ sold, 4.9★
+  - SILBERTHAL Salatschleuder-Set → 1005006863821687, €9.06, 383 sold, 4.9★ — `EQUIVALENT`: plain spinner, no integrated dressing shaker (source that separately if replicating the exact bundle)
+  - BreatheFree Breathlace Necklace → 1005009183484947, €2.79, 600+ sold, 4.5★ — title literally says "Breathlace Pendant Chain", strong match
+
 ## Archive (names only)
