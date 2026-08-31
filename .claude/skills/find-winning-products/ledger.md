@@ -163,4 +163,32 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - **AliExpress / general web egress**: still fully blocked — all 7 supplier cells `pending`.
 - A new TikTok-ads tool (`search_tiktok_ads`) also appeared this run alongside the Pinterest tools, but returned `total:0` on every query tried — either unpopulated or tier-gated on this account. Worth re-checking on a future run.
 
+## 2026-08-31 (sixth real run — Pinterest confirmed still non-targetable, filter finding reconfirmed)
+
+**Reconfirmed before sourcing:** ran the same keyword-vs-no-keyword diff test as 2026-08-29 (`test123` nonsense keyword vs none) — byte-identical ids both times. `keyword`, `sort_by`, `country`, `technologies`, `promoter_name` on `search_pinterest_ads` are still silently ignored; only `days_min`/`days_max` filter. Same day-window-slicing approach used again.
+
+- Kit Máscara de Colágeno Karseell — saudenocotidiano.com.br (fcbe84-5.myshopify.com) — 687301940776 — Beauty — SOURCE: Pinterest (live) — repin_count 537, adscount 130, days running 435 — TEST NOW
+- THE VOCO TROUSERS — sususummer.com (80c6f5-3.myshopify.com) — 687308429868 — Women's fashion — SOURCE: Pinterest (live) — repin_count 84, adscount 221, days running 464 — TEST NOW
+- Hypercar Alarm Clock (Realistic Engine & Light Effects) — topdoon.com (z3hbvw-wr.myshopify.com) — 687299876005 — Hobbies — SOURCE: Pinterest (live) — repin_count 50 (exactly at the floor), adscount 44, days running 249 — TEST NOW
+- FlyHugz Original Travel Neck Pillow — flyhugz.myshopify.com (flyhugz.com) — 27227863470225599 — Healthcare — Tier B — SOURCE: Meta — TEST NOW
+- Vilya FortiLock (steering-wheel anti-theft lock) — vilya.fr (0e6c30-gn.myshopify.com) — 804490315977752 — Car accessories — Tier B — SOURCE: Meta — TEST NOW
+
+### Rejected candidates (2026-08-31)
+- Brinoa "Feel the Difference of Better Posture" — 0zt01g-ty.myshopify.com/brinoa.com — SKIP: same core problem as Cerviless Pro Posture Corrector already in sheet history (Rule 5's own posture-corrector example, verbatim).
+- Skale Cosmetics "Grow your hair longer, naturally" — lm-002.myshopify.com/skalecosmetics.com — SKIP: hair-growth serum is now a repeat category (Avera 2026-08-19, Dr. Groot 2026-08-29) — same core problem, different bottle.
+- Mamymarket nylon shoulder bag — 22a52a-c8.myshopify.com — SKIP: price $16.99, meaningfully under the 25 floor (not a rounding/conversion edge case).
+- Vfaja shapewear bodysuit — vfaja.myshopify.com — SKIP: exact same product/page as the already-delivered Shecurve EasySlide (2026-08-29), different ad id only.
+- "New Classic Luxury Card Holder Phone Case" (Reserte) — surfaced under `home organization` — SKIP: phone accessory, fits none of the ten niches, fuzzy-keyword off-target.
+- BOXR Underwear boxer briefs — boxrstore.myshopify.com — activeSeen 3 cleared, but every row's price came back blank/`False` and the page can't be opened to verify (egress blocked) — held back rather than guessed; named as a near-miss.
+- TikTok `garage organizer` sweep (6 results, WinningHunter proxy links only) — same undeliverable-link exclusion as every prior run.
+- SHAPELLX, Popilush, Nivora personalised-bracelet line (all activeSeen 1, plus Nivora/Stanbarry gift-jewellery cluster), Duchro/Firewalky/Outask/Bralaven German LED-lifestyle sweep, Matchadan/Paxcd/SmartWorkout-Pro fitness-gadget sweep, Statik "HyperMount", Relaxrich/Gretlei/Erielly/Welfareis/Vipbu/Voalsz/Chubbycable/Gerwant car-mount cluster (55 total results, `car phone mount`), Pulsio/HorseHalo/Eden Labs/SootheSilk/Foot Collective massage-gun sweep — all checked, none cleared `activeSeen` ≥3.
+
+### Persistent gaps (2026-08-31)
+- **Men's fashion: 0 qualifiers, again.** `montre homme` surfaced a genuine winner by the numbers (Vilya FortiLock, activeSeen 3) but it's a car anti-theft lock, not fashion — classified under Car accessories instead of padding the men's slot. `herren armband` returned 9 rows, all personalised-jewellery gift stores (Nivora, Stanbarry), all activeSeen 1.
+- **Home care: 0 qualifiers, fifth run in a row.**
+- **Lighting: 0 qualifiers.** `led beleuchtung` returned 6 rows (bug zapper, ceiling fan, tire compressor, camping fan — mostly off-target for "lighting" specifically), all activeSeen 1.
+- **Underwear: 0 delivered** (BOXR near-miss on price verification only — see above).
+- **Fitness: 0 additional this run** beyond what Pinterest already can't repeat-cover — `fitnessgerät` returned 3 rows, all activeSeen 1.
+- Shipped 5 of 10. Pinterest's day-window-only sourcing found 3 real winners (strongest run yet on that front); Meta filled 2 more; the other five niches came up genuinely empty across real multi-keyword sweeps, not from under-effort.
+
 ## Archive (names only)
