@@ -173,6 +173,18 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - FlyHugz Original Travel Neck Pillow — flyhugz.myshopify.com (flyhugz.com) — 27227863470225599 — Healthcare — Tier B — SOURCE: Meta — TEST NOW
 - Vilya FortiLock (steering-wheel anti-theft lock) — vilya.fr (0e6c30-gn.myshopify.com) — 804490315977752 — Car accessories — Tier B — SOURCE: Meta — TEST NOW
 
+**Continuation (same calendar day, second pass):** the operator asked to top up the day's run to the full 10 after the first pass above shipped only 5. Re-ran fresh keyword sweeps specifically against the niches that came up empty: Men's fashion, Home care, Lighting, Underwear, plus a possible 2nd Fitness/Healthcare pick.
+
+- NightSky LED Galaxy Projector Lamp — bas-bouman.myshopify.com (mijn-hummeltje.nl) — 1504301284325924 — Lighting — Tier B — SOURCE: Meta — activeSeen 4, 279 active ads on page, 40 days running — TEST NOW
+- SILBERTHAL Salatschleuder-Set mit Shaker — silberthal.myshopify.com (silberthal.de) — 746870351790472 — Home care — Tier B — SOURCE: Meta — activeSeen 3, 162 active ads on page, 38 days running — TEST NOW
+- BreatheFree Breathlace Smoke-Free Necklace — ta04hm-r7.myshopify.com (breathefree.shop) — 1820895638532774 — Healthcare (2nd pick) — Tier C — SOURCE: Meta — activeSeen 4, 295 active ads on page, 36 days running, found via a `resistance bands` fuzzy-keyword match — TEST NOW
+
+### Rejected candidates (2026-08-31, continuation)
+- **Andre Ferran Cargo Denim Jeans (`mens wallet` keyword)** — same productid (890815750330585) as the 2026-08-24 delivery. Caught by the pre-delivery dedup check before it could double-ship. This was the only Men's fashion hit across `herren uhr`, `mens wallet`, and `herren schuhe` this continuation — Men's fashion stays at 0 new for the day.
+- `herren uhr`, `rangement maison`, `mens wallet`, `herren schuhe` sweeps: everything else capped at activeSeen 1-2 (Save Moments personalised song, Gesundheitsratgeber beauty shot, Lapupoo sandals/bag, Nivora/By Heart Jewelry gift-jewellery cluster, Kilayou shoe racks, Whatchic menswear, Julie Tremblay hairbrush, VERA MEYER culotte/Wunderhose) — none cleared the ≥3 floor.
+- `shapewear`/`boxershorts` sweep for a 2nd Underwear pick: Shapellx and Popilush both cleared activeSeen ≥3 but are established DTC shapewear brands with their own manufacturing, not dropship candidates; SheCurve/Vfaja EasySlide resurfaced as the same exact dupe already excluded 2026-08-31 pass 1; MyFleecies (activeSeen 3) turned out to be loungewear, not underwear, off-niche; Basic+Ally and KHAIZEN boxers are large established Danish/Dutch boxer brands (own manufacturing, hundreds of reviews, €25k+/€4k+ EU adspend) rather than dropship items. No 2nd Underwear candidate found.
+- `kitchen gadget`, `home organization`, `aufbewahrung` (Home care, before the winning `aufbewahrung` hit): Salatschleuder-Set was the only row across all three sweeps to clear activeSeen ≥3 with a verifiable price and non-established domain — everything else (MyZip camping bags, Firewalky bathroom shelf/wagon, Duchro shoe rack, edone.paris toilet-paper holder, by Benson garden hose, Detson wallet) capped at activeSeen 1-2.
+
 ### Rejected candidates (2026-08-31)
 - Brinoa "Feel the Difference of Better Posture" — 0zt01g-ty.myshopify.com/brinoa.com — SKIP: same core problem as Cerviless Pro Posture Corrector already in sheet history (Rule 5's own posture-corrector example, verbatim).
 - Skale Cosmetics "Grow your hair longer, naturally" — lm-002.myshopify.com/skalecosmetics.com — SKIP: hair-growth serum is now a repeat category (Avera 2026-08-19, Dr. Groot 2026-08-29) — same core problem, different bottle.
@@ -183,12 +195,11 @@ Every product delivered by the find-winning-products skill. Never return one twi
 - TikTok `garage organizer` sweep (6 results, WinningHunter proxy links only) — same undeliverable-link exclusion as every prior run.
 - SHAPELLX, Popilush, Nivora personalised-bracelet line (all activeSeen 1, plus Nivora/Stanbarry gift-jewellery cluster), Duchro/Firewalky/Outask/Bralaven German LED-lifestyle sweep, Matchadan/Paxcd/SmartWorkout-Pro fitness-gadget sweep, Statik "HyperMount", Relaxrich/Gretlei/Erielly/Welfareis/Vipbu/Voalsz/Chubbycable/Gerwant car-mount cluster (55 total results, `car phone mount`), Pulsio/HorseHalo/Eden Labs/SootheSilk/Foot Collective massage-gun sweep — all checked, none cleared `activeSeen` ≥3.
 
-### Persistent gaps (2026-08-31)
-- **Men's fashion: 0 qualifiers, again.** `montre homme` surfaced a genuine winner by the numbers (Vilya FortiLock, activeSeen 3) but it's a car anti-theft lock, not fashion — classified under Car accessories instead of padding the men's slot. `herren armband` returned 9 rows, all personalised-jewellery gift stores (Nivora, Stanbarry), all activeSeen 1.
-- **Home care: 0 qualifiers, fifth run in a row.**
-- **Lighting: 0 qualifiers.** `led beleuchtung` returned 6 rows (bug zapper, ceiling fan, tire compressor, camping fan — mostly off-target for "lighting" specifically), all activeSeen 1.
-- **Underwear: 0 delivered** (BOXR near-miss on price verification only — see above).
-- **Fitness: 0 additional this run** beyond what Pinterest already can't repeat-cover — `fitnessgerät` returned 3 rows, all activeSeen 1.
-- Shipped 5 of 10. Pinterest's day-window-only sourcing found 3 real winners (strongest run yet on that front); Meta filled 2 more; the other five niches came up genuinely empty across real multi-keyword sweeps, not from under-effort.
+### Persistent gaps (2026-08-31, after both passes)
+- **Men's fashion: 0 qualifiers, again — now across two full passes and 6 keyword attempts today** (`montre homme`, `herren armband`, `herren uhr`, `mens wallet`, `herren schuhe`, plus the men's-hoodie/sneaker seeds checked pass 1). The only hit that cleared the gates (Andre Ferran cargo jeans) turned out to be an exact-productid repeat of the 2026-08-24 delivery. `montre homme` surfaced a genuine winner by the numbers (Vilya FortiLock, activeSeen 3) but it's a car anti-theft lock, not fashion — classified under Car accessories.
+- **Home care: filled this pass** (SILBERTHAL Salatschleuder-Set) after 3 empty attempts today (`kitchen gadget`, `home organization`, `rangement maison`) and 4 empty runs before that — ending a five-run gap.
+- **Lighting: filled this pass** (NightSky LED Galaxy Projector Lamp, via `lampe led`) after `led beleuchtung` and `stimmungslicht` came up empty today.
+- **Underwear: 0 delivered.** BOXR near-miss on price verification (pass 1); Shapellx/Popilush (established brands) and Basic+Ally/KHAIZEN (established brands) were the only activeSeen≥3 hits on `shapewear`/`boxershorts` this pass — none dropship-eligible.
+- Shipped 8 of 10 across both passes: 3 Pinterest (live), 5 Meta. Men's fashion and Underwear are the two niches that came up genuinely empty today despite exhaustive multi-keyword, multi-language sweeps in both passes — not from under-effort.
 
 ## Archive (names only)
