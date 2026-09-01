@@ -221,4 +221,44 @@ The operator asked to find the cheapest AliExpress link for all 8 delivered prod
   - SILBERTHAL Salatschleuder-Set → 1005006863821687, €9.06, 383 sold, 4.9★ — `EQUIVALENT`: plain spinner, no integrated dressing shaker (source that separately if replicating the exact bundle)
   - BreatheFree Breathlace Necklace → 1005009183484947, €2.79, 600+ sold, 4.5★ — title literally says "Breathlace Pendant Chain", strong match
 
+## 2026-09-01 (seventh real run — 9/10, AliExpress method held up a second day running)
+
+Pinterest sweep done as day-window slicing again (keyword/sort/country still confirmed non-functional, not re-diff-tested this run since the finding is now stable across three separate runs). Swept days_min/max windows from 30 up through 1200+ to maximise coverage; the strict same-period-last-year window (336-365 days, i.e. Sept 2025) returned only one candidate and it failed the price floor.
+
+- Movina MoveMaster (furniture moving glides) — movina.de (hq6th7-jx.myshopify.com) — 687310095143 — Home care — SOURCE: Pinterest (live) — repin_count 2689, adscount 32, days running 414 — TEST NOW
+- Caneta de Sobrancelha à Prova d'água (waterproof eyebrow pen) — saudenocotidiano.com.br (fcbe84-5.myshopify.com) — 687313714358 — Beauty — SOURCE: Pinterest (live) — repin_count 1846, adscount 130, days running 671 — TEST NOW — **same advertiser as the 2026-08-31 Karseell hair mask delivery, different product**: kept per the Verlimo precedent (same advertiser + genuinely different product category is not automatically a dupe), flagged as a killer risk to watch for account-level saturation
+- The Ultimate Comfort Pillow — minopia.com (9437e2-4.myshopify.com) — 687302040749 — Healthcare — SOURCE: Pinterest (live) — repin_count 1242, adscount 666, days running 575 — TEST NOW
+- 3-Piece Women's Matching Set — thereederfamily.com (xdga2z-0r.myshopify.com) — 687315054577 — Women's fashion — SOURCE: Pinterest (live) — repin_count 448, adscount 11, days running 56 — TEST NOW — ad links to a collection page, not one SKU; price ($64.95) taken from the collection page since the API's own price field was null
+- Sacred Light Jigsaw Puzzle 1000-Piece — puzzlefunland.com — 1722546949088586 — Hobbies — Tier C — SOURCE: Meta — activeSeen 4, 11 ads on page, 42 days running — TEST NOW
+- BrickBling LEGO Messi Celebration Light Kit — 2fb240-2.myshopify.com (brickblingtoy.com) — 891527910624946 — Lighting — Tier C — SOURCE: Meta — activeSeen 3, 279 ads on page, 95 days running — TEST NOW
+- Lace Mystic Aurora Nightdress — mysticlingeriestore.com (w1103v-jm.myshopify.com) — 4616904438557976 — Underwear — Tier B — SOURCE: Meta — activeSeen 4, 181 ads on page, 66 days running — TEST NOW
+- Zenvora Chemise à Coupe Ajustée Infroissable — zenvora-france.com (ae08rg-hy.myshopify.com) — 36790067810592333 — Men's fashion — Tier B — SOURCE: Meta — activeSeen 4, 77 ads on page, 97 days running — TEST NOW — API returned no price/domain fields; both confirmed live by reading the actual page (€39.00, backed by ae08rg-hy.myshopify.com)
+- KTVmoto Motorcycle Helmet LED Evil Eye Warning Light — www.ktvmoto.com — 2530637620767054 — Car accessories — Tier C — SOURCE: Meta — activeSeen 4, 149 ads on page, 36 days running — **WATCH**: Pinterest Fit only 3/10 (motorcycle safety gear has no natural home on a lifestyle/home-decor platform) — capped below TEST NOW per Rule 0/9 despite solid Meta numbers
+
+### Rejected candidates (2026-09-01)
+- High Flexibility Lazy Elastic Shoelaces (startrsp.com) — the one hit inside the strict Sept-2025-last-year Pinterest window (336-365 days) — SKIP: price $12.99, under the 25 floor.
+- Custom Blue Speed Seiko Mod Watch (zjani-mods.com) — repin 181, genuine Pinterest winner by the numbers — SKIP: price $349.95, over the 200 ceiling.
+- Premium Bead Drill Bits (sususummer.com, same domain as the already-delivered 2026-08-31 VOCO Trousers) — SKIP: price $22.99, under the 25 floor.
+- Wiskii activewear ×2 (Step Out in Style leggings, Scallop Back Mock Neck Dress) — genuine Pinterest hits, repin 241 and 524 — held back: `shopify_productprice` null on both and no time to verify a specific SKU price this run (unlike the Reeder Family set, no collection-page fallback was checked) — named as a near-miss, worth re-checking next run.
+- Sparvox Muscle Trainer (`home workout`) — activeSeen 3 cleared, but `shopify_shopifydomain` empty — held back rather than guess it's a real Shopify dropship store; near-miss for Fitness.
+- Ji Martial Arts resistance bands, Mireva Total Body Resistance Band, Pullup & Dip doorway bar, SmartWorkout short bands, Moonbeamt slant board (`home workout`/`resistance band`) — all capped at activeSeen 1-2.
+- Meine Studios ERGO SLEEVE (`accessoire voiture`) — activeSeen 4, genuinely strong Meta numbers, but it's a laptop/posture ergonomic sleeve, not a car accessory (fuzzy keyword match) — and posture correction is a repeat category already declined twice this session (Cerviless Pro, Brinoa) — skipped on both grounds.
+- Melissa & Doug Spanish See & Spell, established-brand puzzle results — SKIP: established brand.
+
+### Persistent gaps (2026-09-01)
+- **Fitness: 0 qualifiers.** `home workout` and `resistance band` both returned 100+ rows; only Sparvox cleared activeSeen ≥3 and it had no verifiable store domain. Everything else capped at 1-2.
+- Shipped 9 of 10 — the ninth (Fitness) came up genuinely empty after two real keyword sweeps, not from under-effort. This is the strongest source split yet: 4 Pinterest, 0 TikTok (still excluded, proxy-only links, not re-queried separately this run since the exclusion is now a stable policy), 5 Meta.
+
+### AliExpress sourcing — method held up a second consecutive run
+Re-ran the exact same curl + `aep_usuc_f` locale-cookie method documented after the 2026-08-31 run, on 9 fresh searches. No anti-bot block hit. This is now two runs in a row it has worked — still worth re-verifying fresh each time rather than assuming it's permanently open, per the caveat already on file, but the signal is getting stronger that this is a durable capability, not a one-off window.
+- Movina MoveMaster → 1005008475856470, €2.59, 1,000+ sold, 4.5★
+- Caneta de Sobrancelha → 1005008393561745, €0.59, 10,000+ sold, 4.6★
+- Comfort Pillow → 1005012632081478, €6.19, 256 sold, 4.5★
+- 3-Piece Matching Set → 1005012735815217, €26.19, 65 sold, 4.3★ — `EQUIVALENT`: exact style match (cardigan+vest+trousers) but under the 200-order floor; nothing in this specific style clears it
+- Sacred Light Jigsaw Puzzle → 1005010698323596, €32.59, 12 sold, 5.0★ — `no qualifying supplier`: nothing in the religious-art-puzzle genre clears 200 orders; this is the cheapest genuine same-genre match
+- BrickBling LEGO Light Kit → 1005008595953993, €2.69, 319 sold, 4.8★ — `EQUIVALENT`: generic Technic LED kit, not modeled for set 43018 specifically — verify wiring/fit before committing
+- Lace Mystic Nightdress → 1005009014655806, €4.49, 203 sold, 4.5★
+- Zenvora Shirt → 1005007653863061, €6.09, 500+ sold, 4.6★ — `EQUIVALENT`: short-sleeve variant, confirm sleeve length matches the original before sourcing
+- KTVmoto Helmet Light → 1005008707885420, €5.39, 700+ sold, 4.5★
+
 ## Archive (names only)
