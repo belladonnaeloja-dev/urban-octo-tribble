@@ -803,30 +803,99 @@ previous run's, tagged with the run date. Never start a fresh sheet.
    - Layout: title row 1, subtitle row 2, blank row 3, **header row 4**, data from **row 5**.
 
    **READ THE HEADER ROW BEFORE EVERY WRITE — THE COLUMNS MOVE.** Do
-   `get_sheet_data` on `V4:AF4` and map the columns by *name* every single run. Never write to a
+   `get_sheet_data` on `V4:AH4` (pad a few columns past where you think the sheet ends — it has
+   grown past the previously-documented last column at least twice) and map the columns by *name*
+   every single run, including confirming which column is actually last. Never write to a
    remembered letter.
 
-   As of 2026-08-18 the layout is:
+   As of 2026-09-01, verified cell-by-cell against a live read (not copied forward from an
+   earlier note in this file — see the near-miss below for why that distinction matters), the
+   full layout is:
 
    | Col | Header |
    |---|---|
-   | U | Verdict |
-   | V | Main killer / risk |
-   | W | Their hook |
-   | X | Open in WinningHunter |
-   | Y | Product page |
-   | Z | The winning ad |
-   | AA | All their live ads |
-   | **AB** | **(blank spacer — do NOT write here)** |
-   | **AC** | **AliExpress supplier** |
-   | **AD** | **COGS EUR** |
-   | AE | Listed On Asana |
+   | A | Run date |
+   | B | Priority |
+   | C | Test order |
+   | D | Product |
+   | E | Tier |
+   | F | Niche |
+   | G | Store |
+   | H | FB page |
+   | I | Cur. |
+   | J | Price |
+   | **K** | **EUR PRICE** |
+   | **L** | **EUR MARGIN** |
+   | M | Est. gross / order |
+   | N | Active ads |
+   | O | Ads growth 1m |
+   | P | Ad seen |
+   | Q | Ad rank |
+   | R | EU ad spend |
+   | S | Spend window |
+   | T | Days live |
+   | U | Saturation /10 |
+   | V | PINTEREST FIT /10 |
+   | W | Verdict |
+   | X | Main killer / risk |
+   | Y | Their hook (first line) |
+   | Z | Open in WinningHunter |
+   | AA | Product page |
+   | AB | The winning ad (Meta) |
+   | AC | All their live ads |
+   | AD | (blank spacer — do NOT write here) |
+   | AE | AliExpress supplier (opens in YOUR EUR/DE session) |
+   | AF | COGS EUR (item only) |
+   | AG | Approved For Asana — LAST column, real checkbox, every run |
 
    **Why this is a hard rule.** On 2026-08-18 a column was inserted between runs, moving
    AliExpress from AB→AC and COGS from AC→AD. Writing to the remembered letters put COGS numbers
    *on top of four supplier links and destroyed them*. It was caught only by reading the cells
-   back. The old note here said "27 columns, A–AA", which was already stale and is what made the
-   remembered letters look authoritative.
+   back. Later, two more columns (**EUR PRICE**, **EUR MARGIN**) were inserted right after `Price`,
+   shifting everything downstream of it — `Verdict` moved from U all the way to W. The old note
+   here said "27 columns, A–AA", which was already stale and is what made the remembered letters
+   look authoritative in the first place — do not let this table go stale the same way. **Confirm
+   the last column's header text every run** (it is always the sheet's final populated column,
+   whatever letter that lands on) rather than trusting AG specifically.
+
+   **Near-miss, 2026-09-01: a header read that happened before a write got reused for a write that
+   happened after the sheet changed underneath it.** The header was read correctly (and used
+   correctly) for that run's AliExpress-column work. But the day's *product* rows were then written
+   using a reusable `build_row()` script carried over verbatim from an earlier run's file — a
+   19-field positional template built when `Verdict` was still at column U — instead of being
+   rebuilt against the header just read. The two new EUR-PRICE/EUR-MARGIN columns pushed every
+   downstream field two slots right of where the template assumed, so the rows landed with (for
+   example) the ad-hook text sitting in the `Verdict` cell and the `Verdict` string sitting in
+   `Saturation /10` — while the verdict-colour and currency formatting, applied straight after by
+   *column index* rather than by re-confirmed header name, painted the wrong cells green/amber and
+   put a € sign on an `Ad seen` count. It was caught only because the operator's next, unrelated
+   request happened to prompt a fresh full-row read-back. **The fix is not "read the header once
+   per run" — it is "never let a write script's field order silently outlive the header read that
+   justified it."** Treat any positional row-building code (this file's or a scratch script's) as
+   suspect on every run: re-derive the column-to-field mapping from a header read taken *in that
+   same run, immediately before the write*, and diff it against whatever template you're about to
+   reuse before trusting it. The same applies to any formatting step that targets a column by raw
+   index (verdict colour, currency number formats) — re-confirm the header name at that index
+   right before applying it, not just once at the top of the run.
+
+   **The last column is a checkbox, not a text cell — every run, no exceptions (operator rule,
+   set 2026-09-01).** "Approved For Asana" must render as an actual Google Sheets checkbox widget
+   the operator can click, defaulting to unchecked. Writing the string `"FALSE"` (or `"TRUE"`) as
+   plain text is not the same thing and does not satisfy this rule, even though it displays
+   similarly — it does not toggle, and the operator has to delete-and-re-add a real checkbox by
+   hand. For every new row's last-column cell:
+   1. `updateCells` with `userEnteredValue: {boolValue: false}` (not `stringValue`).
+   2. A `setDataValidation` request on that same cell range with
+      `rule: {condition: {type: "BOOLEAN"}, showCustomUi: true}` — this is what actually turns the
+      cell into a clickable checkbox in the Sheets UI; the boolean value alone does not.
+   3. Read the cell back and confirm it carries a `dataValidation` rule of type `BOOLEAN`, not just
+      a boolean-looking string — a `batch_update_cells` call reports success even when the
+      validation rule silently didn't attach.
+   Copying cell *format* (`PASTE_FORMAT`) from a prior checkbox row does carry the data-validation
+   rule forward along with the value, so the existing per-run `copyPaste` step (below) already
+   covers this as long as the source row for that copy is itself a real checkbox — verify that
+   before relying on it, and fall back to the explicit `setDataValidation` call above if the source
+   row predates this rule (i.e. was still a plain `"FALSE"` string).
 
    **Always `get_sheet_formulas` on the written range afterwards and confirm each cell holds what
    you intended** — a `batch_update_cells` call reports success even when it wrote to the wrong
@@ -857,27 +926,49 @@ previous run's, tagged with the run date. Never start a fresh sheet.
       `repeatCell` on column A of the new rows:
       `numberFormat: {type:"DATE", pattern:"yyyy-mm-dd"}`.
 
-      **b. Verdict colour (column U).** The verdict fill is a static per-row colour, NOT
+      **b. Verdict colour (whichever column is currently `Verdict` — W as of 2026-09-01, but
+      re-derive this every run, see below).** The verdict fill is a static per-row colour, NOT
       conditional formatting — so copying format from a WATCH row paints a TEST NOW cell amber
-      and vice versa. After the format copy, set column U **per row, by its actual verdict**:
+      and vice versa. After the format copy, set the `Verdict` column **per row, by its actual
+      verdict**:
       - `TEST NOW` → background `{0.22, 0.463, 0.114}` (#38761D), **bold white** text
       - `WATCH` → background `{1, 0.898, 0.6}` (#FFE599), **bold black** text
       Both centred, vertically middle. Verify visually — the user checks this.
 
-      **THIS HAS REGRESSED TWICE (2026-07-30 and 2026-08-18) AND THE OPERATOR CAUGHT IT BOTH
-      TIMES.** The failure mode is always the same: the format copy in step 3 paints the whole
-      block with the source row's colour, so a run of TEST NOW rows comes out amber. Green is the
-      signal the operator scans for — amber TEST NOW makes the sheet unreadable at a glance.
+      **THIS HAS REGRESSED AT LEAST THREE TIMES (2026-07-30, 2026-08-18, 2026-09-01) AND THE
+      OPERATOR OR A LATER READ-BACK CAUGHT IT EVERY TIME — do not assume the streak is over.** Two
+      distinct failure modes have caused it: (1) the format-copy in step 3 painting the whole block
+      with the source row's colour regardless of that row's actual verdict, and (2) — the
+      2026-09-01 case — applying the coloring to a **remembered column index** (20, for the "U"
+      that used to be `Verdict`) after the header had already shifted `Verdict` to W, which painted
+      `Saturation /10` green/amber instead and left the real `Verdict` cells uncoloured. Green is
+      the signal the operator scans for — a wrongly-coloured column, or an uncoloured `Verdict`
+      column, makes the sheet unreadable at a glance either way.
 
       **Do it like this, every run, no exceptions:**
-      1. `get_sheet_data` on `U<first>:U<last>` and read the actual verdict strings back.
-      2. Group the contiguous runs of `TEST NOW` and `WATCH`.
-      3. Issue one `repeatCell` per group with `fields:
+      1. `get_sheet_data` on the header row to find **which letter is `Verdict` right now** —
+         never assume it is still the same letter as last run (see the column-drift rule above).
+      2. `get_sheet_data` on that column for the new rows and read the actual verdict strings back.
+      3. Group the contiguous runs of `TEST NOW` and `WATCH`.
+      4. Issue one `repeatCell` per group, targeting the `startColumnIndex` you just confirmed in
+         step 1 (not a number carried over from memory), with `fields:
          "userEnteredFormat(backgroundColor,horizontalAlignment,verticalAlignment,textFormat)"`.
-      4. Column U is index **20** in the API's 0-based `startColumnIndex` — but confirm U is
-         still `Verdict` in the header first (see the column-drift rule above).
+      5. Read the cells back afterward and confirm the colour landed on cells that actually contain
+         the string `TEST NOW`/`WATCH` — not on whatever column happens to be one or two slots to
+         the left.
 
-      Never assume the verdicts alternate or match last run's pattern — read them.
+      Never assume the verdicts alternate or match last run's pattern — read them. The same
+      "re-derive the index every run, then verify by reading the values back" discipline applies to
+      *any* other formatting step keyed to a column index (currency number formats included) —
+      see the near-miss note above the column table.
+
+      **c. Last column checkbox ("Approved For Asana").** Every new row's last-column cell must
+      be a real, clickable Sheets checkbox, unchecked by default — see the full rule above the
+      column table. Confirm the `copyPaste` in step 3 actually carried a `BOOLEAN` data-validation
+      rule onto the new rows (read the cells back); if it didn't — e.g. because the source row
+      still held the old plain-text `"FALSE"` — issue the `updateCells` (boolValue) +
+      `setDataValidation` (BOOLEAN condition, `showCustomUi: true`) pair explicitly on the new
+      rows' last-column range instead of relying on the copy.
    5. Update the row-2 subtitle with the new run and product counts.
    6. `get_sheet_data` on the written range to verify, then report the row numbers written.
 
