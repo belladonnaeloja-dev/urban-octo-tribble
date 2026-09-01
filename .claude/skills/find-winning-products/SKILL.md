@@ -737,8 +737,28 @@ Facebook page ID. Always build and include all three:
 - the exact ad in Meta's Ad Library → `https://www.facebook.com/ads/library/?id=<productid>`
 - everything that advertiser is running → `https://www.facebook.com/ads/library/?view_all_page_id=<page_id>&active_status=active&ad_type=all`
 
+**Pinterest-sourced products get the equivalent pair, never a placeholder.** A Pinterest ad has
+no Meta ad-archive entry, but it is NOT missing a "winning ad" or an "all their live ads"
+link — those concepts exist on Pinterest too, from fields the search/detail tools already return:
+
+- **the winning ad itself** (maps to the `AB` / "The winning ad" column) →
+  `https://www.pinterest.com/pin/<adid>` — the pin, i.e. the actual ad creative. (Do not put this
+  under "Open in WinningHunter" instead and leave this cell empty or `n/a` — that column is for a
+  WinningHunter app link and has no Pinterest equivalent; the pin URL belongs here.)
+- **everything that advertiser is running** (maps to the `AC` / "All their live ads" column) → the
+  promoter's own Pinterest profile, i.e. the `page_url` field returned by `search_pinterest_ads` /
+  `get_pinterest_ad` (e.g. `https://www.pinterest.com/MovinaDE`) — the closest Pinterest equivalent
+  to a Meta "view all ads from this page" link.
+
+Writing `n/a — Pinterest, no Meta ad` into either of these cells is a mistake, not a legitimate
+"nothing to show" case — the data exists on every Pinterest row, it just has to be read from
+`pin_url`/`page_url` rather than assumed absent because there's no Meta-shaped ad ID. (Found and
+fixed retroactively across 9 rows spanning three earlier runs on 2026-09-01 — none of them had
+actually lacked the underlying data, the enrichment step had just skipped fetching it for
+Pinterest-sourced rows specifically.)
+
 Also close the report with a consolidated **table** of all products: name, store, FB page, tier,
-price, active ads + growth, seen, rank, spend, days live, and the three links above.
+price, active ads + growth, seen, rank, spend, days live, and the relevant link pair above.
 
 Close with:
 
@@ -913,8 +933,11 @@ previous run's, tagged with the run date. Never start a fresh sheet.
       last list" — five newer runs sat below it, and the operator saw nothing change. Read the
       sheet, find the newest `run_date`, and say which rows you are working on before you start.
    2. `batch_update_cells` writing `A<next>:AA<next+n-1>`. Numbers as numbers; the four link
-      columns as `=HYPERLINK("url","label")` with labels `WinningHunter` / `Open shop` /
-      `View ad` / `All ads` to match existing rows.
+      columns as `=HYPERLINK("url","label")`. For Meta-sourced rows use labels `WinningHunter` /
+      `Open shop` / `View ad` / `All ads` to match existing rows. **For Pinterest-sourced rows,
+      the "winning ad" and "all their live ads" columns are NOT `n/a`** — use `pin_url` (label
+      `View pin`) and `page_url` (label `Pinterest profile`) respectively; see the Pinterest
+      ad-links rule in Step 7 above for why these are never a placeholder.
    3. **`batch_update` with a `copyPaste` / `pasteType: "PASTE_FORMAT"`** request, source = the
       last pre-existing data row, destination = the rows just written. Written values arrive
       unformatted — without this, growth shows `0.75` instead of `+75%` and fills/borders are
