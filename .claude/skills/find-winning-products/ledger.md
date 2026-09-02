@@ -269,4 +269,53 @@ Fixed in place: rewrote the affected block (columns A–AC) for rows 285–293 a
 ### Pinterest rows' "winning ad" / "all their live ads" columns fixed — they were never actually `n/a`
 The operator asked to check rows carrying `n/a — Pinterest, no Meta ad` and add the Pinterest pin link. A sheet-wide scan found 9 rows across three runs (2026-08-29 rows 270–271, 2026-08-31 rows 277–279, 2026-09-01 rows 285–288) carrying this placeholder in both the "The winning ad" and "All their live ads" columns. This was a genuine gap, not a correct `n/a`: every Pinterest row already carries `pin_url` (the pin itself — the actual winning ad) and `page_url` (the promoter's Pinterest profile — the closest equivalent to "all their live ads") from `search_pinterest_ads`/`get_pinterest_ad`; the enrichment step had just never been reading them for these two columns. Re-fetched `get_pinterest_ad` for the 5 older ids (page_url wasn't saved locally for those), confirmed it for the 4 already-known 2026-09-01 ids, and wrote `=HYPERLINK(pin_url,"View pin")` and `=HYPERLINK(page_url,"Pinterest profile")` into the two columns for all 9 rows. Re-scanned the full sheet afterward — zero remaining `n/a — Pinterest, no Meta ad` cells. SKILL.md's ad-links rule (Step 7) and the sheet-append procedure (Step 9) now document this explicitly so future runs write it correctly the first time instead of needing a retroactive fix.
 
+## 2026-09-02 (ninth real run — first run under the rewritten Rule 5 + new Rule 5b)
+- Brinoa Waterproof Microblading Eyebrow Pen — brinoa.com — 687314723164 — Beauty — Tier A — SOURCE: Pinterest (live) — repin_count 1223, adscount 208, days running 163 — TEST NOW
+- Cladwell™ Double-Sided 304 Steel Antibacterial Cutting Board — evaberrynewyork.com — 687318233906 — Home care — Tier A — SOURCE: Pinterest (live) — repin_count 631, adscount 56, days running 180 — TEST NOW
+- FoldWash™ Portable Mini Washing Machine — shopsohobloo.com — 687311427184 — Home care — Tier A — SOURCE: Pinterest (live) — repin_count 413, adscount 74, days running 212 — TEST NOW
+- Sadaro Lena Tote Bag — sadaro.de — 687317838694 — Women's fashion — Tier A — SOURCE: Pinterest (live) — repin_count 395, adscount 36, days running 716 — TEST NOW
+- ECO. Modern Essentials Ultimate Wellbeing Collection (12-pack) — ecomodernessentials.com.au — 687270848410 — Beauty — Tier B — SOURCE: Pinterest (live) — repin_count 107, adscount 11, days running 1092 — TEST NOW
+- Montessori Toddlers Personalized Wooden Name Puzzle — montessori-toddlers-global.myshopify.com — 1864726737523552 — Hobbies — Tier B — SOURCE: Meta — activeSeen 3, 201 ads on page, 142 days running, Pinterest Fit 8/10 — TEST NOW
+- PostureFlex Ab Roller (elbow support) — 0f9624.myshopify.com — 1254661370087070 — Fitness — Tier B — SOURCE: Meta — activeSeen 3, 41 ads on page, 45 days running, Pinterest Fit 6/10 — TEST NOW
+- Bruno's Leak-Proof Boxershorts (Auslaufschutz) — www.brunosboxers.de — 27416626137948013 — Underwear — Tier C — SOURCE: Meta — activeSeen 3, 89 ads on page, 46 days running, Pinterest Fit 4/10 — TEST NOW
+- QL Claw Back Pain Relief Tool — ql-claw.myshopify.com — 2139821486868449 — Healthcare — Tier C — SOURCE: Meta — activeSeen 4, 21 ads on page, 120 days running, Pinterest Fit 5/10 — TEST NOW
+
+### Dupes and near-misses excluded this run
+- Movina MoveMaster furniture-moving glides (`veilleuse`/day-window sweep, repin 2689 — by far the strongest Pinterest traction of the day) — SKIP: exact dupe, already delivered 2026-09-01 row 285. Caught only by checking the live sheet directly — ledger.md/master-history.tsv text search for "Movina" had already flagged it, but this is a reminder that the **sheet itself**, not just the local files, is the authoritative dedup source.
+- Axolunee Full-View Car Dashcam System (`dashcam`, activeSeen 21 — the single strongest Meta candidate found all run) — SKIP: exact dupe, already delivered 2026-08-16 row 134. **Not caught by ledger.md/master-history.tsv** (neither file mentions Axolunee) — only the live-sheet grep caught it. This is now the second time in one run the local dedup files proved incomplete relative to the sheet; treat them as a first pass, never as sufficient on their own.
+- CarTablet-store dashcam (16968b-2.myshopify.com, activeSeen 3) — SKIP: same store/page as the already-delivered CarTablet Pro Max (2026-08-19), previously caught in the 2026-08-24 run too.
+- Kymoonn quad-channel dashcam (activeSeen 5, 499 ads on page) — SKIP: not a literal dupe, but the same core problem (360°/multi-angle dashcam recording) as the just-excluded Axolunee, which is itself already delivered — same-core-problem-repeat rule (Rule 5's own posture-corrector precedent) applied to Car accessories for the first time.
+- `car organizer` keyword — 20 rows returned, none cleared activeSeen ≥3.
+- Zenvora Chemise à Coupe Ajustée Infroissable (`chemise homme`, activeSeen up to 4 across duplicate ad rows) — SKIP: exact dupe, already delivered 2026-09-01 row 292.
+- A Thousand Roses Teething Natural Pain Relief Roller (`pain relief`, activeSeen 5, 614 ads on page) — held back: `shopify_productprice` of 28.00 is in AUD, and 28 AUD converts to roughly USD/EUR 18 — under the real 25 floor once normalized to a common currency, even though the raw number cleared the API's currency-blind `minprice=25` filter. New trap worth flagging in SKILL.md: the price gate compares raw numbers regardless of currency.
+- Mama Bear Oasis neuropathy roller (`pain relief`, activeSeen 3) — held back: `urlStore` pointed at a `/blogs/news/` article, not a product page: no confirmed add-to-cart page to source or link.
+- Macorner Friendship Puzzle Hearts Necklace (`puzzle`, activeSeen 3) — SKIP: same advertiser (page_id 102971998671051) as the already-delivered Personalized Solar Garden Light — resurfaced for the third run in a row under this keyword.
+- Puzzle Funland Sacred Light Jigsaw Puzzle (`puzzle`, activeSeen 4) — SKIP: exact dupe, already delivered 2026-09-01 row 289.
+- Sparvox Muscle Trainer (`home gym`, activeSeen 3) — held back again: no `shopify_shopifydomain`, same near-miss as the 2026-09-01 run.
+- The Rugby Speed Coach Junior Accelerator Bundle (`home gym`, activeSeen 3, 12 ads on page) — held back: it's a digital 12-week training program (PDF manual, video course), not a physical dropshippable good — fails Rule 4 outright regardless of metrics.
+- Zavonix BoltMaster Mug, WISKII Active, ZJANI Custom Seiko Mod Watch, Livindahome (`day-window sweep`) — all had strong repin_count/adscount but blank `shopify_productprice` — no verifiable price to gate on, held back rather than guessed.
+- Marnetic Brain Boost Math Stamper (repin 1694, adscount 1292) and Rosemary Sloane Crossbody Bag (repin 1301, adscount 66) — both cleared every other gate but priced under the $25 floor ($11.95 and $17.95).
+- msheep Waterproof Winter Jacket with Harness (repin 652) and Gooob Anti-rust Clothespin Clip (repin 411) — both just under the $25 floor ($23.98 and $16.98).
+- Minopia Ergonomic Cushion (repin 1242, adscount 666) — SKIP: same core problem (posture/seat cushion) already declined three times this session (Cerviless Pro, Brinoa, and now this).
+
+### Persistent gaps (2026-09-02)
+- **Men's fashion: 0 qualifiers.** `mens sneakers`, `chemise homme`, `herren uhr` all swept; the one hit clearing activeSeen ≥3 (Zenvora) is an exact dupe of yesterday's delivery. No other candidate cleared the gate.
+- **Car accessories: 0 qualifiers.** `dashcam`, `car organizer`, `autozubehör`, `car accessory`, `car seat cushion` (prior run) all swept; every dashcam hit was either an exact dupe or a same-core-problem repeat of one, and nothing else in the category cleared activeSeen ≥3. Two consecutive runs at 0 for this niche — worth a fresh keyword angle next time (e.g. `dash cam` split spelling, `parking sensor`, `car phone mount`).
+- Shipped 9 of 10 — split 5 Pinterest (live) / 0 TikTok / 4 Meta. Strongest Pinterest haul yet by count, though two of the day's best-looking Pinterest and Meta candidates by raw traction (Movina, Axolunee) both turned out to be dupes only the live sheet caught — see above.
+
+### AliExpress sourcing — third consecutive run, still holding
+Same curl + `aep_usuc_f` locale-cookie method (`assets/aliexpress-search.py`), 9 fresh searches, no anti-bot block. This is now the third run in a row it has worked cleanly.
+- Brinoa Eyebrow Pen → 1005009460558215, €1.45, 10,000+ sold, 4.9★ — `INDEX-OK`
+- Cladwell Cutting Board → 1005006579021127, €5.89, 10,000+ sold, 4.5★ — `INDEX-OK`
+- FoldWash Washing Machine → 1005010572804368, €22.99, 1,000 sold, 4.9★ — `INDEX-OK`
+- Sadaro Tote Bag → 1005005966718077, €4.99, 4,000+ sold, 4.6★ — `INDEX-OK`
+- ECO. Modern Essentials 12-pack → 1005007476886425, €4.59, 1,000+ sold, 4.9★ — `EQUIVALENT`: 12-piece 3ml set, not the same bottle sizes as the $74 original — confirm scent/volume parity before quoting margin
+- Montessori Toddlers Puzzle → 1005011852954449, €5.39, 500+ sold, 4.9★ — `INDEX-OK`
+- PostureFlex Ab Roller → 1005006995164472, €4.79, 5,000+ sold, 4.9★ — `INDEX-OK`: generic ab wheel, verify the elbow-support variant specifically before committing
+- Bruno's Boxershorts → 1005012276213070, €7.39, 210 sold, 4.7★ — `INDEX-OK`
+- QL Claw → 1005009563144827, €6.19, 389 sold, 4.7★ — `EQUIVALENT`: dual-head trigger-point massager, not the same claw/hook shape, same self-massage function
+
+### EUR PRICE / EUR MARGIN filled for the first time (new Rule 5b)
+Fetched fresh rates from `open.er-api.com/v6/latest/EUR` (1 EUR = 1.159417 USD at run time). All 9 products converted and margin computed against the AliExpress COGS above. **Found and fixed forward (not retrofixed) a data-quality bug from the previous run**: rows 285–293 (2026-09-01) have a pre-converted, rounded EUR estimate written into the `Price` column itself (e.g. `€90` for an $89.90 product) with `EUR PRICE`/`EUR MARGIN` left as `n/a` — this run's rows write the true native-currency number into `Price` and the computed conversion into the correct `EUR PRICE`/`EUR MARGIN` columns instead, per Rule 5b. The 2026-09-01 rows were left as-is since fixing historical rows wasn't asked for; flagging here so a future cleanup pass knows exactly what to fix and why.
+
 ## Archive (names only)
