@@ -1,6 +1,6 @@
 ---
 name: find-winning-products
-description: Daily winning-product research run using WinningHunter. Queries ALL THREE sources every run — the PINTEREST ads API first (swept across every major market, Germany leading), then TikTok, then Meta; none of them is optional, because Pinterest alone cannot fill a run. The Pinterest sweep runs TWICE to maximise the number of Pinterest winners: once for what is scaling live, and once for the SAME CALENDAR PERIOD LAST YEAR (e.g. August 2025 when run in August 2026) via a mindays+maxdays start-date window, which surfaces 12-month survivors carrying seasonal proof — Pinterest search peaks 4-8 weeks before the buying moment, so last year's winners are an early signal, not a late one. Dropshipping products only, never established brands, priced 25-200. Delivers 10 products per run across TEN fixed niches only — hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting — sourced by MULTI-LANGUAGE KEYWORD SEARCH (English first, then French, German, Spanish, Dutch, Italian) rather than niche codes, with up to 2 men's fashion products every run. Sources a real AliExpress item link for every product automatically via the in-app browser — EUR prices, English titles, ships to Germany — with no extension or user action needed. Every supplier link is rewritten to the de.aliexpress.com domain and carries a confidence tag (LOAD-TESTED / INDEX-OK / EQUIVALENT / n/a) so a broken or approximate link can never masquerade as a verified one. Delivers the 10 products RANKED BY TESTING MERIT, best first, on Pinterest fit then traction, margin, saturation and killer risk — the order is the recommendation. Prioritises brand-new products already scaling, then proven scalers, then a wildcard outside the usual niches. A "winner" is defined by the operator's rule: running at least 30 days AND clearing a Pinterest traction floor of 50+ repins with 10+ ads on the advertiser (repins stand in for ad spend, which the Pinterest API does not expose and whose filters it silently ignores). Also enforces hard gates on price, video creative, dropship-only and Pinterest fit, and never repeats a product returned on a previous run — a persistent ledger plus a date-driven rotation seed guarantee fresh results every day. Appends each run to a cumulative spreadsheet. Use when the user asks to find winning products, do product research, "what should I test", daily product hunt, or scaling/trending product ideas.
+description: Daily winning-product research run using WinningHunter. Queries ALL THREE sources every run — the PINTEREST ads API first (swept across every major market, Germany leading), then TikTok, then Meta; none of them is optional, because Pinterest alone cannot fill a run. The Pinterest sweep runs TWICE to maximise the number of Pinterest winners: once for what is scaling live, and once for the SAME CALENDAR PERIOD LAST YEAR (e.g. August 2025 when run in August 2026) via a mindays+maxdays start-date window, which surfaces 12-month survivors carrying seasonal proof — Pinterest search peaks 4-8 weeks before the buying moment, so last year's winners are an early signal, not a late one. Dropshipping products only, never established brands, priced 25-200. Delivers 10 products per run across TEN fixed niches only — hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting — sourced by MULTI-LANGUAGE KEYWORD SEARCH (English first, then French, German, Spanish, Dutch, Italian) rather than niche codes, with up to 2 men's fashion products every run. Sources a real AliExpress item link and EUR price/margin for every product automatically via a curl-based scraper (no browser, extension or user action needed) — EUR prices, English titles, ships to Germany. Every supplier link is rewritten to the de.aliexpress.com domain and carries a confidence tag (LOAD-TESTED / INDEX-OK / EQUIVALENT / n/a) so a broken or approximate link can never masquerade as a verified one. Delivers the 10 products RANKED BY TESTING MERIT, best first, on Pinterest fit then traction, margin, saturation and killer risk — the order is the recommendation. Prioritises brand-new products already scaling, then proven scalers, then a wildcard outside the usual niches. A "winner" is defined by the operator's rule: running at least 30 days AND clearing a Pinterest traction floor of 50+ repins with 10+ ads on the advertiser (repins stand in for ad spend, which the Pinterest API does not expose and whose filters it silently ignores). Also enforces hard gates on price, video creative, dropship-only and Pinterest fit, and never repeats a product returned on a previous run — a persistent ledger plus a date-driven rotation seed guarantee fresh results every day. Appends each run to a cumulative spreadsheet. Use when the user asks to find winning products, do product research, "what should I test", daily product hunt, or scaling/trending product ideas.
 ---
 
 # Find Winning Products (WinningHunter daily run)
@@ -212,29 +212,57 @@ seeds are exhausted, never as the primary net.
    Enforced by the helper (Shopify store required, blocklist, >2M-visit stores dropped) and by
    [references/brand-blocklist.md](references/brand-blocklist.md), which you **extend every run**.
 
-5. **SOURCE SUPPLIERS AUTOMATICALLY VIA THE IN-APP BROWSER — DO NOT ASK THE USER FOR ANYTHING.**
+5. **SOURCE SUPPLIERS AUTOMATICALLY VIA THE PROVEN CURL METHOD — DO NOT ASK THE USER FOR ANYTHING.**
 
-   *(Rewritten 2026-08-17. This rule used to require asking the operator to open the Claude in
-   Chrome extension every run. That is no longer necessary and you should not ask.)*
+   *(Rewritten 2026-09-01/02 — the `mcp__Claude_Browser__*` tool this rule used to describe does
+   not exist in this environment and never has; the method below is the one actually run and
+   verified working across two consecutive real runs, 2026-08-31 and 2026-09-01.)*
 
-   Supplier links come from `mcp__Claude_Browser__*`, which needs no extension, no logged-in
-   session and no user action. Read
-   [references/aliexpress-sourcing.md](references/aliexpress-sourcing.md) before sourcing — it
-   carries the locale cookies, the extraction JS, and the match-verification procedure.
+   Run [assets/aliexpress-search.py](assets/aliexpress-search.py):
+   ```
+   python3 assets/aliexpress-search.py "<query>" <output.html>
+   ```
+   It `curl`s `https://de.aliexpress.com/w/wholesale-<query>.html?g=y` through the session's
+   HTTPS proxy, sending the locale cookie `aep_usuc_f=site=deu&c_tp=EUR&region=DE&b_locale=en_US`
+   on **every** request — setting it once does not persist into curl's cookie jar, it must be
+   passed with `-b` on each call — and prints the parsed product list (id, title, original/sale
+   price + currency, orders sold, star rating), sorted cheapest-first. No browser, no extension,
+   no logged-in session, no user action.
 
-   **The locale is a hard requirement (operator, 2026-08-17): EUR prices · English titles ·
-   ships to Germany.** Set the `aep_usuc_f` cookies *before* navigating, or the box geo-defaults
-   to Arabic titles and TND prices. Verify the first row's price and title before trusting a batch.
+   **How the extraction works, if you need to debug it:** the product grid is server-rendered
+   into a JS object literal assigned to `window._dida_config_._init_data_` — there are several
+   decoy occurrences of that string earlier in the page (minified bootstrap code); the real one is
+   immediately followed by `= { data: {"hierarchy"...`. The script does not need to parse that
+   (non-JSON, unquoted-key) object as a whole — it regexes each product's fields out of a
+   ~3000-char window following its own `"productId":"..."` match.
 
-   **Read `window._dida_config_`, never the DOM.** The old DOM extractor returns zero rows
-   silently — see the reference doc.
+   **Re-verify this still works before relying on it — every run, not just the first time.** The
+   anti-bot layer that blocked this earlier in the project's history could reopen at any time.
+   If the output (or a raw fetch) contains `bxpunish` or `_____tmd_____`, sourcing is blocked:
+   mark the supplier column `pending — AliExpress anti-bot block, retry next run` and do **not**
+   substitute a search URL or invented price. A missing link the operator knows about is fine; a
+   search page dressed up as a supplier, or a guessed price, is not.
 
-   **Claude in Chrome is now the fallback**, for when the in-app browser hits a CAPTCHA or empty
-   grids. Only then ask the user, and confirm with `list_connected_browsers`.
+   **Always re-filter results by a category keyword before picking "cheapest."** AliExpress's own
+   relevance ranking surfaces off-target matches on a blind price sort — e.g. a car-shaped novelty
+   alarm clock search returns generic desk clocks, a quit-smoking-necklace search returns generic
+   fashion chains. Filter the title list down to genuine same-product matches first, *then* sort
+   the survivors by price.
 
-   **Never solve a CAPTCHA** — ask the user to clear it and wait. If sourcing fails entirely,
-   mark the supplier column `pending — <reason>` and do **not** substitute a search URL. A missing
-   link the operator knows about is fine; a search page dressed up as a supplier is not.
+   **Pick the cheapest item that clears both `>=200 sold` and `>=4.5 stars`.** Tag it `INDEX-OK`.
+   If nothing in the filtered, genuine-match set clears both floors, take the cheapest genuine
+   match anyway and tag it `no qualifying supplier` (or `EQUIVALENT` if it's a real but
+   variant-different match — name the variant difference in the label) rather than silently
+   downgrading the floor or leaving the cell blank — see Rule 10's confidence-tag table.
+
+   Rewrite every result to `https://de.aliexpress.com/item/<productId>.html` before it touches the
+   sheet (per Rule 10 — never store a `.us` URL).
+
+   **This confirms the item is live in the DE/EUR search index with a real price/rating/orders
+   count — it does NOT confirm the item page itself loads.** That upgrade (`INDEX-OK` →
+   `LOAD-TESTED`) requires actually opening `/item/<id>.html` and reading the body, which this
+   script does not do. Do that extra step when you have time to spare; don't claim it happened
+   when it didn't.
 
    Because supplier cost now arrives as a real EUR figure, the `**Economics:**` line in Step 7
    carries a **computed** margin, not an estimate:
@@ -243,15 +271,43 @@ seeds are exhausted, never as the primary net.
    Economics: €4.49 supplier (10,000+ sold, 4.9★) | €39.95 their price | 89% margin | €35.46/order
    ```
 
-   **Open the item page to confirm the price before writing that line.** The listed figure is
-   usually a **time-limited promo** with an expiry date — quote the expiry alongside it. And the
-   € appears both before *and* after the number on AliExpress DE, so a careless prefix-only regex
-   grabs the strikethrough original and overstates COGS ~2×. Both traps are documented in the
-   reference.
+   The listed AliExpress figure is usually a **time-limited promo** with no visible expiry in the
+   search-page data this script reads — say so rather than inventing one. And the € appears both
+   before *and* after the number on AliExpress DE pages, so a careless prefix-only regex on a raw
+   page fetch grabs the strikethrough original and overstates COGS ~2× — the script's own
+   `originalPrice`/`salePrice` field extraction avoids this by keying off the JSON field names
+   rather than scanning for a `€` character, but be aware of the trap if you ever fall back to
+   reading a raw item-page fetch by hand.
 
-6. **FASHION IS IN EVERY RUN.** Fashion and accessories are always searched, regardless of what
-   the rotation seed selects. The seed only decides *which slice* of fashion. Fashion is also
-   the single most Pinterest-native category, so it usually supplies the top-ranked products.
+## 5b. EUR PRICE AND EUR MARGIN — COMPUTE THEM EVERY RUN, EVERY PRODUCT (added 2026-09-02)
+
+The sheet carries two columns right after `Price` — `EUR PRICE` and `EUR MARGIN` — that were
+inserted into the sheet at some point without a corresponding rule ever being written here. They
+sat blank on every one of 289 rows until this rule existed. Fill both, every product, every run:
+
+**EUR PRICE** — the store's selling price (column `Price`, in whatever currency the ad targets)
+converted to EUR:
+1. Fetch fresh EUR-based rates once per run: `curl https://open.er-api.com/v6/latest/EUR` through
+   the session proxy (no key required; verified reachable 2026-09-02). The response's `rates`
+   object gives, for each currency code, how many units of that currency equal 1 EUR.
+2. If the product's currency is already `EUR`, `EUR PRICE = Price`.
+3. Otherwise `EUR PRICE = Price / rates[currency_code]`. Round to 2 decimals; write as a **number**
+   (not a string), so the sheet's own currency formatting renders it.
+4. If the API call fails or the currency code isn't in the response, write `n/a` — never guess a
+   rate from memory or from a stale rate seen on an earlier run. Rates move; re-fetch every run.
+
+**EUR MARGIN** — how much headroom the sell price leaves over the sourced COGS, now that both are
+in EUR:
+```
+EUR MARGIN = (EUR PRICE − COGS EUR) / EUR PRICE
+```
+Store as a decimal fraction (`0.92` = 92% margin), matching the convention already used for the
+`growth` columns elsewhere in this sheet, and apply a percentage number format when writing it.
+If `COGS EUR` is `n/a` (supplier sourcing pending or blocked that run — see Rule 5), `EUR MARGIN`
+is `n/a` too — do not compute a margin against a cost you don't actually have.
+
+Do this for the day's delivered products only; there is no obligation (and no value) in
+backfilling every historical row retroactively, though a one-off cleanup pass is fine if asked.
 
 7. **THE DAILY TARGET IS 10 PRODUCTS — AND 10 MEANS 10.** Every run delivers **10**, split
    **4 Tier A / 4 Tier B / 2 Tier C**. If the user names a different number, that wins.
@@ -314,11 +370,11 @@ seeds are exhausted, never as the primary net.
    | `DEAD LINK (was <id>) - verified <date>` | You confirmed a 404 by reading the page body. |
    | `UNVERIFIED - recheck` | The read was blocked/inconclusive. **Keep the original link.** |
 
-   **A blocked read is NEVER a dead verdict.** See the throttle signatures in
-   [references/aliexpress-sourcing.md](references/aliexpress-sourcing.md): a throttled page and a
-   404 look identical unless you read the body. On 2026-08-18, judging on tab title alone marked
+   **A blocked read is NEVER a dead verdict.** A throttled/anti-bot page (`bxpunish`,
+   `_____tmd_____` — see Rule 5) and a genuine 404 look nothing alike once you read the body, but
+   judging from a page *title* alone conflates them. On 2026-08-18, doing exactly that marked
    **15 live links dead**, and they had to be reverted. Confirm dead only on an explicit
-   "can not be found" string.
+   "can not be found" string in the body.
 
    **Prefer an honest weaker tag over an empty cell.** The operator wants the column filled; a
    labelled `INDEX-OK` is useful, a blank is not, and an unlabelled guess is worse than both.
@@ -844,8 +900,8 @@ previous run's, tagged with the run date. Never start a fresh sheet.
    | H | FB page |
    | I | Cur. |
    | J | Price |
-   | **K** | **EUR PRICE** |
-   | **L** | **EUR MARGIN** |
+   | **K** | **EUR PRICE** — see Rule 5b for how to compute this, every product, every run |
+   | **L** | **EUR MARGIN** — see Rule 5b |
    | M | Est. gross / order |
    | N | Active ads |
    | O | Ads growth 1m |
@@ -1042,11 +1098,14 @@ end-to-end:
 - `references/winninghunter-filters.md` — full niche-code reference, filter semantics, metric
   caveats (e.g. InvariantCulture price parsing).
 - `references/brand-blocklist.md` — established brands to exclude from dropship candidates.
-- `references/aliexpress-sourcing.md` — **new as of the 2026-08-17 rewrite of Rule 5.** Must carry
-  the `aep_usuc_f` locale-cookie setup (EUR / English / ships-to-Germany), the
-  `window._dida_config_` extraction JS, the match-verification procedure, the promo-expiry and
-  double-€-symbol traps referenced above, and the throttle-vs-404 signatures referenced in Rule 10.
-  Does not exist yet — author it before the next real run, or Rule 5/10 cannot be followed as written.
+- ~~`references/aliexpress-sourcing.md`~~ — **superseded, 2026-09-01.** This file was never
+  authored, and the `mcp__Claude_Browser__*` tool Rule 5 used to describe never existed in this
+  environment. Rule 5 now describes the method that actually works instead:
+  [assets/aliexpress-search.py](assets/aliexpress-search.py), a `curl`-based scraper verified
+  across two consecutive real runs (2026-08-31, 2026-09-01) with no anti-bot block hit. Treat that
+  as a working capability, not an unmet dependency — but re-verify it fresh every run per Rule 5's
+  own caveat, since the anti-bot layer that blocked it earlier in the project's history could
+  reopen at any time.
 - `assets/build-workbook.ps1` — the local `.xlsx` workbook builder.
 - A configured WinningHunter API key, plus TikTok Shop and Google Sheets connector access, are
   assumed by the workflow and are environment-specific — not something a skill file can carry.
