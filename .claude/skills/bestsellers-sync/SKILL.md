@@ -1,13 +1,13 @@
 ---
 name: bestsellers-sync
-description: 'Pull the top 50 best-selling products (by net items sold, trailing 30 days) from the Zanaro Berlin Shopify store and reconcile them against the Asana task "List of bestsellers to copy" (project "1E. Pinterest - US") two ways — (1) SYNC: insert any products missing from the list right after the last strikethrough entry and before the first normal-text entry; (2) RANK-SORT: among the normal-text (not-yet-strikethrough) entries only, reorder the ones that appear in the top 50 to the front, in rank order (best-seller first), leaving every strikethrough entry exactly where it is and untouched. Use when the user asks to sync bestsellers, update the bestsellers-to-copy list, check what''s newly trending, refresh the product-copy backlog from live Shopify sales data, or re-rank/reorder the list by sales.'
+description: 'Pull the top 100 best-selling products (by net items sold, trailing 30 days) from the Zanaro Berlin Shopify store and reconcile them against the Asana task "List of bestsellers to copy" (project "1E. Pinterest - US") two ways — (1) SYNC: insert any products missing from the list right after the last strikethrough entry and before the first normal-text entry; (2) RANK-SORT: among the normal-text (not-yet-strikethrough) entries only, reorder the ones that appear in the top 100 to the front, in rank order (best-seller first), leaving every strikethrough entry exactly where it is and untouched. Use when the user asks to sync bestsellers, update the bestsellers-to-copy list, check what''s newly trending, refresh the product-copy backlog from live Shopify sales data, or re-rank/reorder the list by sales.'
 ---
 
 # Bestsellers sync (Shopify → Asana "List of bestsellers to copy")
 
 Keeps the Asana product-copy backlog current with what's actually selling, and keeps the
 un-actioned part of it prioritized by real sales rank. Read-only on Shopify. On Asana this skill
-has exactly two effects, run independently or together: **adding** missing top-50 products, and
+has exactly two effects, run independently or together: **adding** missing top-100 products, and
 **reordering** normal-text entries by rank. It never edits, removes, or re-strikes an existing
 line's content or status.
 
@@ -23,12 +23,12 @@ If a colleague runs this skill against a different workspace/store, re-derive th
 (search Asana for the project/task by name, confirm the shop with `get-shop-info`) rather than
 reusing the values above blind.
 
-## Step 1 — Pull the top 50 by items sold (last 30 days)
+## Step 1 — Pull the top 100 by items sold (last 30 days)
 
 Run, via `run-analytics-query`:
 
 ```
-FROM sales SHOW net_items_sold GROUP BY product_title ORDER BY net_items_sold DESC LIMIT 50 SINCE -30d UNTIL today
+FROM sales SHOW net_items_sold GROUP BY product_title ORDER BY net_items_sold DESC LIMIT 100 SINCE -30d UNTIL today
 ```
 
 `net_items_sold` is the right metric — it counts units sold, not revenue. Do not substitute
@@ -80,15 +80,15 @@ normal-text line that follows it. Don't hardcode any specific pair of names as t
 it moves over time as more items get crossed off. Always re-derive it from the live `html_notes`
 on every run.
 
-## Mode A — SYNC: add missing top-50 products
+## Mode A — SYNC: add missing top-100 products
 
 Run this when the user asks to sync/update/refresh the list against current sales.
 
-A top-50 product is "on the list" if its normalized key (Step 3) matches any normalized existing
+A top-100 product is "on the list" if its normalized key (Step 3) matches any normalized existing
 entry, strikethrough or not — don't re-add something just because it's already been struck
 through.
 
-**Insert every top-50 product that has no match anywhere in the list**, at the strikethrough
+**Insert every top-100 product that has no match anywhere in the list**, at the strikethrough
 boundary: immediately after the last strikethrough entry and before the first normal-text entry.
 Do not insert anywhere else.
 
@@ -105,7 +105,7 @@ Run this when the user asks to reorder/re-rank/re-prioritize the list by sales.
 skip it entirely, wherever it sits in the list.**
 
 Within the normal-text bucket:
-1. Split it into two groups: entries whose normalized key matches a top-50 product (**ranked**),
+1. Split it into two groups: entries whose normalized key matches a top-100 product (**ranked**),
    and everything else (**unranked**).
 2. Sort the ranked group by its Shopify rank ascending (rank 1 = best-seller = first).
 3. Rebuild the bucket as: ranked group (in rank order) followed by the unranked group, **in its
@@ -122,7 +122,7 @@ dedupe as part of this skill; that's a separate cleanup task.
 
 A single request ("sync and re-rank", "update the list") can invoke both: run Mode A first
 (insert the newly-missing products as plain entries), then Mode B (which will naturally pick up
-the just-inserted entries if they're in the top 50, since they're now part of the normal-text
+the just-inserted entries if they're in the top 100, since they're now part of the normal-text
 bucket). Report both effects separately (see Step 5).
 
 ## Step 4 — Write it back
@@ -141,9 +141,9 @@ status annotation must survive verbatim on every line you didn't intentionally t
 ## Step 5 — Report
 
 State clearly, for whichever mode(s) ran:
-- **Mode A:** how many of the top 50 were already on the list vs. newly added (name each added
+- **Mode A:** how many of the top 100 were already on the list vs. newly added (name each added
   product), and the exact insertion point (the two neighboring entries it landed between).
-- **Mode B:** which normal-text entries were matched to a top-50 rank and their new order (name
+- **Mode B:** which normal-text entries were matched to a top-100 rank and their new order (name
   + rank for each), and confirm every unranked normal-text entry kept its original relative order
   and every strikethrough entry kept its exact original position.
 - Either way: confirm no strikethrough entry was altered, moved, or had its status text changed.
