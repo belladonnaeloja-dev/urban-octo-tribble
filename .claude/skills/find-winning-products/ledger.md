@@ -318,4 +318,52 @@ Same curl + `aep_usuc_f` locale-cookie method (`assets/aliexpress-search.py`), 9
 ### EUR PRICE / EUR MARGIN filled for the first time (new Rule 5b)
 Fetched fresh rates from `open.er-api.com/v6/latest/EUR` (1 EUR = 1.159417 USD at run time). All 9 products converted and margin computed against the AliExpress COGS above. **Found and fixed forward (not retrofixed) a data-quality bug from the previous run**: rows 285–293 (2026-09-01) have a pre-converted, rounded EUR estimate written into the `Price` column itself (e.g. `€90` for an $89.90 product) with `EUR PRICE`/`EUR MARGIN` left as `n/a` — this run's rows write the true native-currency number into `Price` and the computed conversion into the correct `EUR PRICE`/`EUR MARGIN` columns instead, per Rule 5b. The 2026-09-01 rows were left as-is since fixing historical rows wasn't asked for; flagging here so a future cleanup pass knows exactly what to fix and why.
 
+## 2026-09-03 (tenth real run — genuinely thin day, pool exhaustion after 10 runs of dedup)
+- Clarendale Restedge Ruffle Blouse — clarendale.co — 687316955912 — Women's fashion — Tier A — SOURCE: Pinterest (live) — repin_count 86, adscount 50, days running 33 — TEST NOW — **third distinct product from this advertiser** across this sheet's history (Lovushape Sculpting Bodysuit 2026-08-17, Florette wearable-vase brooch 2026-08-27, now a blouse) — kept per the established "same advertiser, genuinely different category each time" precedent (Verlimo), but flagged since three is more than any other advertiser has reached.
+- Pridola Natural Wireless Wall Sconce — pridola.co — 2316485935485048 — Lighting — Tier A — SOURCE: Meta — activeSeen 3, 281 ads on page, 129 days running, Pinterest Fit 8/10 — TEST NOW — currency unconfirmed (API returned an empty `shopify_currency` object), treated as USD pending live-page check.
+- Lou santé bien-être Cotons au Curcuma — sefia.co — 973611909032273 — Beauty — Tier B — SOURCE: Meta — activeSeen 4, 613 ads on page, 56 days running, Pinterest Fit 7/10 — TEST NOW
+- RYER Nasssauger (wet extraction vacuum) — ryer.de — 939834552372026 — Home care — Tier B — SOURCE: Meta — activeSeen 3, 1052 ads on page, 63 days running, Pinterest Fit 5/10 — TEST NOW
+- KyroLabs CerviFlex Neck Stretcher — thrivewild.myshopify.com — 1835550110709448 — Healthcare — Tier C — SOURCE: Meta — activeSeen 3, 78 ads on page, 257 days running, Pinterest Fit 4/10 — TEST NOW
+
+### Pinterest sweep — 10 day-windows, only 1 new winner
+Swept `search_pinterest_ads` across ten non-overlapping `days_min`/`days_max` windows (30–45, 45–65, 60–90, 90–150, 90–250, 150–250, 250–350, 250–600, 350–400, 400–600, 600–900, 700–800, 700–900, 800–1200, 1500–3000) at `limit=100` each — the widest single-run sweep to date. Nearly every window returned only advertisers already in the ledger (Brinoa, Cladwell, FoldWash, Sadaro, Movina, Verlimo, Sususummer, Saúde I Beleza Feminina) or gate failures (Sususummer Bead Drill Bits $22.99, mamymarket bag $16.99, Minopia cushion repeat). Only Clarendale's ruffle blouse (a brand-new page/product for this session) cleared every gate as genuinely new.
+
+### Dupes and near-misses excluded this run
+- Movina MoveMaster, Brinoa/Cladwell/FoldWash/Sadaro (Pinterest), Verlimo PowerBands (`-lastyear` window), Sususummer VOCO Trousers, Saúde I Beleza Feminina Karseell mask, Sususummer Bead Drill Bits — all resurfaced across the 10-window Pinterest sweep as exact dupes of already-delivered products (2026-08-29 through 2026-09-02) — none new.
+- WolfBox Mirror Dash Cam, Cuoeo HD Dash Cam Set, Newbeew/Rouvenor/Fourisily/Scerich/AutoLinkr dashcams (`dash cam`, `parking sensor`) — none cleared activeSeen ≥3 except Soundman Car Audio's Vantrue E1 Pro (activeSeen 5) — SKIP: Vantrue is an established consumer-electronics dashcam brand sold on Amazon/major retail, not a dropship-sourceable generic; this is an affiliate page for it, not an independent store.
+- Meine Studios ERGO SLEEVE (`accessoire voiture`, activeSeen up to 9) — SKIP again: laptop ergonomic sleeve, not a car accessory (fuzzy keyword match), and posture-correction category already declined repeatedly this session.
+- Beshap Orelina Body Gainant (`sous-vêtements`, activeSeen 3) — SKIP: same page_id as the already-delivered Beshap Shorty Gainant (2026-08-24) — same advertiser, same shapewear core problem.
+- Nooktales Magic Clock Tower (`home workout`→no, actually surfaced under `ambient light`, activeSeen 4, price $72.99 valid) — SKIP: same advertiser and same core product line (DIY miniature LED diorama kit) as the already-delivered Nooktales Magic Treasure House Book Nook Kit (2026-08-28).
+- femkestudio Ikseon-dong Hanok Bakery Miniature House Kit (`craft kit`, activeSeen 4, ads 664) — held back: `shopify_productprice` was the literal string `"False"`; attempted to fetch the live product page for the real price but the domain (byanavrin.com) is blocked by this session's egress proxy — could not verify, so not guessed.
+- Kymoonn quad-channel dashcam, CarTablet dashcam — resurfaced under `parking sensor`/`accessoire voiture`, both already excluded in the 2026-09-02 run as dupes/same-core-problem repeats.
+- Shapellx AirSlim shapewear panty (`seamless underwear`, activeSeen 10) — SKIP: already blocklisted as an established DTC shapewear brand (own manufacturing) on 2026-08-19, resurfaced and skipped again per that standing note.
+- Momcozy seamless maternity panties (`seamless underwear`) — the only activeSeen ≥3 rows for this product all carried a blank/`"False"` price; the rows with a real price (€29.99) topped out at activeSeen 1–3 combined inconsistently — no row cleared both gates simultaneously, held back.
+- Leaf Co Gua Sha Sculptant Bio-Collagène PDRN (`soin visage`, activeSeen 3) — SKIP: same advertiser (leaf-cosmetics.com) as the already-delivered Leaf Cosmetics PDRN Bio-Collagen Eye Stick (2026-07-30), and the sheet already carries six other collagen-branded skincare products — same-core-problem-repeat at the category level.
+- Ko-Kow Pack Triple Collagen (`soin visage`, activeSeen 3) — SKIP on the same collagen-category-saturation grounds (7th collagen product would have been added).
+- Curren Italia watch collection (`orologio uomo`), GiftTail personalized watch (`reloj hombre`), Gentoria/Houstape/Firewalky/Meindeinhaus men's sets (`herrenmode`) — swept for Men's fashion, none cleared activeSeen ≥3.
+- Bells of Steel adjustable kettlebell, Nike Strength kettlebell, Relifesports power tower, GORNATION pull-up bar, NOME PowerStep Pro (`kettlebell`, `home workout`) — swept for Fitness, none cleared activeSeen ≥3.
+- Junivia Spiele/Tdd Toy/Pickforu/Fun-Puzzle jigsaw lines (`puzzle 1000`, `diamond painting` timed out) — swept for Hobbies, none new (Puzzle Funland Sacred Light resurfaced as the known 2026-09-01 dupe).
+- Fredgies thong, Iris Lingerie ensembles, Videris Lingerie bras, Rounderbum men's shapewear (`lingerie`) — swept for Underwear, none cleared activeSeen ≥3.
+
+### Persistent gaps (2026-09-03)
+- **Hobbies: 0 qualifiers.** `craft kit`, `puzzle 1000` both swept; the one activeSeen-clearing hit (femkestudio miniature kit) had an unverifiable price and the egress-blocked domain couldn't confirm it live; everything else was a dupe or gate failure.
+- **Underwear: 0 qualifiers.** `shapewear`, `seamless underwear`, `lingerie` all swept; every activeSeen ≥3 hit was a same-advertiser dupe (Beshap), an already-blocklisted established brand (Shapellx), or missing a valid price (Momcozy).
+- **Fitness: 0 qualifiers.** `kettlebell`, `home workout`, `resistance band` (from 2026-09-02) all swept across two runs now; nothing has cleared activeSeen ≥3 in this niche for two consecutive days.
+- **Car accessories: 0 qualifiers.** `dash cam`, `parking sensor`, `accessoire voiture`, `phone mount car` all swept; every real dashcam hit was an established brand (Vantrue) or resurfaced repeat; three consecutive runs at 0 for this niche now — the dashcam/car-mount seam appears fully picked over, worth trying a genuinely different sub-category next time (e.g. seat organizers, trunk storage, tire-pressure gauges).
+- **Men's fashion: 0 qualifiers.** `orologio uomo`, `reloj hombre`, `herrenmode` all swept; nothing cleared activeSeen ≥3. Three consecutive runs at 0–low for this niche.
+- Shipped 5 of 10 — split 1 Pinterest (live) / 0 TikTok / 4 Meta. This is the thinnest run by count since real-run tracking began, and it is a genuine pool-exhaustion result, not under-effort: this run's Pinterest sweep (10 day-windows, the widest yet) and Meta sweep (26 keyword searches spanning EN/FR/DE/IT/ES across all 10 niches) is the largest single-run search volume on record.
+
+### AliExpress sourcing — fourth consecutive run, still holding
+Same curl + `aep_usuc_f` locale-cookie method (`assets/aliexpress-search.py`), 5 fresh searches, no anti-bot block.
+- Clarendale Ruffle Blouse → 1005005570621060, €8.09, 381 sold, 4.4★ — `no qualifying supplier`: cheapest genuine ruffle-blouse match; nothing in this specific style clears the 4.5★ floor
+- Pridola Wall Sconce → 1005011782864310, €2.39, 1,000+ sold, 4.9★ — `INDEX-OK`
+- Lou santé Curcuma Cotons → 1005007805536876, €2.39, 2,000+ sold, 4.9★ — `INDEX-OK`
+- RYER Nasssauger → 1005008830697324, €37.39, 239 sold, 4.9★ — `INDEX-OK`: bed/mattress dust-mite vacuum, same core function as the wet-extraction Nasssauger
+- KyroLabs CerviFlex → 1005008430152211, €4.79, 10,000+ sold, 4.9★ — `INDEX-OK`
+
+EUR PRICE/EUR MARGIN computed per Rule 5b using fresh `open.er-api.com` rates (1 EUR = 1.15828 USD at run time).
+
+### Sheet column layout drifted again — the blank spacer at AD is gone
+A fresh header read (row 4) this run found the sheet had changed shape again since 2026-09-02: the blank spacer column that sat at `AD` yesterday is gone, so `AliExpress supplier` is now `AD` (was `AE`), `COGS EUR` is now `AE` (was `AF`), and the checkbox (`Approved For Asana`) is now the last column at `AF` (was `AG`). This is exactly the drift pattern SKILL.md's Step 9 warns about — caught only because the header was re-read fresh immediately before writing rather than reused from yesterday's script. Today's rows were built and formatted against the freshly-confirmed layout; read back correctly aligned afterward.
+
 ## Archive (names only)
