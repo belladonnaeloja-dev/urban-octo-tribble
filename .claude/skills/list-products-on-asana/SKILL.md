@@ -1,6 +1,6 @@
 ---
 name: list-products-on-asana
-description: Create Asana product-test tasks from the winning-products master log, for the approved products only. Looks ONLY at the last 10 products in the table — the most recent research run — reads the "Approved For Asana" checkbox column (AG) across those ten rows, takes ONLY the ones where it is TRUE (older ticked rows further up the sheet are past decisions and are left alone unless the operator asks for a wider window), skips any product that already has a task so re-runs never duplicate, and creates one task per remaining product in the "1A. Pinterest - DE" project under section "1B. Create Product Page (Aireen)". Each task is named with a COINED HOUSE BRAND NAME — two linked words plus ™, reflecting the product's main benefit (BeamRestore™, LymphFlow™, HairThrive™) — never the supplier's own product name and never a name any earlier task or store product already uses, and is filled from the house template (marketing angle, competitor's link, aliexpress, a Note line holding only the "Selling price /Offer" cell, the WinningHunter link on "ad:", the Meta ads-library link on "ad library:", then blank video/pagepilot/store-URL lines for the page builder). Use whenever the user asks to list products on Asana, create Asana tasks for products, "add the checked products to Asana", push the ticked rows from the research sheet into Asana, or create test tasks for products they have selected — and also when they tick boxes in the master log and ask you to action them, even without naming Asana. Not for creating arbitrary Asana tasks (use the Asana tools directly) and not for finding new products (that is find-winning-products).
+description: Create Asana product-test tasks from the winning-products master log, for the approved products only. Looks ONLY at the last 10 products in the table — the most recent research run — reads the "Approved For Asana" checkbox column (re-verify its letter against row 4 every run, it has shifted twice already) across those ten rows, takes ONLY the ones where it is TRUE (older ticked rows further up the sheet are past decisions and are left alone unless the operator asks for a wider window), skips any product that already has a task so re-runs never duplicate, and creates one task per remaining product in the "1A. Pinterest - DE" project under section "1B. Create Product Page (Aireen)". Each task is named with a COINED HOUSE BRAND NAME — two linked words plus ™, reflecting the product's main benefit (BeamRestore™, LymphFlow™, HairThrive™) — never the supplier's own product name and never a name any earlier task or store product already uses, and is filled from the house template (marketing angle, competitor's link, aliexpress, a Note line holding only the "Selling price /Offer" cell, the WinningHunter link on "ad:", the Meta ads-library link on "ad library:", then blank video/pagepilot/store-URL lines for the page builder). Use whenever the user asks to list products on Asana, create Asana tasks for products, "add the checked products to Asana", push the ticked rows from the research sheet into Asana, or create test tasks for products they have selected — and also when they tick boxes in the master log and ask you to action them, even without naming Asana. Not for creating arbitrary Asana tasks (use the Asana tools directly) and not for finding new products (that is find-winning-products).
 ---
 
 # List Products On Asana
@@ -16,26 +16,59 @@ to include one they did not tick.
 **Master log** — spreadsheet `1ha9uILlG-VetpFMqHCkP3F9P_o7k4nUrZS-zAk3pZJ4`, tab
 `Winning Products`. Header is on **row 4**; data starts at row 5.
 
-| Col | Field | Used for |
+| Col (as of 2026-09-04) | Field | Used for |
 |---|---|---|
 | `D` | Product | the source name — you rename it, see step 4 |
-| `X` | Main killer / risk | warnings worth carrying into the task |
-| `Y` | Their hook (first line) | the marketing angle |
-| `Z` | Open in WinningHunter | **the `ad:` line** |
-| `AA` | Product page | `competitor's link:` |
-| `AB` | The winning ad (Meta) | **the `ad library:` line** |
-| `AD` | AliExpress supplier | `aliexpress:` |
-| `AE` | COGS EUR | risk check only — does **not** go in the Note |
-| `AF` | Selling price /Offer | **the whole `Note:` line** — the colleague fills this in |
-| **`AG`** | **Approved For Asana** | **the checkbox — this is the filter** |
+| `X` | Verdict | not used directly — a newer column, ignore it |
+| `Y` | Main killer / risk | warnings worth carrying into the task |
+| `Z` | Their hook (first line) | the marketing angle |
+| `AA` | Open in WinningHunter | **the `ad:` line** |
+| `AB` | Product page | `competitor's link:` |
+| `AC` | The winning ad (Meta) | **the `ad library:` line** |
+| `AD` | All their live ads | not used |
+| `AE` | AliExpress supplier | `aliexpress:` |
+| `AF` | COGS EUR | risk check only — does **not** go in the Note |
+| `AG` | Selling price /Offer | **the whole `Note:` line** — the colleague fills this in |
+| **`AH`** | **Approved For Asana** | **the checkbox — this is the filter** |
 
-Re-read the header row before trusting these letters. Columns have been inserted before and
-positions shift — they shifted by two between Aug and Sep 2026, which is how `Listed On Asana`
-at `AE` became `Approved For Asana` at `AG`.
+**Do not trust this table blindly — re-read row 4 every run.** It has drifted twice already: `AE`
+→ `AG` between Aug and Sep 2026 (a two-column insert), then `AG` → `AH` within Sep 2026 alone (a
+one-column insert — "Verdict" landed at `X`, pushing everything after it one letter right). The
+sheet's own header-note row sometimes lags the real layout too — it said "AG = Approved For
+Asana" days after the sheet had already moved to `AH`, so verify against the actual row 4 cells,
+not the note. Confirm every lettered column below against row 4 by column position (index 0 of a
+read starting at row 4 is column A) before trusting any of the steps that follow.
 
-The google-sheets MCP is unreliable. When it is `CONNECTION_CLOSED`, read the sheet with
-`find-winning-products/assets/sheets-direct.ps1` (`Get-SheetsAuthHeader`, `Get-SheetsFormulas`) —
-it uses the same service-account key and returns formulas, which is what you want anyway.
+**Reading the sheet — two paths, in order of preference:**
+
+1. **Autosheet** (`autosheet_start_agent_google_sheets_spreadsheet` or a native google-sheets MCP,
+   if either is connected) — ask it directly for the row window, formulas, and formatted values in
+   one natural-language request. Fastest when it's up. It runs on its own billing/trial and can
+   come back `api-billing-free-trial-ended`; if so, fall back to path 2 rather than guessing from
+   its error message.
+2. **Google Drive `download_file_content`** — reliable, always available if Drive is connected,
+   but needs two different exports because no single format gives you everything:
+   - `exportMimeType: text/csv` for plain values (checkbox state, COGS, currency-formatted
+     `Selling price /Offer`, product names). The API returns this **base64-encoded**; decode it
+     before parsing as CSV. This format flattens `=HYPERLINK(url,"label")` cells down to just the
+     label ("WinningHunter", "Open shop"), so it's useless for the ad/competitor/AliExpress links.
+   - `exportMimeType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` (XLSX)
+     for the real URLs. Decode the base64 result to a `.xlsx` file and open it with `openpyxl`
+     (`load_workbook(path, data_only=False)`) — reading a cell's `.value` on a hyperlink cell
+     returns the **raw formula string**, e.g.
+     `=HYPERLINK("https://app.winninghunter.com/ad/...","WinningHunter")`; pull the URL out of
+     that. This also gives you the checkbox as a real Python `True`/`False`/`None`, no case-folding
+     needed. Both exports return the whole workbook in one call — no way to request a row range —
+     so expect a large response; read it back with a script (`jq`/`python`) rather than trying to
+     eyeball the raw dump. `read_file_content` (the natural-language summary) is not reliable for
+     this: it renders hyperlinks the same lossy way as the CSV, silently truncates before reaching
+     rows deep in a 300+ row sheet, and can concatenate content from other tabs into the same
+     response with no clear boundary — don't use it for anything beyond a quick sanity check.
+   - The workbook has two tabs — `Winning Products` and `🏆  WINNERS LIBRARY` — open the sheet by
+     name (`wb['Winning Products']`), not by index; sheet order isn't guaranteed.
+   - There's no dedicated Google Sheets MCP connector to install — Google Drive is the first-party
+     one, and this two-export approach is the reliable way to get everything out of it. Don't burn
+     time re-searching the connector registry for one.
 
 **Asana** — project `1204544103564278` ("1A. Pinterest - DE "),
 <https://app.asana.com/1/1202393474006143/project/1204544103564278>, section `1204544103564283`
@@ -48,7 +81,8 @@ naming: `1212348619651728` (`CeramiFix™`).
 
 **The window is the last 10 products in the table**, not the whole sheet. Find the last row that
 has a product in column `D`, take the ten rows ending there, and consider only those. Within that
-window, keep the rows whose `AG` reads as true.
+window, keep the rows whose "Approved For Asana" column (`AH` as of 2026-09-04 — re-verify against
+row 4) reads as true.
 
 That window is one research run: `find-winning-products` delivers ten products per run, so the
 bottom ten rows are the batch the operator has just been through. Everything above them was
@@ -57,8 +91,10 @@ build something today, and re-reading it is how a run drags eighty stale product
 project. If the ten-row window contains no ticked rows, that is a real answer: report it and
 create nothing.
 
-Match `AG` **case-insensitively** — the API returns `True`, not `TRUE`, and a strict
-`-eq 'TRUE'` silently matches nothing.
+If you're reading via the CSV export, match the checkbox text **case-insensitively** — it comes
+back `True`/`FALSE`, not `TRUE`, and a strict `-eq 'TRUE'` silently matches nothing. Reading via
+the XLSX export with `openpyxl` avoids this entirely — the checkbox comes back as a real Python
+`True`/`False`/`None`.
 
 Do not use `find_in_spreadsheet` to locate the rows — it **caps at 50 results** and silently
 truncates, and it also matches the word "true" inside ordinary prose in other columns. Read the
@@ -81,9 +117,9 @@ Because tasks are now named with a coined brand name that bears no resemblance t
 `opt_fields=name,notes`. Keep this response — step 4 reuses it as the register of coined names
 already spent, so fetch it once. Match a sheet row against a task if **any** of these hit:
 
-1. the WinningHunter ad id from `Z` appears in the task notes — the strongest key, unique per row;
-2. the competitor URL from `AA` appears in the task notes;
-3. the AliExpress item id from `AD` appears in the notes of an existing task — the sheet finds the
+1. the WinningHunter ad id from `AA` appears in the task notes — the strongest key, unique per row;
+2. the competitor URL from `AB` appears in the task notes;
+3. the AliExpress item id from `AE` appears in the notes of an existing task — the sheet finds the
    same physical product under two different competitors, and those rows share a supplier item
    while sharing nothing else. Row 96 (hailiey.com) and row 147 (roseionly.com) are the same
    over-the-door shoe rack on item `1005010433467384`; row 96 is already live as `ShoeTidy™`, so
@@ -99,18 +135,21 @@ before creating rather than assuming.
 
 ### 3. Pull the details
 
-`Z`, `AA`, `AB` and `AD` hold `=HYPERLINK(url,"label")` formulas, so a normal read returns
-"WinningHunter" / "Open shop" / "View ad" and not the URL. Fetch them with
-**`get_sheet_formulas`** (or `Get-SheetsFormulas`) and extract the URL from inside the formula.
-Some rows store `AD` as a plain URL instead — handle both.
+`AA`, `AB`, `AC` and `AE` hold `=HYPERLINK(url,"label")` formulas, so a normal (CSV-style) read
+returns "WinningHunter" / "Open shop" / "View ad" and not the URL. Read them via the XLSX +
+`openpyxl` path from Sources and take the `.value` on each cell — that's the raw formula string;
+extract the URL from inside it. Some rows store the AliExpress cell as a plain URL instead of a
+formula — handle both.
 
-`AF` is the opposite case: read it as a **`FORMATTED_VALUE`, never as a formula**. The cell is
-currency-formatted, so a formula read returns `34` where the operator actually wrote `34€` — and
-the `Note:` line is supposed to be their text verbatim, currency symbol included.
+`AG` (Selling price /Offer) is the opposite case: pull it from the **CSV export or a formatted
+read, never from the formula/raw value**. The cell is currency-formatted, so a raw read returns
+`34` where the operator actually wrote `34€` — and the `Note:` line is supposed to be their text
+verbatim, currency symbol included.
 
-Rows sourced from TikTok Shop carry `n/a - TikTok Shop native listing` in `AA`. That is real data,
-not a gap: write `n/a - TikTok Shop native listing` into the competitor line rather than leaving
-it blank or inventing a link.
+Rows sourced from TikTok Shop can carry non-standard values in the competitor/ad-library
+columns instead of a normal shop or Facebook link — e.g. a WinningHunter TikTok-listing URL, or
+literal `n/a` text. That's real data, not a gap: write whatever is actually in the cell rather
+than leaving the line blank or inventing a link.
 
 ### 4. Name the product
 
@@ -130,7 +169,7 @@ The name is **two words joined into one**, CamelCase, followed by `™`:
 Rules that make a name usable:
 
 - **Name the benefit, not the category.** `BeamRestore` sells the outcome; `HeadlightKit` sells
-  a shelf. The winning ad's hook in `Y` tells you which benefit the market is actually buying —
+  a shelf. The winning ad's hook in `Z` tells you which benefit the market is actually buying —
   build the name from that.
 - **Two linked words, one token, CamelCase, `™` appended.** No spaces, no hyphens.
 - **ASCII only, ~14 characters or fewer.** These names get baked into images and page copy across
@@ -181,12 +220,12 @@ builder fills them in:
 ```
 marketing angle: <one or two sentences: what it is, who it is for, what it is sold on — naming the coined brand>
 
-competitor's link: <url from AA>
-aliexpress: <url from AD>
-Note: <AF verbatim, e.g. "1+1: 39.99" — leave blank if AF is empty>
+competitor's link: <url from AB>
+aliexpress: <url from AE>
+Note: <AG verbatim, e.g. "1+1: 39.99" — leave blank if AG is empty>
 
-ad: <url from Z>
-ad library: <url from AB, when it is a Meta ads-library link>
+ad: <url from AA>
+ad library: <url from AC, when it is a Meta ads-library link>
 video: 
 
 pagepilot:
@@ -200,15 +239,15 @@ Our Store URL:
 
 Three lines carry all the rules worth stating twice:
 
-- **`Note:`** holds **only** the `Selling price /Offer` cell (`AF`) — the offer and its price, e.g.
-  `1+1: 39.99` or `2+1: 30.00`. It no longer carries the competitor's price or the COGS. `AF` is
+- **`Note:`** holds **only** the `Selling price /Offer` cell (`AG`) — the offer and its price, e.g.
+  `1+1: 39.99` or `2+1: 30.00`. It no longer carries the competitor's price or the COGS. `AG` is
   filled in by a colleague and is usually **still empty when you create the task**: leave the line
   bare after `Note:` in that case. Never compute, estimate, or back-fill an offer yourself.
-- **`ad:`** is the WinningHunter link from `Z`
+- **`ad:`** is the WinningHunter link from `AA`
   (`https://app.winninghunter.com/ad/<id>?platform=facebook`), pasted whole, `?platform=` included.
-- **`ad library:`** is the link from `AB`, **only when it applies** — that is, only when it is a
+- **`ad library:`** is the link from `AC`, **only when it applies** — that is, only when it is a
   `facebook.com/ads/library/?id=…` URL. Rows whose ad was found on Pinterest carry a
-  `pinterest.com/pin/…` link in `AB` instead; Pinterest has no ads library, so leave the
+  `pinterest.com/pin/…` link in `AC` instead; Pinterest has no ads library, so leave the
   `ad library:` line blank there rather than putting a pin link on it. The WinningHunter link on
   `ad:` already reaches that creative.
 
@@ -216,10 +255,10 @@ Create with `create_tasks`, passing `default_project` and `section_id`. Leave as
 date empty unless the operator says otherwise — the reference task has neither.
 
 Write the **marketing angle** from the product and its hook: what the thing is, who it is for,
-and the emotional or practical lever the competitor pulls. The hook in `Y` is the competitor's
-own first line, so it tells you what is working. When `Y` says `n/a - not captured`, say so in
-the notes and tell the builder to read the landing page — an invented angle is worse than an
-admitted gap.
+and the emotional or practical lever the competitor pulls. The hook (`Z` as of 2026-09-04) is the
+competitor's own first line, so it tells you what is working. When it says `n/a - not captured`,
+say so in the notes and tell the builder to read the landing page — an invented angle is worse
+than an admitted gap.
 
 ### 6. Carry the warnings across
 
@@ -230,14 +269,15 @@ the line when there is a genuine concern:
 
 - **Regulated claims** — supplements, biocides, medical or cosmetic effects. EU/DE rules bite on
   ad copy and the page, and the reference task flags exactly this kind of risk.
-- **Thin margin** — where the competitor's price (`J`, currency in `I`) minus COGS (`AE`) leaves
+- **Thin margin** — where the competitor's price (`J`, currency in `I`) minus COGS (`AF`) leaves
   little room, the page will need a price test. Check this yourself even though neither number
   goes in the Note any more.
 - **Missing hook or unverified price** — the builder must check the landing page first.
 - **Currency mismatch** — some COGS figures in this sheet are USD, not EUR, and are labelled as
   such in the sheet's own notes. Do not silently present one as the other.
 
-Column `X` ("Main killer / risk") is where the research run recorded its concern; read it.
+The "Main killer / risk" column (`Y` as of 2026-09-04) is where the research run recorded its
+concern; read it.
 
 ## Report back
 
