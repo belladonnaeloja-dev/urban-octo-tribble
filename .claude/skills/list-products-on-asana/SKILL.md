@@ -38,7 +38,7 @@ The google-sheets MCP is unreliable. When it is `CONNECTION_CLOSED`, read the sh
 it uses the same service-account key and returns formulas, which is what you want anyway.
 
 **Asana** — project `1204544103564278` ("1A. Pinterest - DE "),
-<https://app.asana.com/0/1204544103564278/list>, section `1204544103564283`
+<https://app.asana.com/1/1202393474006143/project/1204544103564278>, section `1204544103564283`
 ("1B. Create Product Page (Aireen)"). Reference task showing the house format and the house
 naming: `1212348619651728` (`CeramiFix™`).
 
