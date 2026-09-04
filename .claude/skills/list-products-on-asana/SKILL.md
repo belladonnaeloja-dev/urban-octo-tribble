@@ -1,6 +1,6 @@
 ---
 name: list-products-on-asana
-description: Create Asana product-test tasks from the winning-products master log, for the approved products only. Looks ONLY at the last 10 products in the table — the most recent research run — reads the "Approved For Asana" checkbox column (re-verify its letter against row 4 every run, it has shifted twice already) across those ten rows, takes ONLY the ones where it is TRUE (older ticked rows further up the sheet are past decisions and are left alone unless the operator asks for a wider window), skips any product that already has a task so re-runs never duplicate, and creates one task per remaining product in the "1A. Pinterest - DE" project under section "1B. Create Product Page (Aireen)". Each task is named with a COINED HOUSE BRAND NAME — two linked words plus ™, reflecting the product's main benefit (BeamRestore™, LymphFlow™, HairThrive™) — never the supplier's own product name and never a name any earlier task or store product already uses, and is filled from the house template (marketing angle, competitor's link, aliexpress, a Note line holding only the "Selling price /Offer" cell, the WinningHunter link on "ad:", the Meta ads-library link on "ad library:", then blank video/pagepilot/store-URL lines for the page builder). Use whenever the user asks to list products on Asana, create Asana tasks for products, "add the checked products to Asana", push the ticked rows from the research sheet into Asana, or create test tasks for products they have selected — and also when they tick boxes in the master log and ask you to action them, even without naming Asana. Not for creating arbitrary Asana tasks (use the Asana tools directly) and not for finding new products (that is find-winning-products).
+description: Create Asana product-test tasks from the winning-products master log, for the approved products only. Looks ONLY at the last 20 products in the table — the two most recent research runs — reads the "Approved For Asana" checkbox column (re-verify its letter against row 4 every run, it has shifted twice already) across those twenty rows, takes ONLY the ones where it is TRUE (older ticked rows further up the sheet are past decisions and are left alone unless the operator asks for a wider or narrower window), skips any product that already has a task so re-runs never duplicate, and creates one task per remaining product in the "1A. Pinterest - DE" project under section "1B. Create Product Page (Aireen)". Each task is named with a COINED HOUSE BRAND NAME — two linked words plus ™, reflecting the product's main benefit (BeamRestore™, LymphFlow™, HairThrive™) — never the supplier's own product name and never a name any earlier task or store product already uses, and is filled from the house template (marketing angle, competitor's link, aliexpress, a Note line holding only the "Selling price /Offer" cell, the WinningHunter link on "ad:", the Meta ads-library link on "ad library:", then blank video/pagepilot/store-URL lines for the page builder). Use whenever the user asks to list products on Asana, create Asana tasks for products, "add the checked products to Asana", push the ticked rows from the research sheet into Asana, or create test tasks for products they have selected — and also when they tick boxes in the master log and ask you to action them, even without naming Asana. Not for creating arbitrary Asana tasks (use the Asana tools directly) and not for finding new products (that is find-winning-products).
 ---
 
 # List Products On Asana
@@ -77,19 +77,20 @@ naming: `1212348619651728` (`CeramiFix™`).
 
 ## Steps
 
-### 1. Find the approved rows — in the last 10 products only
+### 1. Find the approved rows — in the last 20 products only
 
-**The window is the last 10 products in the table**, not the whole sheet. Find the last row that
-has a product in column `D`, take the ten rows ending there, and consider only those. Within that
-window, keep the rows whose "Approved For Asana" column (`AH` as of 2026-09-04 — re-verify against
-row 4) reads as true.
+**The window is the last 20 products in the table**, not the whole sheet. Find the last row that
+has a product in column `D`, take the twenty rows ending there, and consider only those. Within
+that window, keep the rows whose "Approved For Asana" column (`AH` as of 2026-09-04 — re-verify
+against row 4) reads as true.
 
-That window is one research run: `find-winning-products` delivers ten products per run, so the
-bottom ten rows are the batch the operator has just been through. Everything above them was
-decided weeks or months ago — a tick up there is a record of a past decision, not a request to
-build something today, and re-reading it is how a run drags eighty stale products back into the
-project. If the ten-row window contains no ticked rows, that is a real answer: report it and
-create nothing.
+That window is two research runs: `find-winning-products` delivers ten products per run, so the
+bottom twenty rows are the two batches the operator has most recently been through — this gives
+the operator a full run to review before it drops out of scope, rather than losing a batch the
+moment the next run lands. Everything above them was decided weeks or months ago — a tick up
+there is a record of a past decision, not a request to build something today, and re-reading it
+is how a run drags eighty stale products back into the project. If the twenty-row window contains
+no ticked rows, that is a real answer: report it and create nothing.
 
 If you're reading via the CSV export, match the checkbox text **case-insensitively** — it comes
 back `True`/`FALSE`, not `TRUE`, and a strict `-eq 'TRUE'` silently matches nothing. Reading via
@@ -100,13 +101,13 @@ Do not use `find_in_spreadsheet` to locate the rows — it **caps at 50 results*
 truncates, and it also matches the word "true" inside ordinary prose in other columns. Read the
 column and map positions to row numbers: index 0 of a read starting at row 5 is row 5.
 
-The operator overrides the window whenever they say so — "the last 20", "everything ticked",
-"rows 250 to 262", "just the ones from Tuesday's run". Honour what they asked for; the ten-row
+The operator overrides the window whenever they say so — "just the last 10", "everything ticked",
+"rows 250 to 262", "just the ones from Tuesday's run". Honour what they asked for; the twenty-row
 window is only the default for a bare invocation.
 
 ### 2. Skip products that already have a task
 
-The ten-row window already keeps the old ticked rows out, but it does not make this step
+The twenty-row window already keeps the old ticked rows out, but it does not make this step
 optional: a run that was interrupted, or an operator who re-ticks a row, still lands the same
 product twice. The project holds ~1,200 tasks and one duplicate inside it is invisible until the
 page builder has already built it.
@@ -128,10 +129,10 @@ already spent, so fetch it once. Match a sheet row against a task if **any** of 
    the legacy tasks created before the rename, and the ones a human has renamed slightly.
 
 What remains is the batch to create. Tell the operator the arithmetic before you write anything —
-"rows 301-310, 4 ticked, 1 already in Asana, creating 3" — naming the row range so they can see
-which window you used and catch a miscount early. Inside a ten-row window the batch is small by
-construction; if a wider window was asked for and it comes back large (say more than 10), confirm
-before creating rather than assuming.
+"rows 301-320, 4 ticked, 1 already in Asana, creating 3" — naming the row range so they can see
+which window you used and catch a miscount early. Inside a twenty-row window the batch is small
+by construction; if a wider window was asked for and it comes back large (say more than 20),
+confirm before creating rather than assuming.
 
 ### 3. Pull the details
 
