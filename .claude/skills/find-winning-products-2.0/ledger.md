@@ -29,6 +29,12 @@ WinningHunter IDs delivered or evaluated by *this skill folder's* runs. One per 
 - `1941289416511882` — Corecare Instant Posture Corrector — 2026-09-08
 - `1298270225287457` — ReabTec KniTec V2 Compression Sleeve — 2026-09-08
 - `1732319419019989289` (TikTok) — NIRACL Car Driving Neck Pillow — 2026-09-08
+- `1731334520230286210` (TikTok) — Foldable Over Sink Dish Drying Rack — 2026-09-08
+- `1729492505494853464` (TikTok) — YAGUD Walking Pad w/ Adjustable Incline — 2026-09-08
+- `1729715817719566389` (TikTok) — RELIFESPORTS Foldable Ab Exercise Machine — 2026-09-08
+- `772945862503594` (Meta) — ScandLights Luno Premium LED Night Light — 2026-09-08
+- `1121572772763778` (Meta) — Soluna SKIN EMS Neck/Face Massager — 2026-09-08
+- FeelinGirl Strapless Shapewear Bodysuit (TikTok, id in search-history.md) — 2026-09-08
 
 ## SEEN_DOMAINS
 
@@ -66,6 +72,18 @@ folder — see visibility-gap note above)
   (GBP-priced store) — SOURCE: Meta — WATCH (sold out)
 - NIRACL Car Driving Neck Pillow — TikTok Shop — 1732319419019989289 — Car Accessories — US
   — SOURCE: TikTok — WATCH (margin risk, price under €25 floor)
+- Foldable Over Sink Dish Drying Rack — TikTok Shop — 1731334520230286210 — Home Care — US
+  — SOURCE: TikTok — TEST NOW
+- YAGUD Walking Pad w/ Adjustable Incline — TikTok Shop — 1729492505494853464 — Fitness — US
+  — SOURCE: TikTok — TEST NOW
+- RELIFESPORTS Foldable Ab Exercise Machine — TikTok Shop — 1729715817719566389 — Fitness —
+  US — SOURCE: TikTok — TEST NOW
+- ScandLights Luno Premium LED Night Light — scand-lights.com — 772945862503594 — Lighting —
+  US/EU — SOURCE: Meta — TEST NOW
+- Soluna SKIN EMS Neck/Face Massager — weareluna.store — 1121572772763778 — Beauty —
+  DE/EU/US — SOURCE: Meta — WATCH (sold out)
+- FeelinGirl Strapless Shapewear Bodysuit — TikTok Shop — Underwear — US — SOURCE: TikTok —
+  TEST NOW
 
 ## REJECTED_PRODUCTS
 
@@ -81,6 +99,7 @@ folder — see visibility-gap note above)
 |---|---|---|---|
 | Corecare Instant Posture Corrector | corecareshop.com | All variants sold out at verification (2026-09-08); pricing display also glitched (sale price shown higher than regular) | ~2–3 weeks — recheck stock and pricing fix |
 | ReabTec KniTec V2 Compression Sleeve | reabtec.com | All variants sold out at verification (2026-09-08), despite being a 359-day survivor with €50,697 EU adspend — very strong underlying signal | ~2–3 weeks — recheck stock; strong TEST NOW candidate if restocked |
+| Soluna SKIN EMS Neck/Face Massager | weareluna.store | All variants (White/Black) sold out at verification (2026-09-08), despite ad_rank=1, 302-day survivor, €32,239 EU adspend — the strongest single spend signal found this run | ~2–3 weeks — recheck stock; likely #1 pick if restocked |
 
 ## EMERGING WINNER WATCHLIST
 
