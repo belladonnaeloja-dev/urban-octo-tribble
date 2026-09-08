@@ -109,8 +109,21 @@ while still blocking repeats.
   domains" export, or paginate `Google_Drive.read_file_content` / find an equivalent ranged
   read, before trusting this ledger's SEEN_* lists as complete.
 - **Autosheet (the Google Sheets write connector) returned
-  `api-billing-free-trial-ended`** on 2026-09-08 — this skill folder currently has NO working
-  path to write rows into the canonical spreadsheet. The 2026-09-08 run's 4 candidates were
-  reported to the user in the run output as a ready-to-paste block instead. Fix the Autosheet
-  billing (link in its error message) before the next run, or confirm an alternative Sheets
-  write path.
+  `api-billing-free-trial-ended`** on 2026-09-08 and was still blocked on retry — no working
+  path via Autosheet this run.
+- **UPDATE 2026-09-08, same run:** the user supplied a Google service-account JSON key
+  (`claude-sheets@intense-palace-505314-b5.iam.gserviceaccount.com`) with edit access to the
+  canonical sheet. Since this sandbox's `cryptography`/`PyJWT` Python packages have a broken
+  Rust backend (`ModuleNotFoundError: No module named '_cffi_backend'`, panics on import),
+  the JWT for the OAuth2 service-account flow was signed manually with the `openssl` CLI
+  (`openssl dgst -sha256 -sign`) instead of a Python JWT library. This worked end-to-end:
+  minted an access token, confirmed read access, wrote the 4 rows to `A343:AH346` via
+  `spreadsheets.values.update` (`valueInputOption=USER_ENTERED`), applied the date format and
+  per-row verdict-color fills via `spreadsheets.batchUpdate`, updated the row-2 subtitle, and
+  verified every write by reading it back. **The spreadsheet now has 342 products; rows
+  343-346 are this run's 4 new products.** The key material was deleted from the local
+  scratchpad immediately after use and never committed to this repo. **The user should still
+  rotate this key** (it was pasted in plaintext into the chat transcript, which is a
+  reasonable thing to rotate as routine hygiene regardless of how carefully it was handled
+  afterward). If the key is still valid on a future run, the same approach (openssl-signed
+  JWT → Sheets API v4) can be reused directly instead of going through Autosheet.
