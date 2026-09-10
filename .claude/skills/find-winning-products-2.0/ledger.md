@@ -9,6 +9,37 @@ spreadsheet if it is briefly unreachable.
 WinningHunter IDs already evaluated (qualified or rejected), so a run never re-fetches or
 re-scores the same row.
 
+### 2026-09-10 (run 3 — PINTEREST-ONLY, operator-requested course correction)
+**Why this run exists**: after run 2 delivered mostly Meta/TikTok-sourced products, the operator
+said explicitly: "results are still not expected. I want results to be mostly pinterest winners."
+This was a legitimate critique — §14 says Pinterest is the *primary* source and Meta/TikTok are
+*expansion only*, but runs 1-2 both leaned on Meta/TikTok for volume because direct Pinterest
+keyword search (2-4 keywords/niche/market) was too shallow to fill niches on its own. This run
+fixes that by actually doing the exhaustive multi-keyword-family (§19, families A-I) x multi-market
+sweep the skill spec calls for, using Pinterest ONLY — zero Meta/TikTok tool calls.
+**Also on load**: the live sheet was re-read fresh and run 2's entire 29-product delivery
+(rows 363-391) was gone too — a third concurrent-write collision (see LEARNING LOG). Given the
+operator's message arrived at the same time, it's plausible this was the operator clearing results
+they didn't want rather than another session's accident; either way, this run did not attempt to
+restore run 2's Meta/TikTok-heavy set — it replaces that approach entirely rather than patching it.
+**Result: exhaustive Pinterest-only search across all 10 niches found only 8 qualifying candidates
+total**, and only 1 confirmed in stock. This is the honest yield of prioritizing source-purity over
+volume — see full breakdown in DELIVERED_PRODUCTS and LEARNING LOG below.
+- Pinterest pin 687308366734 (GlowBare hair removal serum, Marnetic) — qualified, delivered TEST NOW (under $25 floor, flagged)
+- Pinterest pin 687314997020 (Tiktrove scalp massage comb) — qualified, delivered WATCH (price hidden on live page)
+- Pinterest pin 687299035734 (Shana Paris lash serum) — qualified, delivered WATCH (HTTP 402 on verification)
+- Pinterest pin [Swivolt Max wireless car charger, nimebrand.com] — qualified, delivered WATCH (sold out)
+- Pinterest pin 687313751047 (CoreLift Posture Bra, shop-rosemary.co.uk) — qualified, delivered WATCH (sold out, currency corrected USD→GBP)
+- Pinterest pin 687312387169 (Dironia chiffon skirt) — re-surfaced independently a 3rd time, still sold out — delivered WATCH
+- 2 more qualifying-but-not-delivered: Skale lash serum (skalecosmetics.com, US) and Ausbury lash
+  serum (ausbury.co.uk, GB) — both cross-validate the eyelash-serum concept but were not delivered
+  to avoid stacking 3 near-identical products; logged for the recheck queue instead.
+- ~15 near-misses and ~30+ dedupe rejections across the 5 discovery agents — see SEEN_PRODUCT_CONCEPTS
+  and REJECTED_PRODUCTS below; full per-keyword search logs retained in the conversation transcript
+  (roughly 250+ keyword x market combinations run — Hobbies 39, Women's fashion + Home care ~30
+  before one agent hit a context limit mid-sweep, Beauty + Underwear ~50, Car + Fitness 62,
+  Healthcare + Lighting ~75).
+
 ### 2026-09-10 (run 2)
 **CRITICAL CONTEXT FOR THIS RUN**: on load, the live spreadsheet was read fresh and found to have
 lost ALL 17 products delivered in run 1 (2026-09-08) — rows 343-359 had been overwritten by at
@@ -179,6 +210,16 @@ exceeded by the candidate pool).
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
 
+## 2026-09-10 (run 3 — PINTEREST-ONLY, via /find-winning-products-2.0)
+6 delivered (1 TEST NOW + 5 WATCH), ALL SOURCE: Pinterest. Niches with zero qualifying candidates
+after exhaustive search: Hobbies, Men's fashion, Home care, Underwear, Fitness, Lighting.
+- GlowBare Smooth Skin Hair Removal Serum — marnetic.com — Beauty — US — SOURCE: Pinterest — TEST NOW (in stock, but $17.95 < $25 floor, margin-risk flagged)
+- Tiktrove Electric Spray Air Cushion Massage Comb — tiktrove.com — Beauty — Global — SOURCE: Pinterest — WATCH (price hidden on live page)
+- Shana Paris Premium Lash Serum — shanacosmetics.com — Beauty — US (historical, days_min=180) — SOURCE: Pinterest — WATCH (HTTP 402 on verification)
+- Swivolt Max Wireless Car Charger & Mount — nimebrand.com — Car accessories — US (historical) — SOURCE: Pinterest — WATCH (sold out)
+- CoreLift Posture Bra — shop-rosemary.co.uk — Healthcare — GB — SOURCE: Pinterest — WATCH (sold out, currency corrected)
+- Dironia White & Black Polka Dot Chiffon Skirt — dironia.com — Women's fashion — US — SOURCE: Pinterest — WATCH (sold out, 3rd consecutive check)
+
 ## 2026-09-10 (run 2 — via /find-winning-products-2.0)
 16 recovered from run 1 (re-verified, not copied blind) + 13 new = 29 total (16 TEST NOW + 13 WATCH).
 - Seure Fearless Silicone Magnetic Band for Apple Watch — seure.co — Men's fashion — US — SOURCE: Meta — TEST NOW (recovered)
@@ -253,6 +294,36 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-10 (run 3) — Pinterest-only course correction: what exhaustive search actually costs
+This run answers a question runs 1-2 left open: what does the mission's actual spec (§14: Pinterest
+primary, Meta/TikTok expansion-only; §19: full A-I keyword-family sweep) yield if followed strictly?
+**Answer: far fewer products, and most of what survives is WATCH, not TEST NOW.** ~250+ keyword x
+market searches across 5 parallel agents, all 10 niches, US/DE/GB/global markets, plus a
+historical-survivor pass, returned only 8 qualifying candidates — and after live verification, only
+1 was confirmed purchasable. 6 of 10 niches (Hobbies, Men's fashion, Home care, Underwear, Fitness,
+Lighting) returned genuinely zero qualifying candidates, not from thin search effort but from thin
+underlying inventory — the agents' logs show hundreds of raw hits per niche, the overwhelming
+majority static-image or duplicate-mechanism (same posture corrector/neck massager/copper-wire
+lights resold by 3-4 storefronts each). **This is the real, structural tradeoff the operator should
+know about going forward**: Meta/TikTok-inclusive runs (1-2) delivered 17-29 products with maybe
+40-60% eventually confirmable in stock; a Pinterest-only run delivers a genuine handful with the
+same ~10-15% in-stock rate on top. Neither number is a search failure — they're accurately measuring
+two different things (Pinterest's actual current ad-creative mix vs. a broader cross-platform net).
+Recommend making this tradeoff explicit to the operator each run rather than assuming which they want.
+- **Best niche this run**: Beauty (5 of 8 total qualifiers, and the only 1 confirmed-in-stock pick).
+  Beauty's Pinterest video-ad inventory is meaningfully deeper than every other niche checked.
+- **Cross-market validation worth noting**: "eyelash serum" independently qualified from 3 unrelated
+  stores across 3 markets (Skale/US, Shana Paris/US-historical, Ausbury/GB) — strong evidence this
+  specific concept is a genuine, currently-live Pinterest trend, even though only 1 was delivered.
+- **Historical-survivor pass (days_min=180) pulled its weight**: 2 of the 8 total qualifiers
+  (Shana Paris lash serum, Swivolt Max charger) were found only via this pass, not the base search.
+  Keep running it every time — cheap and it surfaces real durable-survivor evidence the live sweep
+  alone misses.
+- **Agent context limits are a real constraint on "exhaustive"**: one agent (Women's fashion/Home
+  care) hit a hard context/tool-call limit mid-sweep and had to wrap up honestly with partial
+  coverage rather than fabricate the rest. For niches where this matters, consider narrower
+  per-agent scope (1 niche, not 2) if a future run needs guaranteed-complete coverage logs.
 
 ### 2026-09-10 (run 2) — MOST IMPORTANT FINDING: concurrent-write collision
 This run opened by discovering that run 1's entire 17-product delivery had been overwritten by
