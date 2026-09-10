@@ -9,6 +9,34 @@ spreadsheet if it is briefly unreachable.
 WinningHunter IDs already evaluated (qualified or rejected), so a run never re-fetches or
 re-scores the same row.
 
+### 2026-09-10 (run 2)
+**CRITICAL CONTEXT FOR THIS RUN**: on load, the live spreadsheet was read fresh and found to have
+lost ALL 17 products delivered in run 1 (2026-09-08) — rows 343-359 had been overwritten by at
+least one other session's write (a 10-product run dated 2026-09-08 in a different format, then a
+4-product Halloween-scoped run dated 2026-09-10) that did not read the sheet fresh before writing.
+This is a **concurrent-write collision**, not data corruption on this skill's part — see LEARNING
+LOG below for the operational implication. 16 of the 17 lost products were re-verified live today
+(not copied blind) and re-delivered with today's date; 1 (Setago AutoFold Pro) was dropped after
+its product page failed to render on 2 separate verification attempts, 2 days apart.
+- 1260750122119171 (Seure) — re-verified live, re-delivered TEST NOW
+- 1454583159242928 (Vega Ring) — re-verified live, re-delivered TEST NOW
+- 986246334209468 (AirStyler Pro) — re-verified live, re-delivered TEST NOW
+- 27156347597386572 (Vaoth) — re-verified live, re-delivered TEST NOW
+- 847832694450978 (Toddla) — re-verified STILL sold out, re-delivered WATCH
+- 1622702748607165 (Gourmetific) — re-verified STILL sold out, re-delivered WATCH
+- 1447345176809196 (LDN LUNA) — re-verified STILL sold out, re-delivered WATCH
+- 1082368799926274 (Lhanel) — re-verified STILL sold out, re-delivered WATCH
+- 2239643873228733 (Setago) — UNVERIFIABLE 2nd time running — DROPPED, not re-delivered
+- New this run: Firewalky (firewalky.com), Favvity (favvity.com), Hyperblade Cervitrax
+  (hyperbladeusa.com), INTERGREAT (TikTok 1732261179638190676), INNERSY (TikTok
+  1729544355421196668) — qualified, delivered TEST NOW
+- New WATCH (sold out/unverified): 3D Relief Art Pen (cur8trend.com), MEMO Whiteboard Wallet
+  (newthingslab.com), Shape-curve 2pc Set (shape-curve.com), Pinauto (pinauto-store.com), LumeAuto
+  (lumeauto.com), Blauzone (blauzone.com), LumiBeam (trylumibeam.com), SwanSway (swanswaywear.com)
+- ~40 further Meta/Pinterest/TikTok ids scanned and rejected across 4 discovery agents (established
+  brand, duplicate concept, price out of band, insufficient traction) — see SEEN_PRODUCT_CONCEPTS
+  and REJECTED_PRODUCTS below.
+
 ### 2026-09-08 (run 1 of the day)
 - 1260750122119171 (Seure Apple Watch band, Meta) — qualified, delivered TEST NOW
 - 1454583159242928 (Vega Ring stacking set, Meta) — qualified, delivered TEST NOW
@@ -151,6 +179,38 @@ exceeded by the candidate pool).
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
 
+## 2026-09-10 (run 2 — via /find-winning-products-2.0)
+16 recovered from run 1 (re-verified, not copied blind) + 13 new = 29 total (16 TEST NOW + 13 WATCH).
+- Seure Fearless Silicone Magnetic Band for Apple Watch — seure.co — Men's fashion — US — SOURCE: Meta — TEST NOW (recovered)
+- Vega Ring Morning Dew Stacking Ring Set — vegaring.com — Women's fashion — US — SOURCE: Meta — TEST NOW (recovered)
+- AirStyler Pro 6-in-1 — aceandtaylor.com — Beauty — US — SOURCE: Meta — TEST NOW (recovered)
+- Adora Delight Handiva Massager — adoradelightusa.com — Healthcare — US — SOURCE: Pinterest — TEST NOW (recovered)
+- Vaoth Infinity Lamp — vaoth.com — Lighting — US — SOURCE: Meta — TEST NOW (recovered)
+- Craftikit 20-Piece Arts & Crafts Kit — TikTok Shop — Hobbies — US — SOURCE: TikTok — TEST NOW (recovered)
+- EQQUALBERRY Vitamin Illuminating Duo — TikTok Shop — Beauty — US — SOURCE: TikTok — TEST NOW (recovered)
+- Level 2 Mandelic Acid Body Acne Serum — TikTok Shop — Beauty — US — SOURCE: TikTok — TEST NOW (recovered)
+- Sprints Car Seat Cover Towel — TikTok Shop — Car accessories — US — SOURCE: TikTok — TEST NOW (recovered)
+- YAGUD Walking Pad w/ Incline — TikTok Shop — Fitness — US — SOURCE: TikTok — TEST NOW (recovered)
+- Comfytemp Cordless Heating Pad/Belt — TikTok Shop — Healthcare — US — SOURCE: TikTok — TEST NOW (recovered)
+- Toddla Montessori Busy Board — toddla.co — Hobbies — US — SOURCE: Meta — WATCH (recovered, still sold out)
+- Dironia Chiffon Skirt — dironia.com — Women's fashion — US — SOURCE: Pinterest — WATCH (recovered, still sold out)
+- Gourmetific Cookware Set — gourmetific.com — Home care — US — SOURCE: Meta — WATCH (recovered, still sold out)
+- LDN LUNA Fajas Colombianas — weareluna.store — Underwear — DE — SOURCE: Meta — WATCH (recovered, still sold out)
+- Lhanel Pilates Kit — lhanel.co — Fitness — US — SOURCE: Meta — WATCH (recovered, still sold out)
+- Firewalky 360 Rotating Faucet — firewalky.com — Home care — DE — SOURCE: Meta — TEST NOW (new)
+- Favvity Balance Board — favvity.com — Fitness — DE — SOURCE: Meta — TEST NOW (new, supplier mechanism mismatch flagged)
+- Hyperblade Cervitrax Gen 2 — hyperbladeusa.com — Healthcare — US+DE double-validated — SOURCE: Meta — TEST NOW (new)
+- INTERGREAT Folding Bed — TikTok Shop — Home care — US — SOURCE: TikTok — TEST NOW (new)
+- INNERSY Plus-Size Underwear 4-Pack — TikTok Shop — Underwear — US — SOURCE: TikTok — TEST NOW (new)
+- 3D Relief Art Pen — cur8trend.com — Hobbies — US — SOURCE: Meta — WATCH (new, sold out)
+- MEMO Whiteboard Wallet — newthingslab.com — Men's fashion — US — SOURCE: Meta — WATCH (new, sold out, price rose $89→$99)
+- Shape-curve 2pc Set — shape-curve.com — Women's fashion — US — SOURCE: Meta — WATCH (new, unverifiable)
+- Pinauto Trunk Organizer — pinauto-store.com — Car accessories — US — SOURCE: Meta — WATCH (new, unverified, currency corrected USD→GBP)
+- LumeAuto Door Projector Light — lumeauto.com — Car accessories — DE — SOURCE: Meta — WATCH (new, unverifiable)
+- Blauzone Reader Night Light — blauzone.com — Lighting — US — SOURCE: Pinterest — WATCH (new, sold out, no supplier)
+- LumiBeam Portable Projector — trylumibeam.com — Lighting — US — SOURCE: Meta — WATCH (new, sold out)
+- SwanSway Push-Up Bra — swanswaywear.com — Underwear — US — SOURCE: Meta — WATCH (new, sold out)
+
 ## 2026-09-08 (run 1 of the day — via /find-winning-products-2.0)
 - Seure Fearless Silicone Magnetic Band for Apple Watch — seure.co — 1260750122119171 — Men's fashion — US — SOURCE: Meta — TEST NOW
 - Vega Ring Morning Dew Stacking Ring Set — vegaring.com — 1454583159242928 — Women's fashion — US — SOURCE: Meta — TEST NOW
@@ -193,6 +253,50 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-10 (run 2) — MOST IMPORTANT FINDING: concurrent-write collision
+This run opened by discovering that run 1's entire 17-product delivery had been overwritten by
+another session's write to the same spreadsheet range. **Operational lesson for every future run,
+this skill or the sibling**: "read the last populated row, then append" is not safe against two
+sessions running close together — the second session's read can be stale by the time it writes.
+There is no locking mechanism available here. Mitigations for next time: (1) always re-read the
+live sheet immediately before the actual write call, not just at the start of the run (this run did
+that and it caught a SECOND round of concurrent writes — rows 357-362 appeared between this run's
+initial read and its final write); (2) if a large date-stamped gap in row content looks suspicious,
+verify against this ledger's DELIVERED_PRODUCTS before assuming the spreadsheet's absence means
+"not yet delivered"; (3) consider recommending the operator stagger scheduled runs of the different
+skills so they don't overlap.
+- **Stock-out rate keeps compounding**: this is now the 3rd run in a row (2 by this skill, 1 by
+  whatever produced the 09-08/09-10 sibling-format rows) to find a large fraction of qualifying,
+  ad-spending products sold out on live verification. This run: 8 of 11 newly-found live-checked
+  candidates (73%) were sold out or unverifiable. Across run 1 + run 2 combined: of 23 total
+  Shopify-storefront products live-checked, 13 were sold out and 3 more were unverifiable — barely
+  30% were cleanly confirmed purchasable. **This should now be treated as the expected base rate,
+  not an anomaly** — budget verification time accordingly in every future run, and consider it a
+  genuine data-quality property of the WinningHunter Meta/Pinterest feed, not bad luck.
+- **Best source this run**: Meta again dominated (most of the 13 new qualifiers), across both the
+  Germany-priority sweep and the buyer-language US sweep. TikTok contributed 2 solid new picks
+  (INTERGREAT, INNERSY). Pinterest contributed 1 (Blauzone, via the winner-derived loop) — direct
+  Pinterest keyword search on its own remains the weakest channel, consistent with run 1.
+- **Germany-priority sweep, closing last run's gap**: productive — 14 tabled DE candidates across
+  the 7 niches never reached in run 1. Pinterest DE keyword depth is still nearly a dead end (only
+  1 of ~21 DE Pinterest keyword searches cleared the full gate — Wecro Berlin's PosturePro); Meta DE
+  carried nearly all of the DE yield. Recommend future DE passes go straight to Meta niche-code
+  search and treat Pinterest DE keyword search as low-priority effort.
+- **Winner-derived loop, run for the first time**: productive on "neck shoulder massager" (6
+  independent qualifying competitors to Handiva found) — confirms this is a real, currently-scaling
+  crowded sub-niche worth watching, though only 1 (Hyperblade Cervitrax, via a distinct
+  traction-not-massage mechanism) was added to avoid stacking near-duplicate massagers. Store-derived
+  expansion (inspecting winning stores' other catalogue items) was a dead end — all 3 checked stores
+  (seure.co, vegaring.com, aceandtaylor.com) are narrow single-hero-product shops with nothing else
+  to harvest; deprioritize store-derived search for single-SKU-family stores in future runs.
+- **Buyer-language keyword search (vs. product-name search) on Meta**: productive — surfaced a
+  genuinely different set of advertisers (FunPunch, MEMO Whiteboard Wallet, Shape-curve, etc.) than
+  product-name or niche-code search would have. Worth keeping as a standing technique.
+- **Best niche this run**: Healthcare (3/3 delivered as TEST NOW — Adora Delight, Comfytemp,
+  Hyperblade — first niche to go 3-for-3 clean in either run). **Weakest**: Lighting and Car
+  accessories again, same as run 1 — both ended up majority-WATCH after live verification even
+  though discovery itself found candidates easily in both.
 
 ### 2026-09-08 (run 1)
 - **Best source this run: Meta** (27 raw qualifiers, 9 delivered) and **TikTok** (25 raw
