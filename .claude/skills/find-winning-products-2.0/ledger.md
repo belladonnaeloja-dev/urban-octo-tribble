@@ -9,6 +9,22 @@ spreadsheet if it is briefly unreachable.
 WinningHunter IDs already evaluated (qualified or rejected), so a run never re-fetches or
 re-scores the same row.
 
+### LINK-COLUMN FIX PART 2 — column AD (applied 2026-09-11, covers rows 363-374 / runs 4-6)
+Operator: "for column AD, if you can't find pinterest link, add the ad library link of the
+product." Column AD ("All their live ads") was still `n/a - Pinterest pin, no Meta ad archive`
+for every Pinterest row even after the AA/AC fix below. Checked all 12 rows via
+`get_pinterest_ad` and every single one has a `page_url` field — the advertiser's Pinterest
+business profile (e.g. `https://www.pinterest.com/skalecosmetics`) — which is the genuine
+Pinterest equivalent of "all their live ads" (all their live pins). Wrote that to column AD for
+all 12 rows, labeled "Pinterest profile (all pins)". None of the 12 needed the Meta Ad Library
+fallback the operator described, since a Pinterest link was found every time — but the fallback
+rule stands for any future row where `page_url` is missing/blank: search the Meta Ad Library for
+that store's page (`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&q=<store
+name>`) and use that instead of leaving `n/a`.
+**Going forward**: every future run's row-builder script must populate column AD with the ad's
+`page_url` field (Pinterest profile), falling back to a Meta Ad Library search link only when
+`page_url` is genuinely unavailable — never leave it as an `n/a` placeholder.
+
 ### LINK-COLUMN FIX (applied 2026-09-11, covers rows 363-374 / runs 4-6)
 Two link-column bugs found and fixed after delivery, both purely cosmetic (no data was ever
 missing, only mislabeled/misplaced):

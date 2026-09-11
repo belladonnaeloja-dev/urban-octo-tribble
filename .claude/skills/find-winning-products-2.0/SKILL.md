@@ -844,8 +844,14 @@ correct mapping for every Pinterest-sourced row, matching the existing Meta-row 
   ID matching the `pin_url` field exactly, but for some it is an opaque base64-style mobile
   share-token instead; use whichever form that ad's `id` field actually is in **both** columns
   consistently, don't try to "clean it up" into a numeric form.
-- `all_live_ads` column stays `n/a - Pinterest pin, no Meta ad archive` for Pinterest rows — there
-  genuinely is no Meta ad archive for a Pinterest-only product; only `winning_ad` was wrong.
+- **`all_live_ads` column** → `=HYPERLINK("<page_url>","Pinterest profile (all pins)")` — use the
+  ad's `page_url` field (the advertiser's Pinterest business profile, e.g.
+  `https://www.pinterest.com/skalecosmetics`), returned by `search_pinterest_ads` /
+  `get_pinterest_ad`. This is the genuine Pinterest equivalent of "all their live ads." Only if
+  `page_url` is genuinely missing/blank for that ad, fall back to a Meta Ad Library search link
+  for the store (`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&q=<store
+  name>`) instead of leaving `n/a`. Do not leave this column as a placeholder — every Pinterest ad
+  fetched so far has carried a `page_url`, so the fallback should be rare.
 
 ---
 
