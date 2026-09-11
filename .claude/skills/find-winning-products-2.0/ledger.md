@@ -9,6 +9,35 @@ spreadsheet if it is briefly unreachable.
 WinningHunter IDs already evaluated (qualified or rejected), so a run never re-fetches or
 re-scores the same row.
 
+### 2026-09-11 (run 4 — PINTEREST-ONLY, READY-TO-SHIP BAR — 2nd course correction)
+**Why this run exists**: operator feedback on run 3: "the last result is still as not expected."
+Asked directly what was wrong (via AskUserQuestion rather than guessing a 3rd time) and got 3
+concrete answers: (1) too few products overall, (2) too many WATCH/sold-out rows, (3) the
+video-only gate was too strict for Pinterest — plus a 4th, unprompted but critical: several
+delivered rows had no real Pinterest link, AliExpress link, or COGS (run 3's WATCH rows used
+`pending` placeholders for supplier/COGS since sold-out items weren't sourced). Operator's answer on
+tradeoffs: keep repin/ad-count/day thresholds strict, but allow image ads (not just video).
+**This run's design change**: each of the 5 discovery agents now runs a complete 3-stage pipeline
+per candidate — (1) Pinterest hard-gate qualification with BOTH image and video accepted,
+(2) live stock verification via WebFetch, (3) real AliExpress supplier sourcing via WebFetch — and
+only returns a candidate if it clears ALL THREE. Nothing sold-out, dead-linked, or supplier-less is
+returned as a "result" at all; those are logged as "found but not deliverable" for the record but
+never written to the sheet. This directly fixes complaint (2) and (4) by construction — every
+delivered row is complete by definition. It does not fully fix complaint (1): allowing image ads
+raised the raw candidate pool, but the strict traction gates plus the now-364-then-368-row
+exclusion index (this skill's own prior 3 runs have saturated several niches already) meant only
+3 products survived the full pipeline. See LEARNING LOG for the explicit tradeoff writeup.
+- Pinterest pin 687293690694 (Madepants Utility Pants) — qualified, delivered TEST NOW
+- Pinterest pin 687307541814 (SohoBloo SmoothSilk Epilator) — qualified, delivered TEST NOW
+- Pinterest pin 687317792733 (LumeVibe Car Door Projector) — qualified, delivered TEST NOW
+- ~15 candidates cleared Stage 1 (Pinterest traction gates) but failed Stage 2 (sold out/dead link)
+  or Stage 3 (no qualifying supplier) — see REJECTED_PRODUCTS/RECHECK_QUEUE below, full detail in
+  conversation transcript.
+- 6 of 10 niches (Hobbies, Women's fashion, Home care, Underwear, Healthcare, Lighting) returned
+  zero end-to-end survivors — mostly concept-saturation against this sheet's own prior 3 runs'
+  deliveries (posture correctors, neck massagers, wall sconces, shapewear all explicitly flagged
+  as "mined out" by the agents), not a search-depth failure.
+
 ### 2026-09-10 (run 3 — PINTEREST-ONLY, operator-requested course correction)
 **Why this run exists**: after run 2 delivered mostly Meta/TikTok-sourced products, the operator
 said explicitly: "results are still not expected. I want results to be mostly pinterest winners."
@@ -210,6 +239,13 @@ exceeded by the candidate pool).
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
 
+## 2026-09-11 (run 4 — PINTEREST-ONLY, READY-TO-SHIP BAR, via /find-winning-products-2.0)
+3 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, ALL with a real Pinterest link + real AliExpress
+supplier link + real COGS (no placeholders — this was the explicit fix this run made).
+- Madepants Men's Vintage-Inspired Casual Utility Pants — madepants.com — Men's fashion — US — image ad — TEST NOW
+- SohoBloo SmoothSilk 2-in-1 Hair Removal Epilator & Trimmer — shopsohobloo.com — Beauty — US — video ad — TEST NOW
+- LumeVibe Car Door Logo Projector Light — mylvera.com — Car accessories — US — video ad — TEST NOW (only 8 left in stock on live check — recheck soon)
+
 ## 2026-09-10 (run 3 — PINTEREST-ONLY, via /find-winning-products-2.0)
 6 delivered (1 TEST NOW + 5 WATCH), ALL SOURCE: Pinterest. Niches with zero qualifying candidates
 after exhaustive search: Hobbies, Men's fashion, Home care, Underwear, Fitness, Lighting.
@@ -294,6 +330,34 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-11 (run 4) — the explicit volume-vs-completeness tradeoff, quantified
+Run 3 predicted this tradeoff; run 4 measured it. Adding a hard "must verify in-stock AND must
+source a real supplier before counting as a result" bar (fixing the operator's complaints about
+incomplete WATCH rows) on top of run 3's already-strict repin/ad/day gates dropped the deliverable
+count from 8 (run 3, mostly WATCH/incomplete) to 3 (run 4, all complete). Allowing image ads (the
+other operator-requested change) widened the Stage-1 candidate pool noticeably per agent report,
+but nearly all of the extra volume died at Stage 2 (sold out) or Stage 3 (no AliExpress match) —
+**the bottleneck has moved from "can we find candidates" to "can we verify and source them,"** which
+loosening the media-type filter doesn't fix. **The lever that would actually raise the count from
+here is the repin/ad-count/day thresholds themselves** (operator explicitly chose to keep these
+strict this run) — if a future run wants more than a handful of products from Pinterest-only
+search, that's the parameter to revisit, not search breadth (which is now genuinely near-exhausted
+for many niches given 4 runs' worth of accumulated exclusion-index saturation).
+- **Only niche combo with zero Stage-1-to-Stage-3 survivors across ALL FOUR runs so far**:
+  Healthcare + Lighting on the 4th attempt again returned nothing new — every qualifying hit was a
+  duplicate of a posture-corrector/neck-massager/wall-sconce concept already in the sheet. These two
+  niches are the most saturated in the whole 10-niche set at this point.
+  Underwear is close behind (zero new in runs 3 and 4; the one promising store found in run 4 had
+  its entire catalog stuck on a broken "ships after 19041994" placeholder — a data-quality problem
+  on WinningHunter's index, not a gate failure).
+- **Beauty and Car accessories/Men's fashion remain the most productive niches** across runs 3-4
+  (5 of 8 run-3 candidates were Beauty; run 4's 3 deliverables spread across Men's/Beauty/Car,
+  the same three niches that also produced run 3's one delivered TEST NOW).
+- **Dead links and broken stock flags are becoming a recurring Stage-2 failure mode**, not just
+  "sold out" — hudsongrace.co.uk had rebranded/redirected mid-run, eaksone.com 404'd, mrsaker.com's
+  entire storefront shows a broken date placeholder. Treat "store appears broken" as its own category
+  in future runs' near-miss logs, distinct from ordinary stock-outs.
 
 ### 2026-09-10 (run 3) — Pinterest-only course correction: what exhaustive search actually costs
 This run answers a question runs 1-2 left open: what does the mission's actual spec (§14: Pinterest
