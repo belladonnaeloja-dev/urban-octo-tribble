@@ -9,6 +9,29 @@ spreadsheet if it is briefly unreachable.
 WinningHunter IDs already evaluated (qualified or rejected), so a run never re-fetches or
 re-scores the same row.
 
+### LINK-COLUMN FIX (applied 2026-09-11, covers rows 363-374 / runs 4-6)
+Two link-column bugs found and fixed after delivery, both purely cosmetic (no data was ever
+missing, only mislabeled/misplaced):
+1. Column AA ("Open in WinningHunter") had every Pinterest-sourced row's HYPERLINK display text
+   set to "WinningHunter" pointing at the raw `pinterest.com/pin/<id>` URL — correct link, but
+   nothing in the cell visually signaled it was a Pinterest pin, which read as if the pin link
+   were simply missing. Operator caught this twice.
+2. Once flagged, operator specified the actual intended layout: column AA should hold a genuine
+   WinningHunter platform deep-link (`https://app.winninghunter.com/ad/<id>?platform=pinterest`,
+   matching the established Meta convention `.../ad/<id>?platform=facebook` already used
+   elsewhere in this sheet), and column AC (previously "The winning ad (Meta)", holding an
+   `n/a - Pinterest pin, no Meta ad archive` placeholder for every Pinterest row) should hold the
+   actual `pinterest.com/pin/<id>` link instead. Fixed both for all 12 affected rows. The `<id>`
+   used is WinningHunter's own `id`/`productid` field for that ad — for most pins this is a plain
+   numeric Pinterest pin ID, but for a minority (confirmed via a live re-query for the Livaé row)
+   it's an opaque base64-style mobile share-token instead of a numeric ID; either form is valid
+   and resolves, and both column AA and AC now consistently use whichever form that ad's `id`
+   field actually is.
+**Going forward**: every future run's row-builder script must set column AA to the constructed
+`app.winninghunter.com/ad/<id>?platform=pinterest` link (not a "WinningHunter"-labeled pin link)
+and column AC to the actual Pinterest pin link — not an `n/a` placeholder — for every
+Pinterest-sourced row.
+
 ### 2026-09-11 (run 6 — GATE-LOOSENING EXPERIMENT: repin_count/adscount 50/10 → 20/5)
 **Why this run exists**: operator, on seeing run 5's 2-product result: "only 2 additional products
 were added. i need 10 products every run." This is the run that finally tests the lever flagged
