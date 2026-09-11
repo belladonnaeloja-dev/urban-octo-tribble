@@ -1,6 +1,6 @@
 ---
 name: find-winning-products-2.0
-description: Continuous Pinterest-first winning-product discovery engine (v4) using WinningHunter — an exhaustive, never-stops-searching companion to find-winning-products. Optimizes for the maximum number of NEW, evidence-backed, Pinterest-testable products discovered per run, not a fixed count of 10, and searches USA first, then Germany, then the largest remaining Pinterest markets, across the same ten fixed niches (hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting). Runs four mandatory discovery passes every run — Pinterest live, Pinterest historical (same month last year), TikTok Shop, and Meta Ad Library — with deep keyword-family expansion (synonyms, problems, solutions, use cases, buyer language, seasonal terms), multi-language search (EN/DE/FR/ES/NL/IT and beyond), and winner-derived and store-derived search loops that keep generating new queries instead of stopping when one seam runs dry. Enforces hard Pinterest traction gates (repins >= 50, ads >= 10, days running >= 30, video only, price <= 200), verifies every product page and AliExpress supplier link before writing, deduplicates against the full spreadsheet and a persistent ledger (SEEN_PRODUCT_IDS, SEEN_DOMAINS, SEEN_PRODUCT_CONCEPTS, SEARCH_HISTORY, RECHECK_QUEUE, etc.), and appends only genuinely new products to the same cumulative spreadsheet the original skill uses. Use when the user asks to run /find-winning-products-2.0, wants an exhaustive or continuous Pinterest winning-product search, wants the "USA first, Germany second" market priority, or wants the maximum number of new qualifying products rather than a capped run of 10.
+description: Continuous Pinterest-ONLY winning-product discovery engine (v4) using WinningHunter — an exhaustive, never-stops-searching companion to find-winning-products. Operator has set an explicit target of 10 delivered products per run; push discovery breadth to reach it, but never by lowering the verification bar — report the honest count with a named binding constraint when the achievable ceiling is below 10. Searches USA first, then Germany, then the largest remaining Pinterest markets, across the same ten fixed niches (hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting), with deep keyword-family expansion (synonyms, problems, solutions, use cases, buyer language, seasonal terms), multi-language search (EN/DE/FR/ES/NL/IT and beyond), and winner-derived and store-derived search loops that keep generating new queries instead of stopping when one seam runs dry. Enforces hard Pinterest traction gates (repins >= 20, ads >= 5, days running >= 30, image OR video, price <= 200), then runs every candidate through a mandatory 3-stage pipeline — qualify, live in-stock verification, real AliExpress supplier sourcing (>= 200 orders, >= 4.5 stars) — and writes ONLY candidates that clear all three; nothing sold-out, dead-linked, or supplier-less is ever written as a placeholder/WATCH row. Deduplicates against the full spreadsheet and a persistent ledger (SEEN_PRODUCT_IDS, SEEN_DOMAINS, SEEN_PRODUCT_CONCEPTS, SEARCH_HISTORY, RECHECK_QUEUE, etc.), and appends only genuinely new, fully-verified products to the same cumulative spreadsheet the original skill uses. TikTok/Meta discovery passes are suspended by standing operator instruction ("mostly pinterest winners") — Pinterest is the sole source unless the operator explicitly re-enables them. Use when the user asks to run /find-winning-products-2.0, wants an exhaustive or continuous Pinterest-only winning-product search, wants the "USA first, Germany second" market priority, or wants the maximum number of new, fully-verified qualifying products toward the 10/run target.
 ---
 
 # Find Winning Products 2.0 — Pinterest Exhaustive Discovery Engine (v4)
@@ -83,45 +83,73 @@ exhausted.
 
 ## 1. Core success metric
 
-The primary metric is: **NEW QUALIFYING PRODUCTS FOUND.**
+The primary metric is: **NEW QUALIFYING, FULLY-VERIFIED PRODUCTS FOUND.**
 
-Do NOT optimize for: number of API calls · number of raw results · number of candidates · filling
-exactly 10 rows · number of products returned by one endpoint.
+Do NOT optimize for: number of API calls · number of raw results · number of candidates · number of
+products returned by one endpoint.
 
-Optimize for: the maximum number of new, genuinely qualifying product concepts discovered per run.
+Optimize for: the maximum number of new, genuinely qualifying, fully-verified (§34 Stage
+A+B+C) product concepts discovered per run — **toward an explicit operator target of 10 delivered
+per run.**
 
-- If 10 qualify, deliver 10.
-- If fewer than 10 qualify, continue searching through additional discovery paths before
-  concluding the run is exhausted.
-- Never lower quality gates merely to fill the spreadsheet.
+- If 10 clear all three stages, deliver 10.
+- If fewer than 10 clear all three stages, continue searching through additional discovery paths
+  (wider keyword families, more markets, deeper pages) before concluding the run is exhausted —
+  the 10/run target is a reason to search harder, never a reason to lower a gate or skip Stage
+  B/C verification.
+- Never lower quality gates, and never skip live-stock or supplier verification, merely to fill
+  the spreadsheet. If the honest, fully-verified count after exhausting discovery is below 10,
+  deliver that honest count and name the binding constraint (§57) — do not pad with
+  unverified/WATCH/placeholder rows to reach 10. See the run-6 learning log in
+  [ledger.md](ledger.md) for what was already tried and what's left to try before asking the
+  operator to trade away a standing requirement (Pinterest-only, or full verification) for volume.
 
 ---
 
 ## 2. Product definition — what counts as a winner?
 
-For a Pinterest-origin product, **both** traction gates must be satisfied:
+For a Pinterest-origin product, **all** traction gates must be satisfied:
 
 | Gate | Required |
 |---|---|
 | Days running | >= 30 |
-| Repins | >= 50 |
-| Ad count | >= 10 |
-| Media | Video |
+| Repins | >= 20 |
+| Ad count | >= 5 |
+| Media | Image OR Video |
 | Price | <= 200 |
 | Store | Dropship-compatible |
 | Product page | Live |
 | Brand | Non-established / non-trademark-risk |
 | Duplicate | Must be NEW |
 
-Days running MUST be independently recomputed from the `started` field. Use `mindays=30`
+Days running MUST be independently recomputed from the `started` field — never trust the
+`daysrunning` field returned by the API, it has been repeatedly found unreliable. Use `mindays=30`
 server-side where applicable **and** verify the actual started date yourself.
+
+**Gate history (updated 2026-09-11, run 6):** repins and ad count were originally 50/10 and media
+was video-only. Both were loosened after direct operator feedback across runs 3-6:
+- Run 4: media changed from video-only to image-OR-video — video-only was killing ~90% of
+  Pinterest inventory outright; operator's explicit tradeoff choice was "allow image ads, keep
+  repins/ads/days strict."
+- Run 5: tested lowering days_running from 30 to 15 as a volume lever — this did NOT meaningfully
+  raise the qualifying count (3 products at 30-day floor vs. 2 at 15-day floor with the same
+  search method), so days_running was reverted to and confirmed at **30**.
+- Run 6: lowered repins 50→20 and ad count 10→5 (the lever days_min had ruled out) — this roughly
+  tripled the raw candidate pool and materially increased fully-verified deliveries (2 → 7). These
+  loosened values are now the standing gate, not an experiment to redo each run.
+
+Do not loosen further (e.g. repins/ads below 20/5, or dropping the days≥30 or price≤200 gates)
+without a fresh, explicit operator instruction — see [ledger.md](ledger.md)'s run 6 learning log
+for the remaining untested levers and why each one trades away something the operator already
+asked for.
 
 ---
 
 ## 3. Pinterest traction rule
 
-For Pinterest: `repin_count >= 50` **AND** `adscount >= 10` **AND** days running `>= 30`. These are
-mandatory.
+For Pinterest: `repin_count >= 20` **AND** `adscount >= 5` **AND** days running `>= 30`. These are
+mandatory (see §2 gate history for why the repin/ad-count numbers are lower than the skill's
+original 50/10).
 
 Do NOT substitute `save_count`, Meta spend, Meta active ads, TikTok spend, ad rank, or Meta
 momentum for Pinterest traction. Pinterest does not provide reliable Pinterest ad-spend fields in
@@ -266,20 +294,31 @@ opportunity.
 
 ---
 
-## 14. Four mandatory discovery sources
+## 14. Discovery sources — Pinterest-ONLY by standing operator instruction
 
-Every run must use all four passes, in this order:
+**UPDATED 2026-09-11.** This section originally mandated four passes every run (Pinterest live,
+Pinterest historical, TikTok Shop, Meta Ad Library). After run 2 delivered a Meta/TikTok-heavy
+mix, the operator said explicitly: *"results are still not expected. I want results to be mostly
+pinterest winners."* Runs 3 through 6 ran Pinterest-only with no objection — that is now the
+standing behavior, not a one-run experiment:
 
-| Pass | Source | Label |
-|---|---|---|
-| 1 | Pinterest LIVE | `SOURCE: Pinterest` |
-| 2 | Pinterest HISTORICAL | `SOURCE: Pinterest (last-year <MONTH YYYY>)` |
-| 3 | TikTok Shop | `SOURCE: TikTok` |
-| 4 | Meta Ad Library | `SOURCE: Meta` |
+| Pass | Source | Label | Status |
+|---|---|---|---|
+| 1 | Pinterest LIVE | `SOURCE: Pinterest` | **Mandatory, every run** |
+| 2 | Pinterest HISTORICAL | `SOURCE: Pinterest (last-year <MONTH YYYY>)` | **Mandatory, every run** |
+| 3 | TikTok Shop | `SOURCE: TikTok` | **Suspended** — do not run unless the operator explicitly re-enables it |
+| 4 | Meta Ad Library | `SOURCE: Meta` | **Suspended** — do not run unless the operator explicitly re-enables it |
 
-Pinterest remains the primary source for Pinterest winners. TikTok and Meta are expansion /
-discovery sources. A TikTok or Meta winner is NOT automatically a Pinterest winner — when
-discovered externally, search the product concept back through Pinterest (§38).
+Do not run TikTok or Meta discovery passes on your own initiative to make up volume toward the
+10/run target (§1) — that trades away a standing operator requirement without asking, which is
+exactly the mistake this rule exists to prevent. If Pinterest-only discovery, even after
+loosened gates (§2) and exhaustive keyword/market sweeps, cannot reach 10 fully-verified products,
+report the honest count and ask before adding another source back in.
+
+The §38 TikTok/Meta → Pinterest reverse-discovery machinery stays available for the rare case the
+operator asks for a mixed-source run again, but is dormant by default. A TikTok or Meta winner is
+NOT automatically a Pinterest winner — when (if) that path is re-enabled, search the product
+concept back through Pinterest (§38) before treating it as Pinterest-proven.
 
 ---
 
@@ -506,17 +545,38 @@ genuinely solving the same problem may be separate products. Use judgment.
 
 ---
 
-## 34. Discovery vs qualification
+## 34. Discovery, qualification, and mandatory verification — the 3-stage pipeline
 
-Separate discovery from qualification.
+Separate discovery from qualification from verification. **UPDATED 2026-09-11 (run 4):** Stage C
+was added after the operator's direct feedback on run 3 — several delivered rows had no real
+Pinterest link, no real AliExpress supplier link, and no real COGS (sold-out/unverified WATCH
+items had been written with `pending`/`n/a` placeholders in those fields). That is no longer
+allowed. A candidate is only ever written to the spreadsheet after clearing **all three** stages:
 
 **Stage A — Discovery.** Collect a large candidate pool — target approximately **50–200 useful
 candidates**, depending on API availability. Do NOT stop at 10.
 
-**Stage B — Qualification.** Apply: traction, days, video, price, brand, Shopify, live page,
-dedupe, Pinterest fit, supplier feasibility.
+**Stage B — Qualification.** Apply: traction gates (§2/§3), days, media type, price, brand,
+Shopify, live product-page existence (§40), dedupe (§33), Pinterest fit (§44).
 
-This prevents early good results from prematurely ending the search.
+**Stage C — Verification (mandatory before any write).**
+1. **Live in-stock verification** — fetch the exact product URL and confirm it is not sold out,
+   not a dead link, and price-confirmed. A "found" product that is sold out, unverifiable
+   (e.g. the store blocks automated fetches), or has a stale/wrong price is **not** written to the
+   spreadsheet — log it in `ledger.md`'s RECHECK_QUEUE / SEEN_DOMAINS as "found but not
+   deliverable," with the specific reason, and move on.
+2. **Real AliExpress supplier sourcing** — per §41/§42, a direct item URL with >= 200 orders and
+   >= 4.5 stars. No qualifying supplier → not written to the spreadsheet either, same
+   RECHECK_QUEUE treatment.
+
+Only candidates that clear Stage A + B + C get a row. This means, in practice, **every delivered
+row now carries a real Pinterest pin link, a real live product-page link, a real AliExpress
+supplier link, and a real COGS number** — never a placeholder. See §48 for how this changes the
+TEST NOW / WATCH distinction, and §50 for the exact link-column layout to write.
+
+This 3-stage design costs volume (Stage C verification is the dominant filter on delivered count,
+per run 6's learning log — not Stage B's gates) but is non-negotiable per explicit operator
+instruction. Do not skip Stage C to hit the 10/run target (§1).
 
 ---
 
@@ -575,18 +635,30 @@ no, reject. Known branded products remain a brand-risk even if their metrics are
 
 ---
 
-## 40. Link verification
+## 40. Link verification — now means in-stock verification, not just "not 404"
 
-Before writing ANY product to the spreadsheet: fetch the exact product URL (`<product-url>.json`
-where possible). Interpret:
+Before writing ANY product to the spreadsheet: fetch the exact product URL. **UPDATED 2026-09-11:**
+"live" is not enough — confirm the product is actually purchasable (in stock), per §34 Stage C.
+Interpret:
 
-- `200` + valid product JSON → **Live.**
-- `404` → **Dead.**
-- Blocked/throttled → **NOT dead** — mark `UNVERIFIED - recheck`.
+- `200` + page shows an active "Add to cart" (no "Sold out" state) → **Live and in stock.**
+  Deliverable, pending Stage C's supplier check.
+- `200` + page explicitly shows "Sold out" / "Out of stock" / "Notify me when available" →
+  **Sold out.** Not deliverable this run — log to RECHECK_QUEUE, do not write to the spreadsheet.
+- `404` → **Dead** (the guessed/reported URL is wrong, or the product was delisted). Try the
+  store's own `/search?q=` or `/collections/all` page to find the real current URL before giving
+  up — store domains and product handles both migrate (seen twice: a 301 domain redirect, and a
+  product simply no longer listed anywhere on the store).
+- Blocked/throttled (e.g. HTTP 403 to automated fetches) → **NOT dead** — mark
+  `UNVERIFIED - recheck`, do not write to the spreadsheet this run (this is a Stage C failure, not
+  a pass).
+- Price shown on the live page differs materially from the price WinningHunter reported → use the
+  **live price**, not the API's, and re-check the price <= 200 gate against it — a stale API price
+  can put a product over the cap even though it looked fine at discovery time.
 
-Never confuse throttling with a dead page. Preserve percent-encoded characters. Remove query
-strings only. Do not inject `/fr/`, `/de/`, etc. Use the exact link returned by WinningHunter
-whenever possible.
+Never confuse throttling with a dead page, and never confuse "page loads" with "in stock." Preserve
+percent-encoded characters. Remove query strings only. Do not inject `/fr/`, `/de/`, etc. Use the
+exact link returned by WinningHunter whenever possible, but fall back to site search when it 404s.
 
 ---
 
@@ -662,11 +734,19 @@ signals. A durable historical survivor receives a meaningful bonus.
 
 ## 48. TEST NOW / WATCH / SKIP
 
-- **TEST NOW** — meets all critical gates and is commercially attractive.
-- **WATCH** — interesting but requires additional proof or has a weaker Pinterest case.
+- **TEST NOW** — meets all critical gates AND has cleared Stage C verification (§34): confirmed
+  in stock, real supplier sourced. This is the only verdict that should appear on a delivered row
+  under the current (2026-09-11-onward) pipeline.
+- **WATCH** — interesting, qualifies at Stage B, but has NOT cleared Stage C (sold out,
+  unverifiable, or no qualifying supplier). **Do not write WATCH rows to the spreadsheet anymore**
+  — this was the exact operator complaint after run 3 (WATCH rows with `pending`/`n/a` supplier
+  and COGS placeholders). Keep WATCH candidates in `ledger.md`'s RECHECK_QUEUE instead, and
+  recheck them on a future run once stock/verification might have changed.
 - **SKIP** — fails a hard gate or has unacceptable risk.
 
-Never deliver SKIP products simply to reach 10.
+Never deliver SKIP products simply to reach 10. Never deliver WATCH products to the spreadsheet
+simply to reach 10 either — that is the same mistake in a different tier. If the fully-verified
+(TEST NOW) count is below 10 after exhausting discovery, report the honest count (§1, §57).
 
 ---
 
@@ -728,7 +808,9 @@ Verdict:
 TEST NOW / WATCH / SKIP
 
 Links:
-product page · winning pin/ad · all live ads
+product page · WinningHunter deep-link (`app.winninghunter.com/ad/<id>?platform=pinterest`) ·
+Pinterest pin link (`pinterest.com/pin/<id>`) · AliExpress supplier link — see §50 for the exact
+spreadsheet column mapping
 ```
 
 ---
@@ -741,6 +823,29 @@ Use the existing spreadsheet schema — do not alter it:
 est_gross_per_order, active_ads, ads_growth_1m, ad_seen, ad_rank, ad_spend, spend_window, days_live,
 saturation, pinterest_fit, verdict, main_killer, their_hook, winninghunter_link, product_page,
 winning_ad, all_live_ads, supplier_link, cogs, notes`
+
+### Link-column convention for Pinterest-sourced rows (UPDATED 2026-09-11)
+
+The live sheet's column headers are `winninghunter_link` = "Open in WinningHunter" and
+`winning_ad` = "The winning ad (Meta)" — both named for the sibling skill's Meta-sourced rows.
+Runs 4-6 initially got this wrong (put the raw Pinterest pin URL under a "WinningHunter"-labeled
+hyperlink in the WinningHunter column, and left the Meta-ad column as an `n/a` placeholder), which
+read as if the Pinterest link were simply missing. The operator corrected this explicitly. The
+correct mapping for every Pinterest-sourced row, matching the existing Meta-row convention
+(`https://app.winninghunter.com/ad/<id>?platform=facebook`) already used elsewhere in this sheet:
+
+- **`winninghunter_link` column** → `=HYPERLINK("https://app.winninghunter.com/ad/<id>?platform=pinterest","WinningHunter")`
+  — a genuine WinningHunter platform deep-link, not the raw Pinterest URL.
+- **`winning_ad` column** → `=HYPERLINK("https://www.pinterest.com/pin/<id>","Pinterest pin")` —
+  the actual Pinterest pin link goes here, replacing the old `n/a - Pinterest pin, no Meta ad
+  archive` placeholder text.
+- `<id>` is WinningHunter's own `id` / `productid` field for that ad (returned by
+  `search_pinterest_ads`/`get_pinterest_ad`) — for most pins this is a plain numeric Pinterest pin
+  ID matching the `pin_url` field exactly, but for some it is an opaque base64-style mobile
+  share-token instead; use whichever form that ad's `id` field actually is in **both** columns
+  consistently, don't try to "clean it up" into a numeric form.
+- `all_live_ads` column stays `n/a - Pinterest pin, no Meta ad archive` for Pinterest rows — there
+  genuinely is no Meta ad archive for a Pinterest-only product; only `winning_ad` was wrong.
 
 ---
 
@@ -824,13 +929,19 @@ After every run, provide:
 TikTok candidates · Meta candidates · total useful candidates · new candidates · duplicate
 candidates.
 
-**QUALIFICATION** — passed · failed repin gate · failed ad-count gate · failed days gate · failed
-video gate · failed price gate · failed brand test · failed product-page verification · failed
-dedupe.
+**QUALIFICATION** — passed Stage B · failed repin gate · failed ad-count gate · failed days gate ·
+failed media gate · failed price gate · failed brand test · failed product-page verification ·
+failed dedupe. Then **Stage C** — passed (both live-stock AND supplier) · failed live-stock check
+(sold out / dead / unverifiable) · failed supplier sourcing (no qualifying AliExpress match).
+Report Stage C attrition explicitly and separately from Stage B — per run 6, Stage C verification
+is now the dominant filter on final delivered count, not the traction gates.
 
-**DELIVERY** — total delivered · TEST NOW · WATCH · SKIP.
+**DELIVERY** — total delivered (all TEST NOW under the current pipeline — see §48) · candidates
+that reached Stage B but not Stage C, logged to RECHECK_QUEUE instead of delivered · SKIP.
 
-**SOURCE MIX** — e.g. Pinterest live: 4 · Pinterest historical: 4 · TikTok: 1 · Meta: 1.
+**SOURCE MIX** — Pinterest live: N · Pinterest historical: N. (TikTok and Meta passes are
+suspended per §14 — omit them from the mix unless the operator has explicitly re-enabled them for
+this run, in which case report those counts too.)
 
 **NICHE MIX** — list all ten niches, explicitly identify empty niches.
 
