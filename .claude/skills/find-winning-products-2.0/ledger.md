@@ -9,6 +9,36 @@ spreadsheet if it is briefly unreachable.
 WinningHunter IDs already evaluated (qualified or rejected), so a run never re-fetches or
 re-scores the same row.
 
+### 2026-09-11 (run 5 — days_min EXPERIMENT: lowered 30 → 15)
+**Why this run exists**: operator asked to "lessen the days running to 50 days." Since the true
+current floor was 30 (not something higher, as the phrasing implied), this was ambiguous — asked a
+quick clarifying question rather than guess a direction on an expensive run, and the operator chose
+to LOWER the floor to 15 (not raise to 50) to test whether it would increase volume, which is what
+recent runs have been short on.
+**On load**: found run 3's entire 6-product delivery (rows 363-368 at the time) gone from the sheet,
+while run 4's 3 products (previously 369-371) were intact and had shifted up to fill 363-365. This
+selective pattern — exactly the unsatisfactory (mostly-WATCH) run removed, the satisfactory
+(all-TEST-NOW) run kept — reads as deliberate manual cleanup, not a session collision. Did not
+attempt to restore run 3.
+**Result — the experiment's answer**: lowering days_min from 30 to 15 did NOT meaningfully raise
+volume. Same 5-agent, same-method sweep (~200+ searches) that found 3 clean deliverables at the
+30-day floor found only 2 at the 15-day floor (one of them a borderline niche-fit call). This
+confirms the hypothesis flagged in run 4's learning log: **days-running was never the actual
+bottleneck** — it's the repin_count/adscount thresholds (kept strict throughout) combined with this
+sheet's own accumulated exclusion-index saturation and Stage 2/3 (stock + supplier) verification
+attrition. See LEARNING LOG for the explicit conclusion and recommended next lever.
+- Pinterest pin 687313914180 (Zavonix PoutPower Lip Plumper) — qualified, delivered TEST NOW
+- Pinterest pin 687299499265 (PistonPerk Spark Plug Novelty Mug, marnetic.com) — qualified,
+  delivered TEST NOW, but flagged: this is an automotive-THEMED novelty desk item, not a functional
+  car accessory — questionable fit for the Car Accessories niche, included with caveat rather than
+  silently dropped or silently forced to fit.
+- 8 of 10 niches (Hobbies, Women's fashion, Home care, Underwear, Fitness, Healthcare, Lighting, and
+  arguably Car accessories given the mug's fit question) returned zero clean end-to-end survivors.
+  Several strong candidates died at Stage 2/3 specifically because they were boutique/proprietary
+  construction (two LEAU dresses — real traction, real stock, no AliExpress equivalent exists for
+  their specific corset/knit construction) rather than commodity dropship goods — this is a new,
+  distinct failure mode worth tracking (see LEARNING LOG).
+
 ### 2026-09-11 (run 4 — PINTEREST-ONLY, READY-TO-SHIP BAR — 2nd course correction)
 **Why this run exists**: operator feedback on run 3: "the last result is still as not expected."
 Asked directly what was wrong (via AskUserQuestion rather than guessing a 3rd time) and got 3
@@ -239,6 +269,13 @@ exceeded by the candidate pool).
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
 
+## 2026-09-11 (run 5 — days_min=15 EXPERIMENT, via /find-winning-products-2.0)
+2 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, both with real Pinterest link + real AliExpress
+supplier link + real COGS.
+- Zavonix PoutPower Lip Plumper — zavonix.com — Beauty — US — video ad — TEST NOW
+- PistonPerk Spark Plug Novelty Mug — marnetic.com — Car accessories — US — image ad — TEST NOW
+  (FLAGGED: automotive-themed novelty gift, not a functional car accessory — questionable niche fit)
+
 ## 2026-09-11 (run 4 — PINTEREST-ONLY, READY-TO-SHIP BAR, via /find-winning-products-2.0)
 3 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, ALL with a real Pinterest link + real AliExpress
 supplier link + real COGS (no placeholders — this was the explicit fix this run made).
@@ -330,6 +367,35 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-11 (run 5) — days_min ruled out as the volume lever; here's what's actually left
+**Direct answer for the next run**: do not spend another cycle adjusting days_min — 30 vs 15 made
+no meaningful difference (3 vs 2 deliverables, same method, same niches). The three real levers left,
+in likely order of impact:
+1. **Lower repin_count and/or adscount thresholds.** These were kept strict across runs 3-5 at the
+   operator's choice. Given how many candidates across all 5 runs died at "repins 30-45" or
+   "adscount 7-9" — just under the 50/10 bars — a modest reduction (e.g. repins>=30, ads>=7) would
+   likely unlock several already-identified near-misses immediately (see REJECTED_PRODUCTS/near-miss
+   notes throughout runs 3-5) without a full new search cycle.
+2. **Accept boutique/proprietary products without a generic AliExpress equivalent**, sourcing
+   instead from a manufacturer-direct or alternative supplier, or simply marking COGS "n/a - verify
+   with brand/manufacturer directly" instead of hard-requiring an AliExpress match. This run's two
+   LEAU dresses (Stage-1 and Stage-2 clean, Stage-3 blocked) are the clearest example — real
+   winning products exist that aren't simple commodity dropship goods.
+3. **Revisit the exclusion index's dedup strictness for near-identical-but-distinct concepts.**
+   5 runs into this sheet, several sub-niches (posture correctors, neck massagers, wall sconces,
+   shapewear bodysuits) are being auto-rejected as "duplicate concept" on every pass. Some of these
+   really are the same product resold; others may be different-enough mechanisms that a less
+   conservative reading would allow. Worth a deliberate one-time review of what's been rejected on
+   this basis across runs 3-5 to see if any should be reconsidered.
+- **New Stage-3 failure mode identified this run**: boutique/proprietary construction with no
+  generic AliExpress equivalent (distinct from "no supplier found because the search terms were
+  wrong" — here the product genuinely doesn't exist as a mass-market commodity). Track this
+  separately from ordinary "no qualifying supplier" in future near-miss logs.
+- **Healthcare + Lighting: 4-for-4 zero.** This is no longer noise — treat these two niches as
+  effectively exhausted against this sheet's Pinterest inventory until either (a) enough time passes
+  for new ads to scale up past the thresholds, or (b) gate #1 above (lower repin/ad thresholds) is
+  applied specifically to these two niches as a test.
 
 ### 2026-09-11 (run 4) — the explicit volume-vs-completeness tradeoff, quantified
 Run 3 predicted this tradeoff; run 4 measured it. Adding a hard "must verify in-stock AND must
