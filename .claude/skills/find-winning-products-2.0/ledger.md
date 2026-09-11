@@ -9,6 +9,56 @@ spreadsheet if it is briefly unreachable.
 WinningHunter IDs already evaluated (qualified or rejected), so a run never re-fetches or
 re-scores the same row.
 
+### 2026-09-11 (run 6 — GATE-LOOSENING EXPERIMENT: repin_count/adscount 50/10 → 20/5)
+**Why this run exists**: operator, on seeing run 5's 2-product result: "only 2 additional products
+were added. i need 10 products every run." This is the run that finally tests the lever flagged
+but not yet tried across runs 4-5's learning logs — lowering repin_count/adscount thresholds
+(the near-miss evidence showed several candidates sitting at repins 30-45 / adscount 7-9, just
+under the old 50/10 bars) — while explicitly keeping days_since_started>=30 (run 5 already proved
+lowering that wasn't the answer), Pinterest-only sourcing, and full Stage 2/3 verification (no
+WATCH/placeholder rows) intact, since those three were the operator's own prior explicit asks.
+**Result**: 4 parallel discovery agents ran ~150 keyword x market Pinterest searches across all 10
+niches at the loosened gates, surfacing 18 raw candidates (Beauty 7, Healthcare 4, Women's fashion
+4, Underwear 1 [men's, wrong niche gender], Lighting 1, Home care 1, Men's fashion/Car
+accessories/Fitness/Hobbies 0 each). Stage 2/3 verification then cut that to **7 deliverable** —
+the highest fully-verified count of any run to date (beats run 4's 3 and run 5's 2 by 2-3x), though
+still short of the operator's stated 10/run target. Verification attrition was the dominant filter,
+not discovery: Eaksone Auto Tag Removal (product page 404, likely delisted), Brinoa Cerviless Pro
+(sold out — also a known duplicate of a product delivered 2026-08-17 under minopia.com per
+SEEN_DOMAINS run 1, so it would have been rejected either way), Onecompress Bamboo Gloves (sold
+out), Eettsy Neck & Back Massager (site returns HTTP 403 to automated fetches — unverifiable, not
+necessarily dead), PosturePro Haltungskorrektor (site migrated wecro.de → shopwecro.com and the
+closest live match was a differently-named/differently-priced EMS posture device — treated as an
+unconfirmed match, not delivered), Sac Moira Tote (live price €245 exceeds the $200 price ceiling —
+original Pinterest-reported price of $164 was stale), Women's Three-Piece Trouser Suit (sold out)
+all died at Stage 2. Sunset Pendant Light's AliExpress search initially returned only 166-184-order
+suppliers (just under the 200-order bar) on an exact-match search term; a broader search term found
+a 335-order/5-star supplier for the same product type, so it survived Stage 3 — the first Lighting
+product to clear the full pipeline in 3 runs that tried that niche. Healthcare went from 4 raw
+candidates to zero delivered (all 4 died at Stage 2/3) despite being historically this skill's
+2nd-best niche (11 delivered all-time) — this is the clearest evidence that stock-out/verification
+attrition, not gate tightness, is now the binding constraint on volume, at least for niches with any
+real candidate supply. Men's fashion, Car accessories, Fitness, Hobbies, Underwear returned zero
+qualifying candidates even at the loosened gates after 20-50 keyword combos each — confirmed
+structurally weak/exhausted on Pinterest for this skill's fixed niche list, not a threshold problem.
+- Pinterest pin 687304672304 (Skale Nail Growth Serum, skalecosmetics.com) — qualified, delivered
+  TEST NOW (margin risk, live price under $25 floor)
+- Pinterest pin 687310403037 (Skale Lash Growth Serum, skalecosmetics.com) — qualified, delivered
+  TEST NOW — NOTE: same store as the Nail Serum above (distinct SKU, not a duplicate); also a soft
+  concept-adjacency with Shana Paris Premium Lash Serum (delivered as WATCH in run 3) — both are
+  eyelash growth serums from different stores/formulations, not blocked as an exact duplicate but
+  flagged here for future dedup judgment
+- Pinterest pin AYxf...(Livaé Facial Lifting Massager, helynshop.com) — qualified, delivered TEST NOW
+- Pinterest pin 687280842742 (Diana Tricot Knit Waistcoat, luxevintage.co) — qualified, delivered
+  TEST NOW
+- Pinterest pin 687299304382 (Blakely Blaze Mini Dress, bymaara.com) — qualified, delivered TEST NOW
+  (AliExpress supplier is a generic bohemian V-neck mini dress, closest high-volume equivalent, not
+  an exact style clone — flagged for sample-check before ordering)
+- Pinterest pin 687307613339 (KlarFix Transparent Dust-Proof Storage Bags, verlimo-shop.com) —
+  qualified, delivered TEST NOW (margin risk, live price under $25 floor)
+- Pinterest pin 4260609374221 (Sunset Pendant Light AFTERGLOW L1, monulo.com) — qualified, delivered
+  TEST NOW
+
 ### 2026-09-11 (run 5 — days_min EXPERIMENT: lowered 30 → 15)
 **Why this run exists**: operator asked to "lessen the days running to 50 days." Since the true
 current floor was 30 (not something higher, as the phrasing implied), this was ambiguous — asked a
@@ -147,6 +197,32 @@ its product page failed to render on 2 separate verification attempts, 2 days ap
 Store domains already evaluated, one line each, with the niche and the outcome (qualified /
 rejected / recheck).
 
+### 2026-09-11 (run 6)
+- skalecosmetics.com — Beauty — qualified TWICE (Nail Growth Serum + Lash Growth Serum, distinct
+  SKUs, both delivered TEST NOW)
+- helynshop.com — Beauty — qualified, TEST NOW (Livaé EMS+LED facial massager)
+- luxevintage.co — Women's fashion — qualified, TEST NOW (Diana Tricot Knit Waistcoat)
+- bymaara.com — Women's fashion — qualified, TEST NOW (Blakely Blaze Mini Dress)
+- verlimo-shop.com (formerly verlimo.de, 301 redirect) — Home care — qualified, TEST NOW (KlarFix
+  storage bags)
+- monulo.com — Lighting — qualified, TEST NOW (Sunset Pendant Light AFTERGLOW L1)
+- eaksone.com — REJECTED — Pinterest-advertised "Auto Tag Removal Kit" no longer resolves on the
+  live store (404 on guessed URL, not in site search or full collection listing) — likely delisted
+- brinoa.com — REJECTED — Cerviless Pro posture corrector is SOLD OUT on live check; also already
+  flagged as a duplicate of a product delivered under minopia.com back in run 1 (see 2026-09-08
+  entry below)
+- eettsy.com — UNVERIFIABLE — returns HTTP 403 to automated fetches on every path tried (product
+  page, collections, homepage) — likely bot-blocking, not necessarily dead; recheck manually
+- onecompress.com — REJECTED (this SKU) — Bamboo Compression Gloves explicitly marked "Out of
+  stock" on live page; other Onecompress products (socks, sleeves) untested this run
+- shopwecro.com (formerly wecro.de, 301 redirect) — REJECTED — the Pinterest-advertised
+  "PosturePro Haltungskorrektor" could not be confirmed at this domain; closest live match was a
+  differently-named, differently-priced EMS posture device — treated as unconfirmed, not delivered
+- latelierdemalte.com — REJECTED (this SKU) — Sac Moira tote's live price (€245) exceeds the $200
+  ceiling; Pinterest-reported price ($164) was stale
+- hudsonclaye.com (formerly hudsongrace.co.uk, 301 redirect) — REJECTED — Women's Three-Piece
+  Trouser Suit is SOLD OUT on live check
+
 ### 2026-09-08 (run 1)
 - seure.co — Men's fashion — qualified, TEST NOW
 - vegaring.com — Women's fashion — qualified, TEST NOW
@@ -176,6 +252,21 @@ rejected / recheck).
 ## SEEN_PRODUCT_CONCEPTS
 Underlying product concepts already delivered or rejected as duplicates — not store-specific, so a
 different brand selling the same object is caught here even under a new domain.
+
+### 2026-09-11 (run 6)
+- Nail growth serum — NEW concept, delivered (Skale Nail Growth Serum)
+- Eyelash growth serum — SOFT DUPLICATE of Shana Paris Premium Lash Serum (delivered WATCH, run 3)
+  — different store/formulation/price, not blocked, but flag before delivering a 3rd instance
+- EMS + LED facial lifting massager — NEW concept, delivered (Livaé)
+- Knit waistcoat/cardigan (women's) — NEW concept, delivered (Diana Tricot)
+- Deep-V ruffled mini dress — NEW concept, delivered (Blakely Blaze)
+- Transparent dust-proof storage bags — NEW concept, delivered (KlarFix)
+- Ribbed-glass ceiling pendant light — NEW concept, delivered (Sunset Pendant Light / Monulo);
+  distinct from Vaoth Infinity Lamp (bottle-upcycle mirror lamp) and Blauzone/LumiBeam (night
+  light / projector) already on the sheet — different form factor
+- "Cerviless Pro" posture corrector (brinoa.com) — CONFIRMED DUPLICATE of the product delivered
+  2026-08-17 under minopia.com (per run 1's SEEN_DOMAINS note) — moot this run since it's also
+  sold out, but worth keeping in this list explicitly since it surfaced again in discovery
 
 ### 2026-09-08 (run 1)
 - Magnetic silicone Apple Watch band — NEW, delivered (Seure)
@@ -268,6 +359,19 @@ exceeded by the candidate pool).
 ## DELIVERED_PRODUCTS
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
+
+## 2026-09-11 (run 6 — GATE-LOOSENING EXPERIMENT, via /find-winning-products-2.0)
+7 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, ALL with a real Pinterest link + real AliExpress
+supplier link + real COGS. Niches with zero qualifying+verified candidates: Healthcare (4 raw
+candidates, all died at Stage 2/3), Men's fashion, Car accessories, Fitness, Hobbies, Underwear
+(zero raw candidates despite loosened gates).
+- Skale Nail Growth Serum — skalecosmetics.com — Beauty — US — video ad — TEST NOW (margin risk, <$25)
+- Skale Lash Growth Serum — skalecosmetics.com — Beauty — US — video ad — TEST NOW
+- Livaé Facial Lifting Massager (EMS+LED) — helynshop.com — Beauty — US — video ad — TEST NOW
+- Diana Tricot Knit Waistcoat — luxevintage.co — Women's fashion — US — image ad — TEST NOW
+- Blakely Blaze Mini Dress — bymaara.com — Women's fashion — GB — image ad — TEST NOW
+- KlarFix Transparent Dust-Proof Storage Bags — verlimo-shop.com — Home care — DE — video ad — TEST NOW (margin risk, <$25)
+- Sunset Pendant Light (AFTERGLOW L1) — monulo.com — Lighting — US — image ad — TEST NOW
 
 ## 2026-09-11 (run 5 — days_min=15 EXPERIMENT, via /find-winning-products-2.0)
 2 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, both with real Pinterest link + real AliExpress
@@ -367,6 +471,33 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-11 (run 6) — loosening repin/adscount gates roughly tripled volume, but stock-out
+attrition is now the harder ceiling
+Operator's message after run 5 was unconditional: "i need 10 products every run." Rather than ask
+another clarifying question, applied the top-ranked lever from run 5's own learning log — lowered
+repin_count from 50 to 20 and adscount from 10 to 5, left days_since_started at 30 (already proven
+not to matter) and left Pinterest-only sourcing + full Stage 2/3 verification untouched (both
+explicit prior operator asks). Result: 18 raw candidates found (vs. roughly 6-10 in runs 3-5 at the
+stricter gates) but only 7 survived live-stock verification and real AliExpress sourcing — a rate
+of ~39% raw-to-delivered, worse than run 4's ~50% and roughly in line with run 5's. **The
+loosened gates worked exactly as intended on the discovery side** (more raw candidates, especially
+in Beauty which nearly doubled its historical single-run yield), but **verification attrition ate
+most of the gain**: 2 sold-out, 1 delisted/404, 1 unverifiable-due-to-bot-blocking, 1
+domain-migrated-with-ambiguous-product-match, 1 stale-price-now-over-cap. None of these are gate
+problems — they're supply-side facts about small dropship stores (frequent restocks/delistings,
+site migrations, inconsistent WebFetch access). **Conclusion for whoever runs this next**: 7/run
+under full Pinterest-only + zero-placeholder verification appears close to this skill's realistic
+ceiling at current exclusion-index saturation (6 runs deep now, several niches structurally
+exhausted on Pinterest per this and prior runs' zero-candidate reports). To reliably clear 10/run
+from here, the remaining real levers are, in order: (1) accept WATCH-tier rows again but ONLY with
+real Pinterest links (no placeholders) even when stock/supplier can't be confirmed same-day — this
+was explicitly rejected by the operator after run 3, so do not do this without asking again;
+(2) loosen repin/adscount further (e.g. 10/3) — untested, real risk of admitting low-traction noise;
+(3) accept a second source (TikTok or Meta) alongside Pinterest for the remaining niche gap — this
+directly conflicts with the operator's "mostly pinterest winners" instruction and should not be done
+without asking; (4) expand beyond the fixed 10-niche list — out of scope per SKILL.md. None of these
+should be applied silently; each trades away something the operator explicitly asked for.
 
 ### 2026-09-11 (run 5) — days_min ruled out as the volume lever; here's what's actually left
 **Direct answer for the next run**: do not spend another cycle adjusting days_min — 30 vs 15 made
