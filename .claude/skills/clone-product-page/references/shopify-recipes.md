@@ -130,6 +130,45 @@ comment. `json.loads` will refuse the raw body; strip the comment first
 regenerates it — or leave it in; both are accepted, but validate the JSON on
 the stripped version.
 
+## 3b. Phase 1 — harvest the snippets the template renders
+
+```graphql
+query Snippets($themeId: ID!) {
+  theme(id: $themeId) {
+    files(first: 50, filenames: ["snippets/pb-*"]) {
+      nodes {
+        filename size checksumMd5
+        body { ... on OnlineStoreThemeFileBodyText { content } }
+      }
+    }
+  }
+}
+```
+
+Use the prefix the template's `{% render '…' %}` calls actually name (grep
+`render '` in the template body). If the response comes back inline rather
+than spilled, request the snippets together with the template in one
+`filenames` list so the combined result spills to a file and lands on disk
+verbatim. Verify each saved body against its `checksumMd5`. Then grep the
+snippets for `file_url` and `shop_images` and add those files to the
+manifest.
+
+## 3c. Phase 3 — does the destination already sell it?
+
+```graphql
+query ExistingProduct($handle: String!) {
+  productByIdentifier(identifier: { handle: $handle }) {
+    id title status templateSuffix
+    variantsCount { count } mediaCount { count }
+    priceRangeV2 { minVariantPrice { amount currencyCode } }
+  }
+}
+```
+
+A hit means offer the choice in SKILL.md Phase 3 before any product write. For
+"replace the page only", upsert the translated template a second time under
+`templates/product.<existing templateSuffix>.json` in the duplicate theme.
+
 ## 4. Phase 1 — resolve `shop_images` references to CDN URLs
 
 The template refers to library files as `shopify://shop_images/<filename>`
@@ -229,6 +268,47 @@ A `FILE_ALREADY_EXISTS`-type user error is fine (the destination already has
 that image). Anything else, fix before continuing. Files land with
 `fileStatus: UPLOADED` and become `READY` a few seconds later; you don't need
 to wait for that before writing the template.
+
+### 7b. When `fileCreate` is denied — theme-asset fallback and in-place replace
+
+Snippet-referenced images can live in the theme instead of Files:
+
+```graphql
+mutation UpsertAssets($themeId: ID!, $files: [OnlineStoreThemeFilesUpsertFileInput!]!) {
+  themeFilesUpsert(themeId: $themeId, files: $files) {
+    upsertedThemeFiles { filename }
+    userErrors { filename code message }
+  }
+}
+```
+
+```json
+{ "themeId": "gid://shopify/OnlineStoreTheme/…",
+  "files": [ { "filename": "assets/pb-ugc-beige.webp",
+               "body": { "type": "URL", "value": "https://cdn.shopify.com/…/pb-ugc-beige.webp" } } ] }
+```
+
+then change `{{ 'pb-ugc-beige.webp' | file_url }}` to `| asset_url` in the
+snippet and re-upsert it. Verify with a `files(filenames: ["assets/pb-*"])`
+read (size and `contentType`).
+
+To replace a library image in place, keeping its filename and every reference:
+
+```graphql
+mutation ReplaceFile($files: [FileUpdateInput!]!) {
+  fileUpdate(files: $files) {
+    files { id fileStatus ... on MediaImage { image { url } } }
+    userErrors { field message code }
+  }
+}
+```
+
+```json
+{ "files": [ { "id": "gid://shopify/MediaImage/…", "originalSource": "https://…/localized.png", "alt": "…" } ] }
+```
+
+The `image` comes back null while it reprocesses; re-query `files` a few
+seconds later for the new `?v=` URL and confirm the live page references it.
 
 ## 8. Phase 5 — `productCreate` with ordered media, then prices
 
@@ -433,7 +513,16 @@ string (without `product.` and `.json`) as the product's `templateSuffix`.
 - `shop_images` references may carry `?v=…`; match `files` by bare filename.
 - `fileCreate` must keep the original filename or the template's
   `shopify://shop_images/<name>` reference breaks.
-- `productReorderMedia` drops the last media item; order at create time.
+- `productReorderMedia` drops the last media item; order at create time. To
+  rebuild an existing product's gallery, `productCreateMedia` the full new set
+  (it appends in array order) and *then* `productDeleteMedia` the old ids —
+  the product never sits empty and no reorder is needed.
+- Templates render snippets; harvest `snippets/` too or sections render Liquid
+  errors on the destination.
+- The destination may already sell the product at the same handle — check
+  before `productCreate`.
+- `fileCreate` needs the staff account's "Create files" permission, not just
+  the app scope; theme assets are the fallback for snippet-referenced images.
 - `productCreate` leaves every variant at price 0 until `productVariantsBulkUpdate`.
 - Theme file writes to the MAIN theme are rejected; write to a duplicate.
 - `themeFilesUpsert` can return an empty list on success; verify by checksum.

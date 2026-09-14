@@ -88,8 +88,17 @@ Collect, and write to a scratch directory as you go:
    Grep them out of the template, then resolve each to a CDN URL with a `files`
    query. Miss one and that section renders blank on the destination.
 
-Save a manifest (product spec + every image URL) so Phase 3 onward can work
-without the source.
+5. **Every theme snippet the template renders.** Custom-liquid sections and
+   blocks are often just `{% render 'pb-xxx' %}` — the actual copy lives in
+   `snippets/pb-xxx.liquid` in the source theme, not in the template. Grep the
+   template for `render '…'`, fetch every named snippet from the MAIN theme, and
+   save them. On the PostureBra run 14 snippets held eight whole page sections;
+   without them the destination renders `Liquid error: Could not find asset`
+   where the sections should be. Snippets can reference more files
+   (`| file_url`, `shopify://shop_images/…`) — harvest those too.
+
+Save a manifest (product spec + every image URL + snippet list) so Phase 3
+onward can work without the source.
 
 ## Phase 2 — Translate
 
@@ -142,12 +151,51 @@ Then confirm the destination theme actually has the page builder's sections
 installed (`sections/pp-*`). Without them the template renders nothing, and it's
 better to find out now than after uploading everything.
 
+**Check whether the destination already sells this product** before creating
+anything: `productByIdentifier(identifier: { handle: "<handle>" })`, and a
+title search if the handle differs. Stores in this family get cloned from each
+other repeatedly, so a hit is common — Nestilia already had `posturebra` from
+an earlier clone, live and selling at its own price. Creating a second product
+is almost never what the user wants. Stop and offer the choice:
+
+- **Replace the page only (usual answer).** Keep the existing product, price,
+  variants and gallery. Write the new template into the duplicate theme under
+  the *existing product's* `templateSuffix` as well as the new name, so
+  publishing the theme swaps the page with zero product edits and no live
+  disruption before publish.
+- **Repoint the product now.** Only if they accept a bare default page on the
+  live storefront until the theme is published.
+- **Separate new product.** Only if they explicitly want two listings.
+
+When replacing the page, also align any prices hard-coded in the copy to the
+destination product's real price — a page saying "$46.99 for three" next to a
+$39.99 price is an inherited defect, not a faithful clone.
+
 ## Phase 4 — Section images
 
 Upload every harvested `shop_images` file with `fileCreate`, **preserving the
 exact original filename** — the template refers to them by name, so a renamed
 file is a broken image. Use `duplicateResolutionMode: RAISE_ERROR`; a collision
 just means the destination already has that image, which is fine.
+
+**Probe the Files permission first** with a `files` query and then one small
+`fileCreate`, before the theme upload. `fileCreate` needs the connector's
+*staff account* to hold the "Create files" permission, not just the app's
+`write_files` scope — the error names both. When it is denied:
+
+- Images referenced from **snippets** (`{{ 'x.webp' | file_url }}`) can go
+  into the theme instead: `themeFilesUpsert` to `assets/x.webp` with a URL
+  body, then change the snippet to `| asset_url`. Theme writes only need
+  `write_themes`, which duplicating the theme already proved you have.
+- Images in **section `image` settings** cannot — those must be Files. Give
+  the user the exact filenames and source URLs (or send the files), and ask
+  them to grant the permission (Settings → Users → staff member → Content →
+  Files) or upload by hand. Retry `fileCreate` once they say it's done; the
+  grant takes effect immediately.
+
+To **replace** an existing library image in place later (for example after
+localizing its text), use `fileUpdate` with `originalSource` on the same file
+id — the filename and every template reference stay valid.
 
 ## Phase 5 — Product
 
