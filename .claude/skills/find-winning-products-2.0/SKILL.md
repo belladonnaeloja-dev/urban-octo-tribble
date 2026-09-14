@@ -781,7 +781,8 @@ Buyer:
 age · gender · audience
 
 Economics:
-supplier cost · sell price · margin · profit/order
+supplier cost · sell price (EUR, computed per the §50 Selling price calculation rule — competitor
+live price converted to EUR, rounded down to the next lower xx.99) · margin · profit/order
 
 Their hook:
 actual first line of their ad copy
@@ -852,6 +853,27 @@ correct mapping for every Pinterest-sourced row, matching the existing Meta-row 
   for the store (`https://www.facebook.com/ads/library/?active_status=active&ad_type=all&q=<store
   name>`) instead of leaving `n/a`. Do not leave this column as a placeholder — every Pinterest ad
   fetched so far has carried a `page_url`, so the fallback should be rare.
+
+### Selling price calculation — column AG (ADDED 2026-09-14, mandatory every run)
+
+For **every** row written to the spreadsheet (not just on request — this is now a standing part of
+the write procedure), compute and fill column AG ("Selling price /Offer"):
+
+1. **Open the product page** (the same live URL used for Stage C stock verification) and read the
+   current price shown there — the competitor's live price, not a stale API-reported price.
+2. **Convert to EUR** if the store's price isn't already in EUR, using a current USD/EUR (or other
+   currency/EUR) rate looked up at write time — don't reuse a rate from an earlier run.
+3. **Round DOWN to the next lower `xx.99`** — never round up, never round to nearest. Formula:
+   `selling_price = floor(eur_price) - 0.01`. Example: competitor price converts to €25.62 → our
+   price is €24.99 (not €25.99, not €26.99). If the converted price is already exactly `N.99`, keep
+   it as-is (it's already "the next lower `xx.99`," not one step below itself).
+4. **Write the result to column AG** as a plain number (e.g. `24.99`), same units/precision as the
+   rest of the price columns.
+
+Apply this to every delivered row in the same write pass that fills the rest of the row — don't
+leave AG for a later manual pass. If a product's page is a collection page rather than a
+single-SKU page (see the Créole Rym precedent in `ledger.md`'s run 7 learning log), use the exact
+SKU's price you already verified for Stage C, not the collection's range.
 
 ---
 
