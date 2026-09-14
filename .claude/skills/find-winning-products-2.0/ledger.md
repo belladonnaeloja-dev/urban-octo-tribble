@@ -48,6 +48,63 @@ missing, only mislabeled/misplaced):
 and column AC to the actual Pinterest pin link — not an `n/a` placeholder — for every
 Pinterest-sourced row.
 
+### 2026-09-14 (run 7)
+**Load state**: on load, found the sheet had grown from 374 rows (end of run 6) to 408 rows — the
+sibling `find-winning-products` skill ran multiple times on 2026-09-13 and 2026-09-14, adding 34
+new products (rows 375-408), mostly Women's fashion (dresses/skirts/cardigans/boots), a Car
+accessories/Christmas-holiday batch, and misc footwear. Rebuilt the exclusion index fresh from the
+live sheet (394 entries, product+store+niche) rather than trusting master-history.tsv alone, per
+§32 "spreadsheet wins." Interesting finding: Swivolt Max (nimebrand.com), delivered as WATCH in
+run 3, was NOT in the fresh exclusion index — confirms it was part of the "deliberate manual
+cleanup" noted in run 5's load (run 3's WATCH rows were removed from the sheet at some point
+between run 3 and run 5) and is legitimately re-discoverable. It resurfaced this run and was
+re-verified independently (still sold out, same as run 3 — consistent finding, not re-delivered).
+**Result**: 4 parallel discovery agents ran ~155 keyword x market Pinterest searches at the current
+standing gates (repins>=20, ads>=5, days>=30, image/video) across all 10 niches, surfacing 22 raw
+candidates. Stage C verification (live stock + real AliExpress supplier) cut that to **5
+deliverable** — noticeably harder than run 6's 7, and the attrition was almost entirely Stage C,
+not discovery breadth or Stage B gates:
+- Sold out on live check: Electric Spray Comb (tiktrove.com — same store/product flagged
+  unreliable in run 3 too), The Men Pen (themenpens.com), Kierstin Lingerie (dulcestoreparis.com),
+  Swivolt Max (nimebrand.com, re-confirmed), Logan Sunglasses (glizm.com), Men's Boxers
+  (mrsaker.com — backorder date literally reads "19041994", a data bug, but functionally
+  unavailable), Pleated Pinstripes Capris (elysianclo.store — 404, not just sold out)
+- Unverifiable (persistent bot-blocking or connection failures across multiple retries), NOT
+  written per §40: Eclipse Retro Wall Light (tudoandco.com — HTTP 403 on 2 separate URL variants),
+  RGB Strobe LED Lamp (zorenza.de — connection refused 3x, a genuine network-level block not a
+  store issue), PosturePro (wecro.de -> shopwecro.com — 2nd run in a row this exact
+  store/product has failed to resolve to a working product page across a domain migration; flag
+  this specific product+store combo as effectively dead for automated verification, recheck
+  manually or drop from future rotations)
+- **NEW failure mode this run**: Flower Child Flannel (vaguestudios.com) was confirmed IN STOCK
+  at Stage B/live-check, but died at Stage C on the SUPPLIER side — no single AliExpress flannel
+  shirt listing met BOTH the >=200-order AND >=4.5-star bar simultaneously (best options were
+  1,000+ orders/4.3 stars OR 43 orders/4.9 stars). Held the line per §41 rather than accept a
+  supplier below either threshold. This is the first run where a fully-verified-in-stock product
+  was lost purely to the supplier-quality bar, not availability.
+- One high-value candidate (**Rhinestone Jeans**, glizm.com, **4,460 repins** — by far the
+  strongest single traction number found in any run to date) could NOT be verified despite
+  extensive effort: the exact WinningHunter-reported product URL 404'd, and neither the store's
+  broken on-site search nor browsing its 5,397-product catalog (via bestsellers collection and
+  paginated `/collections/all`) ever surfaced a matching product page. Logged to RECHECK_QUEUE
+  rather than guessed at or dropped — worth a dedicated retry next run given the traction size.
+- Hobbies and Home care returned **zero raw candidates** from 52 combined keyword searches —
+  every candidate that cleared numeric gates was on a big-brand/marketplace domain (Amazon, SHEIN,
+  Temu, eBay, Etsy, Wayfair, Home Depot, Target, LEGO) with no Shopify storefield, confirmed as a
+  structural feature of Pinterest's current ad mix in these niches, not a search-coverage gap.
+  Healthcare, Lighting, Car accessories, Underwear also delivered zero after Stage C attrition.
+- Beauty (3/3, at niche cap), Fitness (1), Women's fashion (1) were the only niches that delivered.
+- Pinterest pin 687297282900 (BlendMate Portable Blender, margothale.com formerly ausbury.co.uk) —
+  qualified, delivered TEST NOW
+- Pinterest pin 687281266654 (Lissage Indien Kera Glow, lissage-au-top.com) — qualified, delivered
+  TEST NOW
+- Pinterest pin 687296086274 (Valentine's Whisper Corset Top, maisonzifan.com) — qualified,
+  delivered TEST NOW (adscount exactly at the 5 floor — thin evidence beyond repins)
+- Pinterest pin 687267534605 (BIO-Aloe Vera Splash 3-in-1, thatsme.organic) — qualified, delivered
+  TEST NOW (margin risk, live price under $25)
+- Pinterest pin 687289455279 (PureGlow Schwarztee-Gesichtsmaske, solenza.de) — qualified, delivered
+  TEST NOW (margin risk + low stock, 4 units left)
+
 ### 2026-09-11 (run 6 — GATE-LOOSENING EXPERIMENT: repin_count/adscount 50/10 → 20/5)
 **Why this run exists**: operator, on seeing run 5's 2-product result: "only 2 additional products
 were added. i need 10 products every run." This is the run that finally tests the lever flagged
@@ -236,6 +293,39 @@ its product page failed to render on 2 separate verification attempts, 2 days ap
 Store domains already evaluated, one line each, with the niche and the outcome (qualified /
 rejected / recheck).
 
+### 2026-09-14 (run 7)
+- margothale.com (formerly ausbury.co.uk, 301 redirect) — Fitness — qualified, TEST NOW
+  (BlendMate Portable Blender)
+- lissage-au-top.com — Beauty — qualified, TEST NOW (Lissage Indien Kera Glow)
+- maisonzifan.com — Women's fashion — qualified, TEST NOW (Valentine's Whisper Corset Top)
+- thatsme.organic — Beauty — qualified, TEST NOW (BIO-Aloe Vera Splash 3-in-1)
+- solenza.de — Beauty — qualified, TEST NOW (PureGlow Schwarztee-Gesichtsmaske)
+- tiktrove.com — REJECTED (this SKU) — Electric Spray Air Cushion Massage Comb sold out; this
+  store's product feed is also structurally broken (product_title/handle/price all null in the
+  raw API data) — same store flagged unreliable in run 3 too, treat future Tiktrove candidates
+  with extra suspicion
+- themenpens.com — REJECTED — The Men Pen sold out on live check
+- dulcestoreparis.com — REJECTED — Kierstin Strass Lingerie Set sold out on live check
+- nimebrand.com — REJECTED (re-confirmed) — Swivolt Max still sold out, same finding as run 3;
+  this product/store combo is not in the current exclusion index (its run-3 WATCH row was removed
+  from the sheet at some point) but keeps failing stock verification independently — worth a
+  RECHECK_QUEUE entry with a longer interval rather than re-trying every run
+- glizm.com — MIXED — Logan Retro Sunglasses sold out (rejected); Rhinestone Jeans (4,460 repins,
+  by far the strongest traction found to date) could not be located on the live site despite
+  exhaustive search of a 5,397-product catalog — logged to RECHECK_QUEUE, not rejected outright
+- mrsaker.com — REJECTED — 2 Pack Men's Sexy Pouch Boxers shows a backorder date literally reading
+  "19041994" (data bug on the store's side) — functionally unavailable regardless of the cause
+- elysianclo.store — REJECTED — Pleated Pinstripes Capris 404s (delisted), not merely sold out
+- tudoandco.com — UNVERIFIABLE — Eclipse Retro Wall Light returns HTTP 403 to automated fetches on
+  two separate URL variants (with and without www/en-us prefix) — likely bot-blocking, recheck
+  manually
+- zorenza.de — UNVERIFIABLE — RGB Strobe LED Lamp connection-refused on 3 separate fetch attempts —
+  looks like a network-level block specific to this domain, not a store-side stock issue
+- wecro.de / shopwecro.com — UNVERIFIABLE (2nd run in a row) — PosturePro/Haltungskorrektor could
+  not be resolved to a working product page across a domain migration in both run 6 and run 7;
+  treat this specific store+product as effectively dead for automated verification going forward
+  rather than re-attempting every run
+
 ### 2026-09-11 (run 6)
 - skalecosmetics.com — Beauty — qualified TWICE (Nail Growth Serum + Lash Growth Serum, distinct
   SKUs, both delivered TEST NOW)
@@ -291,6 +381,18 @@ rejected / recheck).
 ## SEEN_PRODUCT_CONCEPTS
 Underlying product concepts already delivered or rejected as duplicates — not store-specific, so a
 different brand selling the same object is caught here even under a new domain.
+
+### 2026-09-14 (run 7)
+- Portable USB-rechargeable personal blender/smoothie maker — NEW concept, delivered (BlendMate)
+- At-home keratin/Indian hair-straightening treatment — NEW concept, delivered (Kera Glow) —
+  distinct from nail/lash serums and hair-loss oils already on the sheet
+- Standalone corset top (not part of a skirt/dress set) — NEW concept, delivered (Valentine's
+  Whisper) — distinct from the two "corset skirt set" entries already excluded
+- Multi-use aloe vera hair/face/body spray — NEW concept, delivered (BIO-Aloe Splash)
+- Tea-based clay/stick face mask — NEW concept, delivered (PureGlow)
+- Y2K rhinestone/patchwork cargo jeans — NEW concept, NOT delivered (Rhinestone Jeans,
+  unverifiable — see RECHECK_QUEUE); worth tracking since 4,460 repins is the strongest signal any
+  candidate has shown across all 7 runs
 
 ### 2026-09-11 (run 6)
 - Nail growth serum — NEW concept, delivered (Skale Nail Growth Serum)
@@ -399,6 +501,19 @@ exceeded by the candidate pool).
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
 
+## 2026-09-14 (run 7, via /find-winning-products-2.0)
+5 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, ALL with a real Pinterest link + real AliExpress
+supplier link + real COGS. Niches with zero qualifying+verified candidates: Healthcare, Lighting,
+Car accessories, Underwear (raw candidates found but none survived Stage C), Hobbies, Home care
+(zero raw candidates at all — structural, not a verification issue).
+- BlendMate Portable Blender (2-in-1 Smoothie Maker & Bottle) — margothale.com — Fitness — GB —
+  video ad — TEST NOW
+- Lissage Indien Kera Glow — lissage-au-top.com — Beauty — FR — video ad — TEST NOW
+- Valentine's Whisper Corset Top — maisonzifan.com — Women's fashion — US — video ad — TEST NOW
+- BIO-Aloe Vera Splash 3-in-1 — thatsme.organic — Beauty — DE — image ad — TEST NOW (margin risk)
+- PureGlow Schwarztee-Gesichtsmaske — solenza.de — Beauty — DE — video ad — TEST NOW (margin risk,
+  low stock)
+
 ## 2026-09-11 (run 6 — GATE-LOOSENING EXPERIMENT, via /find-winning-products-2.0)
 7 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, ALL with a real Pinterest link + real AliExpress
 supplier link + real COGS. Niches with zero qualifying+verified candidates: Healthcare (4 raw
@@ -491,6 +606,23 @@ after exhaustive search: Hobbies, Men's fashion, Home care, Underwear, Fitness, 
 Emerging winners (§35) and recheckable rejects (§36) due for another look, with the date they
 become worth rechecking.
 
+### From run 7 (2026-09-14)
+- **Rhinestone Jeans (glizm.com, 4,460 repins)** — HIGHEST PRIORITY recheck of any item in this
+  queue. Strongest traction signal found in any run to date; the exact WinningHunter-reported URL
+  404'd and it could not be located via site search or a 5,397-product catalog browse. Next
+  attempt: try `get_pinterest_ad` again for a fresh `shopify_productid`/handle (the store may have
+  renamed the product), or check via Google site-search (`site:glizm.com rhinestone jeans`) if a
+  web-search tool is available in a future session.
+- **PosturePro / Haltungskorrektor (wecro.de / shopwecro.com)** — failed automated verification 2
+  runs in a row across a domain migration. Recheck manually (a human visiting the site) rather than
+  via automated WebFetch, or drop from future rotations if it keeps failing.
+- **Eclipse Retro Wall Light (tudoandco.com)** and **RGB Strobe LED Lamp (zorenza.de)** — both
+  unverifiable due to bot-blocking/connection issues rather than confirmed sold-out; recheck with a
+  different fetch approach or after a delay (blocking may be temporary/rate-limit related).
+- **Flower Child Flannel (vaguestudios.com)** — confirmed in stock, but no AliExpress supplier met
+  both order-count and star-rating thresholds simultaneously. Re-run supplier sourcing next time
+  with broader search terms ("cotton plaid shirt men", "vintage flannel jacket") before giving up.
+
 ### From this run (recheck_after dates above), plus:
 - **All 6 WATCH products above** — recheck stock status in 2-3 weeks (~2026-09-22 to 2026-09-29);
   Lhanel Pilates Kit (639-day survivor, 9/10 Pinterest fit) and Gourmetific Cookware Set (574-day
@@ -510,6 +642,34 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-14 (run 7) — Stage C (verification) is now unambiguously the binding constraint, and
+it's noisy run-to-run
+This run ran the exact same standing gates as run 6 (repins>=20, ads>=5, days>=30, image/video,
+Pinterest-only) and found comparable raw-discovery breadth (22 candidates vs. run 6's 18), but
+delivered only 5 vs. run 6's 7. The discovery side is now reasonably stable/repeatable at these
+settings; the delivered count is not — it swings with how many candidates happen to survive Stage C
+on a given day (stock levels change daily; a store having a bad inventory week is normal noise, not
+a signal about the gates). Concretely this run: 7 of 22 raw candidates were sold-out/delisted, 3
+were unverifiable due to bot-blocking/network issues outside our control, 1 cleared every check
+except the AliExpress supplier bar (first time that specific failure mode has been the sole reason
+a fully-verified-in-stock product wasn't delivered), and 1 high-value candidate (4,460 repins, the
+single strongest signal in 7 runs) couldn't be located on its own store's site at all.
+**Implication for future runs**: don't chase Stage C attrition rate as if it were a tunable
+parameter the way Stage B gates are — it isn't one. The two real remaining levers are still the
+ones named in run 6's log (loosen repins/ads further, or accept a second source), both of which
+trade away a standing operator requirement and need to be asked about, not assumed. A new,
+narrower lever surfaced this run: build a small allowlist of "verification-hostile" domains
+(bot-blocking stores like tudoandco.com, connection-refused domains like zorenza.de, chronically
+unresolvable ones like wecro.de) and skip spending verification budget on new candidates from those
+same domains in future runs unless the operator asks to retry them — this doesn't add volume, but
+it stops wasting Stage C effort on stores that have already demonstrated they won't verify.
+**Best niche this run**: Beauty (3/3, same as several prior runs — consistently the most reliable
+niche for both raw discovery volume and Stage C survival). **Worst**: Hobbies and Home care, now
+zero raw candidates 2 runs running even after 50+ keyword combos each — worth considering whether
+these two niches have simply moved off Pinterest's current small-Shopify-dropship ad mix entirely,
+which would be a finding worth surfacing to the operator directly rather than re-discovering every
+run.
 
 ### 2026-09-11 (run 6) — loosening repin/adscount gates roughly tripled volume, but stock-out
 attrition is now the harder ceiling
