@@ -48,6 +48,56 @@ missing, only mislabeled/misplaced):
 and column AC to the actual Pinterest pin link — not an `n/a` placeholder — for every
 Pinterest-sourced row.
 
+### 2026-09-14 (run 7, ROUND 2 — operator asked for 5 more to complete the 10/day target)
+After round 1 delivered 5, the operator said: "find 5 products more to complete the 10 daily
+required." Rebuilt the exclusion index again (411 entries, including round 1's deliveries and
+every round-1 reject by name so round 2 wouldn't resurface them) and launched two more discovery
+agents with explicit instructions to avoid every keyword/country combo already tried in round 1
+and push into genuinely new angles (FR/ES markets, seasonal Halloween/Christmas, new keyword
+families) rather than re-running exhausted searches — per §29.
+**Result**: round 2 found 6 raw candidates across ~98 additional keyword searches (40 for
+Healthcare/Lighting/Car accessories, 58 for Underwear/Men's fashion/Fitness/Women's fashion) plus
+~10 more manual follow-up searches. Stage C verification narrowed that to **3 more delivered**
+(total for the day: **8 of 10**):
+- Healthcare, Car accessories, Fitness, Men's fashion, Hobbies, Home care: **zero** qualifying
+  candidates survived to Stage C in round 2 either — Fitness and Men's fashion in particular were
+  pushed hard (35+ combined searches) and came back completely empty; every gate-clearing hit was
+  a big-brand/marketplace domain (Amazon, SHEIN, Temu, eBay, Kohl's, Brooks Brothers, Old Navy,
+  LightInTheBox). This is now confirmed structural for these 6 niches under the current gates and
+  Pinterest-only sourcing, not a search-effort gap — 2 full rounds (round 1 + round 2) have both
+  come back empty or near-empty for the same niches.
+- **Rhinestone Jeans (glizm.com, 4,460 repins)** — closed out this round. Checked the store's own
+  `/search/suggest.json` endpoint directly (a more authoritative check than the earlier
+  `/products.json` and on-site search attempts) — the product is genuinely absent from the store's
+  own search index entirely, not just under a different handle. Confirmed **DELISTED**, not merely
+  unverifiable. Downgrade from "HIGH PRIORITY RECHECK" to closed/likely-permanent.
+- **Cécile™ Maxi Chemise Intemporelle** and **Peignoir Betty™ Camel** (both zoeparis.fr, 351 and
+  79 repins) — found, would likely have qualified (both from an established French dropship
+  store), but the domain failed DNS resolution (`getaddrinfo EAI_AGAIN`) on 3 separate fetch
+  attempts including a `www.` variant. This reads as a genuinely unreachable/down domain rather
+  than bot-blocking (bot-blocking returns HTTP 403, not a DNS failure) — logged to RECHECK_QUEUE,
+  worth a retry in a future run since the domain may come back.
+- **Créole Rym earrings (belizebijoux.com)** — a new sourcing pattern worth noting: the qualifying
+  Pinterest ad promoted the store's whole earrings collection page, not one specific product.
+  Rather than reject it outright, fetched the collection page and used the store's own
+  "BEST-SELLER" tag to identify the single SKU (Créole Rym, €34) the ad's traction most plausibly
+  reflects, then verified that specific product. This is a judgment call — the 76 repins/10 ads
+  belong to the collection ad, not confirmed per-SKU — flag this pattern for future runs: prefer a
+  product-specific ad when available, but a collection ad pointing to a clearly-marked bestseller
+  is a reasonable fallback rather than discarding real traction evidence outright.
+- Pinterest pin AVhlvN45KCb02en6zJa2SsGBXjyE9AX3w3Qx3zmrnB25xn-b7piy6c-KFA37m0pI_11axNvhuWmTNNqcWi5wC_Q
+  (Veilleuse Guirlande Lumineuse LED avec Pinces Photo, luminaire-lucciano.com) — qualified,
+  delivered TEST NOW (margin risk, live price under $25)
+- Pinterest pin 687309701010 (Collier Rainbow, tapioca-bijoux.com) — qualified, delivered TEST NOW
+  (adscount exactly at the 5 floor; currency correction from the API's mistagged USD to the live
+  EUR price)
+- Pinterest pin 687285961402 (Créole Rym earrings, belizebijoux.com) — qualified, delivered TEST
+  NOW (sourced via the collection-ad-to-bestseller-SKU pattern described above)
+
+**Final honest count for 2026-09-14: 8 of the requested 10.** Did not pad the remaining 2 with a
+lower-quality candidate (the DNS-unreachable zoeparis.fr items, or a borderline/duplicate-risk
+reject) to hit the round number — see LEARNING LOG for what's actually left to try.
+
 ### 2026-09-14 (run 7)
 **Load state**: on load, found the sheet had grown from 374 rows (end of run 6) to 408 rows — the
 sibling `find-winning-products` skill ran multiple times on 2026-09-13 and 2026-09-14, adding 34
@@ -501,6 +551,15 @@ exceeded by the candidate pool).
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
 
+## 2026-09-14 (run 7, ROUND 2, via /find-winning-products-2.0)
+3 more delivered (total for the day: 8/10), ALL TEST NOW, ALL SOURCE: Pinterest, ALL with real
+links + real supplier + real COGS.
+- Veilleuse Guirlande Lumineuse LED avec Pinces Photo — luminaire-lucciano.com — Lighting — FR —
+  image ad — TEST NOW (margin risk)
+- Collier Rainbow — tapioca-bijoux.com — Women's fashion — FR — image ad — TEST NOW
+- Créole Rym (18k gold-plated hoop earrings) — belizebijoux.com — Women's fashion — FR — image ad
+  — TEST NOW (sourced via collection-ad-to-bestseller-SKU judgment call, see LEARNING LOG)
+
 ## 2026-09-14 (run 7, via /find-winning-products-2.0)
 5 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, ALL with a real Pinterest link + real AliExpress
 supplier link + real COGS. Niches with zero qualifying+verified candidates: Healthcare, Lighting,
@@ -606,6 +665,15 @@ after exhaustive search: Hobbies, Men's fashion, Home care, Underwear, Fitness, 
 Emerging winners (§35) and recheckable rejects (§36) due for another look, with the date they
 become worth rechecking.
 
+### From run 7 round 2 (2026-09-14)
+- **Cécile™ Maxi Chemise Intemporelle and Peignoir Betty™ Camel (zoeparis.fr)** — DNS resolution
+  failure on every attempt (`getaddrinfo EAI_AGAIN`, both with and without `www.`), not
+  bot-blocking. Retry in a future run — the domain may simply have been down temporarily.
+- **Rhinestone Jeans (glizm.com)** — DOWNGRADED from the prior high-priority recheck. Confirmed
+  absent from the store's own `/search/suggest.json` index, not just a wrong URL. Treat as
+  delisted/gone; do not spend further budget chasing it unless it resurfaces in a fresh discovery
+  pass under a new listing.
+
 ### From run 7 (2026-09-14)
 - **Rhinestone Jeans (glizm.com, 4,460 repins)** — HIGHEST PRIORITY recheck of any item in this
   queue. Strongest traction signal found in any run to date; the exact WinningHunter-reported URL
@@ -642,6 +710,24 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-14 (run 7, ROUND 2) — pushed a second full discovery round to reach 8/10; the last 2
+are a real ceiling today, not a search-effort gap
+Round 1 delivered 5; the operator asked for 5 more. Ran a full second round (~98 more keyword
+searches across 2 agents, avoiding every round-1 combo, adding FR/ES markets and seasonal angles)
+and got 3 more, landing at 8/10 for the day. The two products lost to genuine bad luck rather than
+gate strictness (zoeparis.fr's DNS being down) are the clearest evidence yet that at least part of
+Stage C attrition is pure operational noise unrelated to product quality — those two would very
+likely have been delivered on a different day. Six niches (Healthcare, Car accessories, Fitness,
+Men's fashion, Hobbies, Home care) are now 0-for-2 rounds today on top of being weak across prior
+runs too — this is strong enough evidence to say, plainly, that under Pinterest-only sourcing with
+the current gates, these six niches cannot reliably contribute to a 10/day target most days. That
+is a structural fact about today's Pinterest ad mix for small Shopify dropshippers, not a discovery
+failure — surfacing it directly rather than re-discovering it every run. If 10/day needs to be hit
+reliably, the operator needs to decide among: (a) accept fewer than 10 on days these 6 niches are
+dry (my recommendation — this is what happened today and delivered a clean, honest 8), (b) allow a
+second source (TikTok/Meta) specifically to backfill these 6 niches only, or (c) loosen repins/ads
+further. None of these should be assumed silently.
 
 ### 2026-09-14 (run 7) — Stage C (verification) is now unambiguously the binding constraint, and
 it's noisy run-to-run
