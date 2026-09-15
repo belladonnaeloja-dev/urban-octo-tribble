@@ -351,6 +351,10 @@ its product page failed to render on 2 separate verification attempts, 2 days ap
 - Pinterest pin 687270712886 (Vakkerlight Lantern Fabric Pendant Light) — qualified but REJECTED (run 8, no qualifying AliExpress supplier)
 - Pinterest pin 687300057355 (LePharea CelAway 3-in-1) — REJECTED at Stage B (run 8, computed selling price 38.99 EUR, fails new 39 EUR gate)
 - Pinterest pin 687294515093 (Zoe Paris Cécile Maxi Chemise) — qualified but REJECTED (run 8, still DNS-unreachable — 3rd failed attempt across 2 sessions, see RECHECK_QUEUE)
+- Meta ad 793144933467995 (Pinauto Shop Trunk Organizer) — qualified, delivered TEST NOW (run 8b, Meta fallback, operator-authorized)
+- Meta ad 1262220535372400 (Floralshe V-Shaped Bodysuit) — qualified, delivered TEST NOW (run 8b, Meta fallback)
+- Meta ad 7866695093444584 (Joybos Smart Sensor Trash Can) — qualified, delivered TEST NOW (run 8b, Meta fallback)
+- Meta ad 2427984170869017 (Lumos Knitting Light) — qualified, delivered TEST NOW (run 8b, Meta fallback)
 
 ## SEEN_DOMAINS
 Store domains already evaluated, one line each, with the niche and the outcome (qualified /
@@ -453,6 +457,10 @@ rejected / recheck).
 - vakkerlight.com — Lighting — rejected (run 8, 1 product delisted, 1 no qualifying supplier)
 - lepharea.fr — Beauty — rejected (run 8, computed selling price fails new 39 EUR gate)
 - zoeparis.fr — Women's fashion — recheck (run 8, still DNS-unreachable, 3rd attempt)
+- pinauto-store.com — Car accessories — qualified, delivered TEST NOW (run 8b, Meta)
+- floralshe.com — Underwear — qualified, delivered TEST NOW (run 8b, Meta; store has another SKU already in this index — distinct product, not a re-list)
+- joybos.com — Home care — qualified, delivered TEST NOW (run 8b, Meta)
+- lumoslumos.com — Hobbies — qualified, delivered TEST NOW (run 8b, Meta; niche classification judgment call — LED product sold as a knitting accessory, kept out of Lighting)
 
 ## SEEN_PRODUCT_CONCEPTS
 Underlying product concepts already delivered or rejected as duplicates — not store-specific, so a
@@ -576,6 +584,25 @@ exceeded by the candidate pool).
 ## DELIVERED_PRODUCTS
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
+
+## 2026-09-15 (run 8b, via /find-winning-products-2.0) — META FALLBACK, OPERATOR-AUTHORIZED, hit 10/10
+After run 8's Pinterest-only pass delivered 6/10 with Hobbies/Fitness/Home care/Car
+accessories/Underwear all empty, the operator explicitly said "if pinterest is exhausted, find
+meta products" — a one-time authorization, not a standing change to the Pinterest-only default
+(SKILL.md section14 stays Pinterest-only unless told otherwise again next run). Ran 2 parallel Meta
+Ad Library discovery+verify agents targeting exactly those empty niches. 4 delivered, ALL TEST NOW,
+ALL SOURCE: Meta, ALL with a real Meta Ad Library link (ad-specific + all-ads-by-page, since no
+Pinterest pin exists for these) + real AliExpress supplier + real COGS + a computed AG selling
+price. Fitness still returned zero (every candidate found was an established brand, not dropship).
+Rows 423-426. **Day total: 10/10 for the first time since gate-loosening began in run 6.**
+- Luxury Foldable Trunk Organizer — pinauto-store.com — Car accessories — GB — TEST NOW (39.99 EUR
+  — MARGIN RISK, barely clears the gate)
+- Women's V-Shaped Elastic Band S-Curve Shaping & Tummy Control Bodysuit — floralshe.com —
+  Underwear — US — TEST NOW (49.99 EUR)
+- Joybos Smart Sensor Trash Can — joybos.com — Home care — US — TEST NOW (57.99 EUR; 781-day
+  survivor, strongest durability signal of the whole day)
+- Lumos Knitting Light — lumoslumos.com — Hobbies — US — TEST NOW (46.99 EUR; niche classification
+  judgment call, see SEEN_DOMAINS)
 
 ## 2026-09-15 (run 8, via /find-winning-products-2.0) — FIRST RUN UNDER THE NEW >=39 EUR SELLING-PRICE GATE
 6 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, ALL with a real Pinterest link + real AliExpress
@@ -793,6 +820,33 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-15 (run 8b) — Meta fallback closed the gap to 10/10; the "structural ceiling" niches
+turn out to be Pinterest-specific, not category-wide
+Meta Ad Library found genuinely qualifying, dropship-compatible products in 4 of the 5 niches that
+had returned zero on exhaustive Pinterest search (Car accessories, Underwear, Home care, Hobbies) —
+only Fitness stayed empty, this time because every Meta candidate turned out to be an established
+brand (Pulsio, Kensui, SmartWorkout, T1TAN) rather than a dropship opportunity, a different failure
+mode than "no candidates exist." **This reframes the run 4-8 learning-log narrative**: the repeated
+finding that these niches are "structurally weak" was specific to Pinterest-as-a-channel, not
+evidence that no sourceable product exists in them at all. Worth remembering next time Pinterest
+comes up empty in one of these — it is not necessarily a dead end for the day, just a dead end for
+that one source.
+- **AliExpress sourcing method fix paid off across both agents**: explicitly appending
+  `&SortType=total_tranpro_desc` to the wholesale search URL and parsing `trade.tradeDesc` +
+  `evaluation.starRating` from the embedded `_init_data_` JSON (rather than the default-sorted page,
+  which sometimes omits the `trade` field entirely) worked reliably for both Meta agents on the
+  first attempt each — this fix from earlier in the same run session is now confirmed repeatable,
+  not a one-off. Bake this into the standing AliExpress-sourcing instructions for future runs
+  (Pinterest or Meta) rather than re-discovering it each time an agent hits the client-side-render
+  wall.
+- **Meta's established-brand noise is real and different in kind from Pinterest's**: both Meta
+  agents rejected a large fraction of otherwise-qualifying candidates specifically for being
+  established/branded operations (own warehouses, VAT registration, 10k+ reviews, multi-year ad
+  runs at huge scale) rather than small dropship stores — this pattern showed up far more on Meta
+  this run than it typically does on Pinterest keyword search. If Meta becomes a recurring
+  secondary source, budget extra verification time for this brand-vs-dropship judgment call
+  specifically.
 
 ### 2026-09-15 (run 8) — first run under the new >=39 EUR selling-price gate; landed at 6/10,
 attrition pattern shifted from "sold out" to "priced out"
