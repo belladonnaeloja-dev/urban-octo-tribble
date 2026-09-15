@@ -849,6 +849,21 @@ est_gross_per_order, active_ads, ads_growth_1m, ad_seen, ad_rank, ad_spend, spen
 saturation, pinterest_fit, verdict, main_killer, their_hook, winninghunter_link, product_page,
 winning_ad, all_live_ads, supplier_link, cogs, notes`
 
+### `priority` column (fixed 2026-09-15 — was hardcoded to 1 for every row)
+
+`priority` is the sequential rank of the row within that day's delivered batch — `1, 2, 3, ...`
+counting every product delivered that `run_date`, in the same top-to-bottom order as `test_order`.
+It is **not** a constant "this is priority-1 work" flag, and it does **not** reset to 1 at the start
+of each discovery round or source-batch within the same day — if a day's delivery happens across
+multiple write calls (e.g. a Pinterest batch followed by a Meta-fallback batch), `priority` must
+keep counting up from where the previous batch on that date left off (so 6 Pinterest rows + 4 Meta
+rows on the same day are priority `1-10`, not `1-6` then `1-4` again). Every add-on script in this
+skill's rows_data*.py files historically hardcoded `priority` to the literal `1` for every row in
+its own `ROWS` list — this was wrong and went unnoticed for several runs (rows 363-374, 399-406,
+417-426 all had to be corrected retroactively). When building a new batch, always read the current
+last `priority` value already on the sheet for today's date (if any rows exist yet) and continue
+the count from there, rather than starting a fresh `add()` helper's internal counter at 1.
+
 ### Link-column convention for Pinterest-sourced rows (UPDATED 2026-09-11)
 
 The live sheet's column headers are `winninghunter_link` = "Open in WinningHunter" and
