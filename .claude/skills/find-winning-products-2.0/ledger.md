@@ -339,6 +339,19 @@ its product page failed to render on 2 separate verification attempts, 2 days ap
   image-only media, empty shopify_shopifydomain, duplicate concept) — full per-search detail not
   retained here to keep this file lean; see run report in conversation for the breakdown.
 
+- Pinterest pin 687299735097 (Eettsy Cupping Massager) — qualified, delivered TEST NOW (run 8)
+- Pinterest pin 687288933364 (LEAU Ramona Corset Babydoll Mini Dress) — qualified, delivered TEST NOW (run 8)
+- Pinterest pin 687290210437 (Tudo & Co Ito Wabi Sabi Pendant Light) — qualified, delivered TEST NOW (run 8)
+- Pinterest pin 687295333990 (Ashoul/jdongvak Leather Drop Shoulder Jacket) — qualified, delivered TEST NOW (run 8, margin-flagged)
+- Pinterest pin AYofrUdZkDq6kDVSVLwxEoZn84C7ic2GTgeet7YQnlMeWuG5w3r__yzNUdikuixTdXFvM6mKjQF5ub2IWRLU7S4 (theroyalcodes Indra Dress) — qualified, delivered TEST NOW (run 8)
+- Pinterest pin 687300876961 (Dulce Store Paris Kierstin lingerie) — qualified but REJECTED (run 8, sold out at live check)
+- Pinterest pin AcrXt-M8W1hGyzaZ9TI0ja6_LdC02b4njU5jFXb8uuXHH5PSOsPH3YuFj_qHXINii2KtTF2CXzRK4JLyXBN18G0 (DeluxeSkin LumaLift) — qualified but REJECTED (run 8, store down HTTP 423/402)
+- Pinterest pin 4260609563741 (Hudson Grace/Claye 3-piece trouser suit) — qualified but REJECTED (run 8, delisted, 404 on both domains)
+- Pinterest pin 687272065045 (Vakkerlight Minimalist LED Floor Lamp) — qualified but REJECTED (run 8, delisted/404)
+- Pinterest pin 687270712886 (Vakkerlight Lantern Fabric Pendant Light) — qualified but REJECTED (run 8, no qualifying AliExpress supplier)
+- Pinterest pin 687300057355 (LePharea CelAway 3-in-1) — REJECTED at Stage B (run 8, computed selling price 38.99 EUR, fails new 39 EUR gate)
+- Pinterest pin 687294515093 (Zoe Paris Cécile Maxi Chemise) — qualified but REJECTED (run 8, still DNS-unreachable — 3rd failed attempt across 2 sessions, see RECHECK_QUEUE)
+
 ## SEEN_DOMAINS
 Store domains already evaluated, one line each, with the niche and the outcome (qualified /
 rejected / recheck).
@@ -427,6 +440,19 @@ rejected / recheck).
   Ölend, Melinda Maria, OGEE, Storelli, Inno Supps, Quntis, Dreamegg, Bon Charge, HOTO, Ottocast,
   Asarai, Tiny Land, Mighty Paw, BAEBROW, Hermosa Hair, Dokotoo (watch, not full reject), ecozy
   (watch, not full reject))
+
+- adoradelightusa.com (adoradelight.com redirects here) — Healthcare — qualified, delivered TEST NOW (run 8)
+- eettsy.com — Beauty — qualified, delivered TEST NOW (run 8)
+- leauclothing.com — Women's fashion — qualified, delivered TEST NOW (run 8)
+- tudoandco.com — Lighting — qualified, delivered TEST NOW (run 8)
+- jdongvak.com (ashoul.com redirects here) — Men's fashion — qualified, delivered TEST NOW (run 8, margin-flagged)
+- theroyalcodes.com — Women's fashion — qualified, delivered TEST NOW (run 8)
+- dulcestoreparis.com — Underwear — rejected (run 8, sold out)
+- deluxeskin.uk / trydeluxeskin.com — Beauty — rejected (run 8, store suspended, HTTP 423/402)
+- hudsongrace.co.uk / hudsonclaye.com — Women's fashion — rejected (run 8, delisted)
+- vakkerlight.com — Lighting — rejected (run 8, 1 product delisted, 1 no qualifying supplier)
+- lepharea.fr — Beauty — rejected (run 8, computed selling price fails new 39 EUR gate)
+- zoeparis.fr — Women's fashion — recheck (run 8, still DNS-unreachable, 3rd attempt)
 
 ## SEEN_PRODUCT_CONCEPTS
 Underlying product concepts already delivered or rejected as duplicates — not store-specific, so a
@@ -551,6 +577,25 @@ exceeded by the candidate pool).
 Products actually written to the spreadsheet, one dated block per run — mirrors the sibling skill's
 ledger format so the two stay easy to cross-check:
 
+## 2026-09-15 (run 8, via /find-winning-products-2.0) — FIRST RUN UNDER THE NEW >=39 EUR SELLING-PRICE GATE
+6 delivered, ALL TEST NOW, ALL SOURCE: Pinterest, ALL with a real Pinterest link + real AliExpress
+supplier link + real COGS + a computed AG selling price written at delivery time (not backfilled).
+Niches with zero qualifying+verified candidates: Hobbies, Fitness, Home care, Car accessories
+(zero raw candidates surviving the new price floor), Underwear (1 raw candidate, sold out at
+verification). Rows 417-422.
+- Handiva (TM) Real Hands Neck & Shoulder Massager — adoradelightusa.com — Healthcare — US — video ad
+  — TEST NOW (63.99 EUR; cross-store demand confirmed via Valcero + bovagu listings)
+- Eettsy Cupping Massager — eettsy.com — Beauty — AU — video ad — TEST NOW (50.99 EUR; days-running
+  right at the 30-day gate floor, ad currency not re-confirmed live)
+- Ramona Contrast Corset Babydoll Mini Dress — leauclothing.com — Women's fashion — US — video ad —
+  TEST NOW (137.99 EUR)
+- Ito Wabi Sabi Minimalist Pendant Light — tudoandco.com — Lighting — US — image ad — TEST NOW
+  (216.99 EUR; WinningHunter price was stale, live price much higher across 3 variants)
+- Modern Leather Drop Shoulder Jacket — jdongvak.com (was ashoul.com) — Men's fashion — US — image ad
+  — TEST NOW (39.99 EUR — MARGIN RISK, razor-thin buffer above the gate and thin COGS-to-price ratio)
+- Indra Dress (Amethyst Purple) — theroyalcodes.com — Women's fashion — US — image ad — TEST NOW
+  (74.99 EUR; WinningHunter price was stale, adscount exactly at the 5-floor gate)
+
 ## 2026-09-14 (run 7, ROUND 2, via /find-winning-products-2.0)
 3 more delivered (total for the day: 8/10), ALL TEST NOW, ALL SOURCE: Pinterest, ALL with real
 links + real supplier + real COGS.
@@ -665,6 +710,44 @@ after exhaustive search: Hobbies, Men's fashion, Home care, Underwear, Fitness, 
 Emerging winners (§35) and recheckable rejects (§36) due for another look, with the date they
 become worth rechecking.
 
+### From run 8 (2026-09-15)
+- **Cécile™ Maxi Chemise Intemporelle (zoeparis.fr)** — STILL DNS-unreachable, 3rd consecutive
+  failed attempt (2 separate sessions now: `getaddrinfo EAI_AGAIN` again, plus this run's proxy
+  also independently logged `connect_rejected`/502 on the same host). This is now looking like a
+  persistent issue with this specific domain rather than transient downtime — deprioritize further
+  automated retries; if it matters, flag for a human to check manually.
+- **Sexy Strass Lingerie Set – Kierstin (dulcestoreparis.com)** — sold out at live check, AND the
+  live price ($109/$129) has risen ~58% vs. the $69/$89 WinningHunter snapshot from 2026-01-28.
+  Recheck stock in 2-3 weeks, but re-run the full selling-price gate calc from scratch if/when it
+  restocks — do not reuse this run's numbers.
+- **LumaLift Facial Sculptor (deluxeskin.uk / trydeluxeskin.com)** — entire storefront down
+  (HTTP 423 "store unavailable" + HTTP 402 on the alt domain), not just this product. The
+  Pinterest ad ("Beauty Life Magazine") was still apparently driving traffic to a dead store as of
+  this run — worth a priority recheck since this may resolve on its own if it's a billing/freeze
+  issue, and the underlying product economics (67.99 EUR, 10,000+ order supplier at 4.9*) are
+  strong if the store comes back.
+- **Minimalist LED Floor Lamp (vakkerlight.com)** — both the product page and its collection page
+  404, but a Wayback Machine snapshot confirms it was live as of 2026-04-02 at the expected price.
+  Recheck in a few weeks in case it's a temporary delisting rather than permanent discontinuation.
+- **Lantern Fabric Pendant Light (vakkerlight.com)** — in stock, price passes (167.99 EUR), but no
+  AliExpress supplier cleared both the >=200 orders and >=4.5* bar simultaneously across 5 search
+  variations. Retry sourcing with different angles (Chinese-language search terms, "linen drum
+  pendant light gold frame") before giving up on this one.
+- **3-Piece Trouser Suit concept (hudsongrace.co.uk / hudsonclaye.com)** — the specific 3-piece
+  blazer+corset+wide-leg set is delisted (both known product URLs 404, and the live "Women's Suits"
+  collection is entirely sold out), but the store itself (now rebranded to hudsonclaye.com) is
+  alive — worth a fresh discovery pass against the new domain rather than continuing to chase the
+  old product URLs.
+- **Data-loss note, not a product recheck**: SEEN_PRODUCT_IDS already listed Pinterest pin
+  687295152692 (Adora Delight Handiva) as "qualified, delivered TEST NOW" from run 1/run 2
+  (2026-09-08/09-10) — but it was absent from the live spreadsheet when this run's exclusion index
+  was built (D5:H416), and re-delivering it was correct per the "spreadsheet wins" rule (SKILL.md
+  section32). This is the same concurrent-write-collision failure mode documented in the run 2
+  learning log below, resurfacing 5 days later — a product qualified twice, five runs apart,
+  because an earlier delivery was silently lost from the live sheet at some point. Not actionable
+  right now, but worth remembering next time a "duplicate" ledger entry looks surprising: check the
+  live sheet, not just this file, before assuming it's already there.
+
 ### From run 7 round 2 (2026-09-14)
 - **Cécile™ Maxi Chemise Intemporelle and Peignoir Betty™ Camel (zoeparis.fr)** — DNS resolution
   failure on every attempt (`getaddrinfo EAI_AGAIN`, both with and without `www.`), not
@@ -710,6 +793,56 @@ become worth rechecking.
 End-of-run notes on which keyword families, languages, markets, historical windows, and niches
 produced the highest new-qualifying rate (§55) — read this before planning the next run's depth
 allocation.
+
+### 2026-09-15 (run 8) — first run under the new >=39 EUR selling-price gate; landed at 6/10,
+attrition pattern shifted from "sold out" to "priced out"
+Raw discovery across the 10 niches (4 parallel agents, USA/DE-first per mandate) found 13 candidates
+after excluding obvious duplicates and one gate failure at the discovery stage itself (LePharea
+CelAway at 39.95 EUR converts to 38.99 after the floor-to-.99 rounddown — fails despite "looking"
+above 39). Of those 13, Stage B/C verification passed 6 and rejected 7. **The rejection reasons this
+run skew heavily toward store/stock problems, not price**: 2 stores fully down (dead Shopify
+storefront, HTTP 423/402), 2 products delisted (404 on live product+collection pages), 1 sold out
+with a price that had also risen 58% since the WinningHunter snapshot, 1 with no qualifying
+AliExpress supplier despite passing price/stock cleanly. Only one candidate (CelAway) was actually
+killed by the new price gate itself. **This suggests the new >=39 EUR floor's main effect this run
+was upstream, at discovery** — agents were explicitly told to deprioritize sub-35 EUR candidates
+before even proposing them, so the "priced out" attrition mostly happened invisibly before Stage B,
+not as a visible rejection count here. Worth tracking over a few more runs: if visible price-gate
+rejections stay this low, the floor may be filtering less than expected at the margin (most
+Pinterest dropship candidates in these niches already cluster either well above or well below 39
+EUR, with few genuine borderline cases like CelAway).
+- **AliExpress order/rating verification method matters — same search, different results depending
+  on how the page renders**: one verification agent hit a wall where item detail pages were fully
+  client-side-rendered with no usable data, and even the search-results page's embedded JSON lacked
+  a `trade`/orders field on that particular fetch. A different fetch of the same style of search
+  (this time with `&SortType=total_tranpro_desc` explicitly appended) reliably returned `trade.
+  tradeDesc` (orders) and `evaluation.starRating` for every item. **Always sort AliExpress search
+  results by orders explicitly via the URL param, don't rely on the default sort** — this recovered
+  3 suppliers (Ito Wabi Sabi, Ashoul jacket, Indra Dress) that an agent had reported as
+  "unconfirmable due to tooling limitation" moments earlier using the exact same search terms.
+- **Stale WinningHunter price data was unusually common this run**: 3 of 6 delivered products (Ito
+  Wabi Sabi $199→$251+, Indra Dress $77→$87, Kierstin $69→$109 before it was rejected anyway) had
+  live prices meaningfully different from the cached WinningHunter snapshot, always higher. Worth
+  treating "WinningHunter price" as a rough pre-filter only, never as the number that actually goes
+  into the selling-price gate calculation — always use the live-verified price, which this run
+  already does per SKILL.md section50, but the drift size this run was bigger than usual.
+- **Margin-risk flagging still has a place even though the old sub-25-EUR soft-flag rule was
+  retired**: the Ashoul leather jacket cleared the 39 EUR selling-price gate at exactly 39.99 EUR,
+  but its closest-matching AliExpress suppliers cost 27-45 USD, i.e. close to or above the entire
+  selling price. The gate checks selling price alone, not COGS ratio, so this slipped through as a
+  technical PASS while being a real business risk. Recommend flagging (not rejecting) any delivered
+  product whose supplier COGS exceeds roughly 50% of the computed AG selling price, the same way
+  this run flagged it in the product's Y-column note — this isn't a codified gate, just a judgment
+  call worth making visible every time it comes up.
+- **Underwear, Hobbies, Fitness, Home care, Car accessories: still a hard ceiling.** Hobbies/
+  Fitness/Home care returned literally zero raw candidates this run even before Stage B (confirmed
+  by a dedicated agent running ~35 searches across US+DE) — same structural finding as runs 4-7.
+  Car accessories also returned zero across 13 keyword variants in a separate agent. Underwear
+  returned exactly one raw candidate (Kierstin) and it was sold out. This is now 5+ consecutive
+  runs with the same 4-5 niches contributing nothing — worth raising to the operator as a standing
+  question (accept these niches as structurally near-empty on Pinterest, or authorize a lever this
+  skill hasn't tried yet, e.g. a second source restricted to just these niches) rather than
+  re-running the identical exhaustive sweep every time with the same result.
 
 ### 2026-09-14 (run 7, ROUND 2) — pushed a second full discovery round to reach 8/10; the last 2
 are a real ceiling today, not a search-effort gap
