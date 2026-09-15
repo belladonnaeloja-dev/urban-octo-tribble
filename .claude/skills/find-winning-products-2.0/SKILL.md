@@ -1,6 +1,6 @@
 ---
 name: find-winning-products-2.0
-description: Continuous Pinterest-ONLY winning-product discovery engine (v4) using WinningHunter — an exhaustive, never-stops-searching companion to find-winning-products. Operator has set an explicit target of 10 delivered products per run; push discovery breadth to reach it, but never by lowering the verification bar — report the honest count with a named binding constraint when the achievable ceiling is below 10. Searches USA first, then Germany, then the largest remaining Pinterest markets, across the same ten fixed niches (hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting), with deep keyword-family expansion (synonyms, problems, solutions, use cases, buyer language, seasonal terms), multi-language search (EN/DE/FR/ES/NL/IT and beyond), and winner-derived and store-derived search loops that keep generating new queries instead of stopping when one seam runs dry. Enforces hard Pinterest traction gates (repins >= 20, ads >= 5, days running >= 30, image OR video, price <= 200), then runs every candidate through a mandatory 3-stage pipeline — qualify, live in-stock verification, real AliExpress supplier sourcing (>= 200 orders, >= 4.5 stars) — and writes ONLY candidates that clear all three; nothing sold-out, dead-linked, or supplier-less is ever written as a placeholder/WATCH row. Deduplicates against the full spreadsheet and a persistent ledger (SEEN_PRODUCT_IDS, SEEN_DOMAINS, SEEN_PRODUCT_CONCEPTS, SEARCH_HISTORY, RECHECK_QUEUE, etc.), and appends only genuinely new, fully-verified products to the same cumulative spreadsheet the original skill uses. TikTok/Meta discovery passes are suspended by standing operator instruction ("mostly pinterest winners") — Pinterest is the sole source unless the operator explicitly re-enables them. Use when the user asks to run /find-winning-products-2.0, wants an exhaustive or continuous Pinterest-only winning-product search, wants the "USA first, Germany second" market priority, or wants the maximum number of new, fully-verified qualifying products toward the 10/run target.
+description: Continuous Pinterest-ONLY winning-product discovery engine (v4) using WinningHunter — an exhaustive, never-stops-searching companion to find-winning-products. Operator has set an explicit target of 10 delivered products per run; push discovery breadth to reach it, but never by lowering the verification bar — report the honest count with a named binding constraint when the achievable ceiling is below 10. Searches USA first, then Germany, then the largest remaining Pinterest markets, across the same ten fixed niches (hobbies, men's fashion, women's fashion, home care, beauty, underwear, car accessories, fitness, healthcare, lighting), with deep keyword-family expansion (synonyms, problems, solutions, use cases, buyer language, seasonal terms), multi-language search (EN/DE/FR/ES/NL/IT and beyond), and winner-derived and store-derived search loops that keep generating new queries instead of stopping when one seam runs dry. Enforces hard Pinterest traction gates (repins >= 20, ads >= 5, days running >= 30, image OR video, competitor price <= 200, and — mandatory since 2026-09-15 — a computed selling price of >= 39 EUR after converting the live competitor price to EUR and rounding down to the next lower xx.99; below that floor is an automatic reject, not a soft margin-risk flag), then runs every candidate through a mandatory 3-stage pipeline — qualify, live in-stock verification, real AliExpress supplier sourcing (>= 200 orders, >= 4.5 stars) — and writes ONLY candidates that clear all three; nothing sold-out, dead-linked, or supplier-less is ever written as a placeholder/WATCH row. Deduplicates against the full spreadsheet and a persistent ledger (SEEN_PRODUCT_IDS, SEEN_DOMAINS, SEEN_PRODUCT_CONCEPTS, SEARCH_HISTORY, RECHECK_QUEUE, etc.), and appends only genuinely new, fully-verified products to the same cumulative spreadsheet the original skill uses. TikTok/Meta discovery passes are suspended by standing operator instruction ("mostly pinterest winners") — Pinterest is the sole source unless the operator explicitly re-enables them. Use when the user asks to run /find-winning-products-2.0, wants an exhaustive or continuous Pinterest-only winning-product search, wants the "USA first, Germany second" market priority, or wants the maximum number of new, fully-verified qualifying products toward the 10/run target.
 ---
 
 # Find Winning Products 2.0 — Pinterest Exhaustive Discovery Engine (v4)
@@ -116,7 +116,8 @@ For a Pinterest-origin product, **all** traction gates must be satisfied:
 | Repins | >= 20 |
 | Ad count | >= 5 |
 | Media | Image OR Video |
-| Price | <= 200 |
+| Competitor price | <= 200 |
+| Our selling price (AG, computed) | >= 39 EUR |
 | Store | Dropship-compatible |
 | Product page | Live |
 | Brand | Non-established / non-trademark-risk |
@@ -160,13 +161,36 @@ spend.
 
 ## 4. Price rule
 
-- Preferred price: **25–200 EUR/USD**.
-- Under 25: flag as margin risk — do not automatically reject if economics are unusually strong.
-- Over 200: automatic rejection.
+- Preferred competitor price: **25–200 EUR/USD**.
+- Competitor price over 200: automatic rejection.
 
 Do NOT use API `minprice` / `maxprice` filters unless independently verified. Most Pinterest rows
 have unreliable/null product-price fields. Filter price **client-side** using verified product
 information whenever possible.
+
+### Minimum selling-price gate (ADDED 2026-09-15, mandatory every run)
+
+**Only select products whose computed selling price is >= 39 EUR.** This is a hard qualification
+gate, checked as part of Stage C, not a soft flag:
+
+1. Run the §50 "Selling price calculation" procedure first — live competitor price → convert to
+   EUR → round down to the next lower `xx.99`. That result is the number this gate checks, **not**
+   the raw competitor price.
+2. If that computed selling price is `< 39.00 EUR` (e.g. `38.99` or below), **reject the product —
+   do not write it to the spreadsheet**, regardless of how strong its traction/repins/margin-%
+   otherwise look. Log it as a rejected candidate (reason: "selling price below 39 EUR floor") so
+   it isn't re-discovered and re-evaluated pointlessly next run.
+3. If it's `>= 39.00 EUR` (e.g. `39.99`), it clears this gate — proceed with normal qualification.
+
+**This supersedes the old "<25 = margin risk, not auto-rejected" language** — that soft-flag
+behavior from §2/§4's original design is retired. A converted selling price anywhere in the old
+"margin risk" zone (competitor price under ~29 EUR once floored to `xx.99`, e.g. run 7's BIO-Aloe
+Splash at 12.99 EUR or PostureCorrector-type sub-25-EUR items) is now a hard reject, not a flag.
+Do the arithmetic, don't estimate: because the rounddown always drops the price into the *previous*
+integer's `.99` (e.g. 39.50 EUR → 38.99, which fails), a competitor price needs to convert to
+**at least ~40.00 EUR** (or land exactly on an already-`.99` value of 39.99 or above) to actually
+clear this floor — a competitor price converting to 39.01–39.98 EUR still fails despite "looking"
+like it's above 39. Compute the real AG value and check it against 39.00 directly every time.
 
 ---
 
@@ -869,6 +893,11 @@ the write procedure), compute and fill column AG ("Selling price /Offer"):
    it as-is (it's already "the next lower `xx.99`," not one step below itself).
 4. **Write the result to column AG** as a plain number (e.g. `24.99`), same units/precision as the
    rest of the price columns.
+
+**This calculation is not just a write-time formality — run it BEFORE deciding whether to deliver
+the product at all.** Per §4's minimum selling-price gate, if the result of step 3 is `< 39.00
+EUR`, reject the candidate outright rather than writing it — do the AG math as part of
+qualification/Stage C, not after the delivery decision is already made.
 
 Apply this to every delivered row in the same write pass that fills the rest of the row — don't
 leave AG for a later manual pass. If a product's page is a collection page rather than a
