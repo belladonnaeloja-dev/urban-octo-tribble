@@ -126,6 +126,23 @@ destination product and store, and **list every such fix in your final report**
 so the user can see what you changed and why. Copying a wrong brand name
 faithfully into a new store helps nobody.
 
+**The three trust bullets under the price are store-standard, not translated.**
+Every PagePilot page in this family has a `pp_custom_liquid_block` right after
+the price and discount label whose content is a `<div class="kk-main">` with
+three icon rows (payment, shipping, returns). Whatever the source page has
+there — Klarna, "Livraison gratuite", anything — replace the whole block's
+content with the destination store's standard version, verbatim, from
+`references/trust-bullets-<store>.html`. For Nestilia that is:
+
+- Pay safely with credit card or *[PayPal logo]*
+- **Free shipping in the US & Canada**
+- **30 day return guarantee**
+
+Leave the "Only 3 left in stock" block that follows it as it is — it is
+already identical across the stores. A store without a reference file gets
+its block copied from an existing PagePilot product on that store (grep its
+template for `kk-main`), and the file added for next time.
+
 Two judgment calls worth making deliberately:
 
 - **Brand styling.** Read the destination's own brand color and border radius
