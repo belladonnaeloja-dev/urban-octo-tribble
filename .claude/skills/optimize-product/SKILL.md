@@ -2085,6 +2085,19 @@ you earned "done".
   location-free `"Invalid JSON in <filename>"`. `body:{type:BASE64}` does not help
   (GraphQL literals cannot be concatenated). Treat this as the last resort; the
   staged URL body is the default.
+- **Learnings from ShineArmor / Modlia (2026-09-16).** (1) `gpt_image_2` renders French
+  accents, cedillas and apostrophes correctly when the prompt spells the caption WITH them
+  and adds "spelled exactly with accents"; a prompt that strips accents to be safe ships
+  "eponge" and "CA MARCHE" and costs a re-roll. (2) For a `BULK_MUTATION_VARIABLES` staged
+  target the returned `resourceUrl` is only the bucket root; the `themeFilesUpsert` URL is
+  `url + key` (`.../tmp/<shop>/bulk/<uuid>/<filename>`). (3) A store can carry two live
+  listings of the same product at different prices (here `shinearmor` at 49,99 EUR and the
+  older `1-1-gratuit-aujourdhui-shinearmor` at 24,95 EUR): pick by 180-day revenue,
+  optimise that one and hand the duplicate to the operator. (4) Supplier gallery photos can
+  show a different brand on the bottle (Rayhong) than the store sells (ShineArmor): render
+  the store brand on new tiles, keep the localised originals, and put "confirm which label
+  ships" in the hand-off. (5) Spray "ceramic" durability: market reality is 4 to 8 weeks,
+  never publish the 6 to 12 month supplier figure; coverage is 60 to 100 ml per car.
 - **Learnings from PostureBra / Modlia (2026-09-10).** (a) A gallery-only previous
   run leaves the PagePilot template untouched: the draft theme it made had the SAME
   template md5 as MAIN, so always diff checksums before assuming copy exists. (b) White
