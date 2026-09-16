@@ -143,6 +143,28 @@ already identical across the stores. A store without a reference file gets
 its block copied from an existing PagePilot product on that store (grep its
 template for `kk-main`), and the file added for next time.
 
+**The "As seen in" media strip is store-standard too — and it exists twice.**
+Each store has its own set of outlets, and they must not cross over: a French
+TV channel on a US-facing page (or *Forbes* on a French one) is the fastest way
+to make a clone look imported. Two places carry it:
+
+1. **The page section** — a snippet (`pb-aso`, `rp-aso`, …) rendered by a
+   custom-liquid section near the top of the page. Replace its content with the
+   destination's version, verbatim, from `references/as-seen-in-<store>.liquid`.
+2. **The gallery tile** — most galleries have one image that repeats the strip
+   ("AS SEEN IN" over the outlet names). Re-render that tile with the
+   destination's outlets in the image-localization pass, and say so in the
+   report. Never leave the source store's outlets baked into an image.
+
+| Store | Label | Outlets |
+|---|---|---|
+| Nestilia (en-US) | As seen in | Forbes · BuzzFeed · COSMOPOLITAN · THE SUN · Good Housekeeping |
+| Modlia (fr-FR) | Vu dans | TF1 · M6 · ELLE · Marie Claire · Femme Actuelle |
+
+For a store not listed, copy the strip from an existing product on that store
+(grep its templates for `aso`) and save it as a new reference file rather than
+inventing outlets.
+
 Two judgment calls worth making deliberately:
 
 - **Brand styling.** Read the destination's own brand color and border radius
