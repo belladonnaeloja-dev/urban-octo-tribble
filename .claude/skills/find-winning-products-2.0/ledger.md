@@ -737,6 +737,29 @@ after exhaustive search: Hobbies, Men's fashion, Home care, Underwear, Fitness, 
 Emerging winners (§35) and recheckable rejects (§36) due for another look, with the date they
 become worth rechecking.
 
+### AE/AF/AG backfill for the sibling skill's 2026-09-16 batch (rows 427-436, done 2026-09-17)
+Operator asked to fill missing AE/AF/AG for the last 10 rows. AG was blank on all 10 (the sibling
+`find-winning-products` skill doesn't compute it — same gap as the 2026-09-14 batch backfilled
+earlier). AE/AF were already correct for 7/10 rows (real supplier link + COGS); the other 3 had an
+honest "no qualifying supplier" note rather than being empty. Computed AG for all 10 via live price
++ fresh EUR rate + floor-to-.99, and retried AliExpress sourcing on the 3 "no supplier" rows:
+- **Row 428 (Marnetic GraceMakers Nativity Craft Set)**: found a qualifying supplier this time —
+  JAKI Nativity Building Blocks Set, 363 orders, 4.9*, COGS $22.98. AG = 34.99 EUR.
+- **Row 433 (Mylvera Apex Dashboard Mat)**: found a qualifying supplier — a per-vehicle-model fitted
+  dashboard mat/sunshade (Hyundai Sonata reference SKU), 388 orders, 4.7*, COGS $4.31. Same product
+  line sold as separate per-car-model listings, which is why earlier searches (looking for one
+  universal SKU) came up empty. AG = 52.99 EUR.
+- **Row 436 (Buckmen Reader Night Light)**: STILL no qualifying supplier after 10 more search-term
+  variations, including visual inspection of the closest 2 candidates (a Halloween ghost lamp -
+  wrong theme; a reader-figure statue with no light at all - fails the "night light" requirement).
+  This looks like a genuinely hard-to-source niche product, not a search-effort gap — deprioritize
+  further automated retries unless a human wants to hand-pick a supplier.
+- **Stock-out note, not part of the ask but observed during live price checks**: rows 427
+  (Tiktrove Massage Comb), 432 (Castivaro HydroGuard), 435 (Odessa StitchMaster), and 436 (Buckmen
+  Reader Night Light) all showed "Sold out" on their live product pages as of 2026-09-17, one day
+  after being delivered. AG was still computed and filled per the request, but these 4 are not
+  currently purchasable — worth a stock recheck in the next couple of weeks.
+
 ### From run 8 (2026-09-15)
 - **Cécile™ Maxi Chemise Intemporelle (zoeparis.fr)** — STILL DNS-unreachable, 3rd consecutive
   failed attempt (2 separate sessions now: `getaddrinfo EAI_AGAIN` again, plus this run's proxy
