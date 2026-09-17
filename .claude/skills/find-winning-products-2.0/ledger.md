@@ -760,6 +760,34 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### Competitor offer/discount check for the same 2026-09-16 batch (rows 427-436, done 2026-09-17)
+Operator asked to check each competitor's current promotional mechanics (% off, BOGO, bundle
+deals) and add it to column AG alongside the selling price (the column's own header is "Selling
+price /Offer", so this was already its intended second purpose). Appended a compact offer summary
+to each AG cell, e.g. `34.99 - Genuine 30% off ($58.50->$40.95); buy2/3 bundle tiers...`.
+
+**Important pricing-integrity finding, worth remembering for every future price check**: 3 of the
+10 stores (both Tiktrove pages - rows 427 and 429 - and Castivaro, row 432) use a **fake-anchor
+pattern**: the page labels a lower number "regular price" and a HIGHER number "sale price," with a
+"SAVE 50%"-style badge on top that is mathematically false (the customer pays MORE than the
+"regular" price, not less). This is the same "sale price higher than regular" bug flagged
+repeatedly elsewhere in this ledger (rows 393/396/407 in earlier runs) — but seeing it on 3 of 10
+stores in one batch, all using near-identical "SAVE X%" badge phrasing despite the badge being
+false, suggests this may be a common theme-app dark pattern on certain Shopify page themes rather
+than a one-off copy mistake. **Keep using the lower number as the real price** (already the
+standing rule per SKILL.md section50), but now also worth flagging the fake badge explicitly in
+AG/notes when found, since it's competitive intelligence in its own right (a competitor's "50% off"
+marketing claim is not real, which matters if the operator ever benchmarks against it).
+
+No genuine BOGO (buy-one-get-one-free) or per-unit quantity-break pricing was found on any of the
+10 products — only single-price sales, a few "combine and save" or "buy 2/3 for extra %" bundle
+tiers (2 stores), a stackable-but-unrelated stale promo code (1 store), and several stale/frozen
+countdown-timer widgets showing out-of-season sale names ("FALL SALE," "Spring Sale," a Black
+Friday code in September) on 4 of the 10 pages — these read as generic theme-app urgency widgets
+left running year-round, not live time-bound offers. Worth remembering: a countdown timer or
+seasonal-sounding sale name on these smaller dropship-style stores is not reliable evidence of an
+actual time-limited promotion.
+
 ### From run 8 (2026-09-15)
 - **Cécile™ Maxi Chemise Intemporelle (zoeparis.fr)** — STILL DNS-unreachable, 3rd consecutive
   failed attempt (2 separate sessions now: `getaddrinfo EAI_AGAIN` again, plus this run's proxy
