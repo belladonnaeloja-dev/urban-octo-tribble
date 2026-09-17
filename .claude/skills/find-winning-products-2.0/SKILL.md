@@ -909,6 +909,22 @@ the write procedure), compute and fill column AG ("Selling price /Offer"):
 4. **Write the result to column AG** as a plain number (e.g. `24.99`), same units/precision as the
    rest of the price columns.
 
+### Offer note in column AG (ADDED 2026-09-17, operator rule)
+
+AG's header is "Selling price **/Offer**" — the column can also carry a short note about the
+competitor's current promotional mechanic, but **only when it's a genuine "x+x" multi-item offer**
+(buy-one-get-one-free, buy-2-get-1-free, or similar — the customer receives extra free units, not
+just a lower unit price). Format: `<price> - <short offer note>`, e.g. `44.99 - Buy 1 Get 1 Free`.
+
+A plain percentage-off or dollar-off sale — however large, and even a "50% off" badge that turns
+out to be a fake-anchor pattern (a "sale" price shown as though it's a discount but is actually
+higher than the labeled "regular" price) — does **NOT** get a note, no matter how notable. In that
+case AG is just the bare number, same as always. This includes quantity-based tiers phrased as
+discounts ("buy 2 save 10%", "buy 3 save $10") — those are still percentage/dollar discounts, not
+a free-item mechanic, so they don't qualify either. When checking, it's fine to note the discount
+pattern in `ledger.md` for institutional memory (e.g. tracking which stores use fake-anchor
+pricing) — just don't write it into the sheet.
+
 **This calculation is not just a write-time formality — run it BEFORE deciding whether to deliver
 the product at all.** Per §4's minimum selling-price gate, if the result of step 3 is `< 39.00
 EUR`, reject the candidate outright rather than writing it — do the AG math as part of

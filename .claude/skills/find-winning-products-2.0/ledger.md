@@ -760,11 +760,28 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
-### Competitor offer/discount check for the same 2026-09-16 batch (rows 427-436, done 2026-09-17)
+### Competitor offer/discount check for the same 2026-09-16 batch (rows 427-436, done 2026-09-17,
+CORRECTED same day)
 Operator asked to check each competitor's current promotional mechanics (% off, BOGO, bundle
 deals) and add it to column AG alongside the selling price (the column's own header is "Selling
-price /Offer", so this was already its intended second purpose). Appended a compact offer summary
-to each AG cell, e.g. `34.99 - Genuine 30% off ($58.50->$40.95); buy2/3 bundle tiers...`.
+price /Offer", so this was already its intended second purpose). Initially appended a compact
+offer summary to every AG cell (e.g. `34.99 - Genuine 30% off ($58.50->$40.95); buy2/3 bundle
+tiers...`) for all 10 rows.
+
+**Operator corrected this same-day**: only write an offer note when the competitor is running a
+genuine "x+x"-style multi-item offer (buy-one-get-one-free, buy-2-get-1-free, etc.) — a plain
+percentage-off sale, however large, does NOT get a note; AG should just be the bare selling-price
+number in that case. Re-checked all 10 against this narrower rule: **none of the 10 products in
+this batch had a genuine x+x/BOGO offer** — every "offer" found (see below) was either a straight
+%-off sale (2 of them a false "sale higher than regular" fake-anchor badge) or a $-off/%-off
+quantity-tier ("buy 2 save 10%", "buy 3 save $10") rather than a free-item mechanic — so all 10 AG
+cells were reverted to plain numbers (29.99, 34.99, 21.99, 42.99, 29.99, 33.99, 52.99, 30.99,
+32.99, 25.99). **Standing rule for future checks**: AG offer notes are reserved for genuine
+free-item/multiplier deals only (1+1, 2+1, buy-N-get-M-free) — percentage or dollar discounts,
+however marketed (including fake-anchor badges), stay as a bare price with no note. The underlying
+research (which stores use fake-anchor pricing, which have bundle tiers, etc.) is still worth
+knowing and stays recorded in the entry below for reference, it's just not written into the sheet
+itself.
 
 **Important pricing-integrity finding, worth remembering for every future price check**: 3 of the
 10 stores (both Tiktrove pages - rows 427 and 429 - and Castivaro, row 432) use a **fake-anchor
