@@ -185,6 +185,21 @@ user needs to be able to trust that a clone never writes to the wrong store, and
 this check is what earns that.
 
 If the connector needs reconnecting, stop and ask, then re-verify on return.
+**A reconnect can land on the wrong store.** On the ShineArmor run the user's
+reconnect came back on Modlia when Nestilia was asked for, and only the
+`get-shop-info` domain check caught it before the first write. If the domain
+is wrong, call `switch-shop` (so the wrong token is revoked) and ask again.
+Never write until the domain matches.
+
+**Re-list the themes on every resume.** Between sessions the user publishes
+and deletes themes: on the same run the MAIN theme id changed and the theme
+that held an earlier fix was never published. Pick the target theme fresh
+each time (`themes(first: 25)`), and write into the *newest* unpublished
+duplicate of MAIN when one exists (check its files' `updatedAt` against
+MAIN's to see what it changes), so one publish carries the user's pending
+edit and the clone together. Any store-standard fix from an earlier run that
+never reached MAIN (the PostureBra `pb-aso` strip) gets re-applied in that
+same write.
 
 Then confirm the destination theme actually has the page builder's sections
 installed (`sections/pp-*`). Without them the template renders nothing, and it's
