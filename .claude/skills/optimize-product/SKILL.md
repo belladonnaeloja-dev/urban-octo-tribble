@@ -2085,6 +2085,23 @@ you earned "done".
   location-free `"Invalid JSON in <filename>"`. `body:{type:BASE64}` does not help
   (GraphQL literals cannot be concatenated). Treat this as the last resort; the
   staged URL body is the default.
+- **Learnings from CleanGel / Modlia (2026-09-18).** (1) When the operator has just
+  published your previous draft, MAIN changes id: re-query `themes(roles:[MAIN])` and
+  duplicate from the NEW id, then check `themes.updatedAt` again right before reporting;
+  if it is older than your duplicate time no sweep is needed. (2) Supplier tiles that
+  carry a rival label ("Super Clean") or CJK keycaps are the cheap tiles to cull; keep
+  the label-free action photos, and keep any tile the LIVE template still references
+  until the operator publishes, because `productDeleteMedia` would blank that section on
+  the live page. (3) The `pp-review-grid` review images on old Modlia pages are Amazon
+  customer photos (filenames like `71HhpNDS3IL._SY720.jpg`): generate 3 extra UGC
+  portraits and repoint them, never leave Amazon photos on the page. (4) `gpt_image_2`
+  cannot render perfectly crisp caption text inside a three-card infographic; three
+  rolls all showed a faint double stroke. Ship the best one and keep the captions
+  short, do not burn more credits on it. (5) Realistic reuse count for cleaning gel is
+  10 to 20 full sessions ("jusqu'à ce qu'il fonce"), never the supplier "centaines de
+  fois"; heat above 35 to 40 °C and water are the two failure modes to pre-empt.
+  (6) The store rate-limits curl (HTTP 429) after a few hits; wait, use a Safari UA and
+  a cookie jar, and fetch the preview only twice (cookie round-trip, then the page).
 - **Learnings from ShineArmor / Modlia (2026-09-16).** (1) `gpt_image_2` renders French
   accents, cedillas and apostrophes correctly when the prompt spells the caption WITH them
   and adds "spelled exactly with accents"; a prompt that strips accents to be safe ships
