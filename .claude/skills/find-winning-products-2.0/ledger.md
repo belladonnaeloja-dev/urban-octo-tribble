@@ -760,6 +760,33 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### AE/AG backfill for the sibling skill's 2026-09-17 batch (rows 437-445, done 2026-09-18)
+Same recurring pattern: operator asked to fill AG and find missing AliExpress links for the latest
+sibling-skill batch (9 rows, not 10 this time). AG was blank on all 9; AE/AF were already correct
+for 7/9, with rows 444 (Castivaro SmartDraw drafting tool) and 445 (Gmbhacks hair straightener
+comb) carrying honest "no qualifying supplier" notes. Computed AG for all 9 via live price + fresh
+EUR rate + floor-to-.99:
+`437=25.99, 438=21.99, 439=58.99, 440=33.99, 441=48.99, 442=36.99, 443=34.99, 444=30.99, 445=25.99`.
+Retried sourcing on the 2 unsourced rows:
+- **Row 444 (SmartDraw drafting tool)**: STILL no qualifying supplier after 10 more search-term
+  variations. The product is a single integrated 3-in-1 ruler+protractor+compass tool; every
+  AliExpress listing clearing the order/rating bar is either a single-function tool or a
+  multi-piece loose kit, never the same integrated form factor. This is now 2 consecutive sourcing
+  attempts with the same honest result — treat as a genuinely hard-to-source niche item, same
+  category as row 436 (Buckmen Reader Night Light) from the prior batch.
+- **Row 445 (Gmbhacks hair straightener comb)**: found a qualifying supplier this time — a corded
+  (not cordless) negative-ion straightening comb/brush, 1,000+ orders, 4.9*, COGS $13.19. The
+  earlier "no supplier" note was from searching cordless variants specifically (which topped out at
+  4.4*, just under the floor); broadening to corded electric models (matching the source product's
+  actual 220/110V corded spec) cleared it immediately. **Worth remembering as a search-technique
+  lesson**: when a product's exact power/connectivity spec (corded vs. cordless, battery vs.
+  plug-in) isn't the differentiator that matters to the buyer, try both before concluding "no
+  qualifying supplier" — the two variants can have meaningfully different supplier pools.
+- Also noted: rows 442 (LaserGuide Scissors) and 444 (SmartDraw) both showed the same fake-anchor
+  "sale price higher than regular" bug on Castivaro's store, and both were also sold-out at time of
+  check — consistent with the store-level pattern already flagged for Castivaro in the 2026-09-16
+  batch entry below (row 432).
+
 ### Competitor offer/discount check for the same 2026-09-16 batch (rows 427-436, done 2026-09-17,
 CORRECTED same day)
 Operator asked to check each competitor's current promotional mechanics (% off, BOGO, bundle
