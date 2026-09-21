@@ -760,6 +760,22 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### AE/AG backfill for the sibling skill's 2026-09-18 batch (rows 446-452, done 2026-09-21)
+Same recurring pattern, 3rd consecutive sibling-skill batch backfilled this way. 7 rows this time.
+AG was blank on all 7; AE/AF were already correct for 6/7, with row 446 (Minopia Magic
+Line-Following Car) carrying an honest "no qualifying supplier" note. Computed AG for all 7 via
+live price + fresh EUR rate + floor-to-.99:
+`446=29.99, 447=48.99, 448=33.99, 449=31.99, 450=26.99, 451=23.99, 452=53.99`.
+Retried sourcing on row 446 and found a qualifying supplier this time: a sensor-driven "pen-chasing"
+car toy (same inductive-line-following mechanism as Minopia's product, just phrased differently in
+the title), 3,000+ orders, 4.9*, COGS ~€8.77. **Search-technique note**: the winning search term was
+"magic pen inductive car toy" — broader than the literal product description. Two closer-titled
+matches existed but failed the hard gates (one literal "follow any line you draw" listing had only
+70 orders; several "line following robot" listings had 1,000+ orders but only 4.4 stars) — a
+reminder that the best-matching title and the best-qualifying listing aren't always the same
+result, so it's worth checking a few phrasing variants even after finding an exact-title hit that
+fails a gate.
+
 ### AE/AG backfill for the sibling skill's 2026-09-17 batch (rows 437-445, done 2026-09-18)
 Same recurring pattern: operator asked to fill AG and find missing AliExpress links for the latest
 sibling-skill batch (9 rows, not 10 this time). AG was blank on all 9; AE/AF were already correct
