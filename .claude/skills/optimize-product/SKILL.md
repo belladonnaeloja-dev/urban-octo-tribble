@@ -2105,6 +2105,17 @@ you earned "done".
   a harness artifact, not page overflow, as long as `wideEls` only lists `pp-w-10/12`
   slider slides. (7) `theme.files(first:20, filenames:[15 names])` returned only 13 nodes;
   query the missing names in a second call before declaring a checksum mismatch.
+- **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
+  first UGC set back: *"the products looks really small, make the product look more
+  realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
+  only stated its dimensions in numbers. Numbers alone do not set scale for the
+  generator. Every UGC and lifestyle prompt for a large product now carries a SCALE
+  block in body terms: "HUGE, fills the frame from the rail to below the knees, wider
+  than the person's shoulders, cannot be held in one hand, not a pouch; the hand on the
+  hook looks tiny against it; the coat inside has adult shoulders about 45 cm wide",
+  plus a framing cue ("photographed from a few steps back so the whole height is
+  visible"). A child's garment inside an adult-size bag is a cheap, honest scale cue.
+  Re-roll cost 8 x 3.5 credits; the fix is the prompt, not the model.
 - **Learnings from CleanGel / Modlia (2026-09-18).** (1) When the operator has just
   published your previous draft, MAIN changes id: re-query `themes(roles:[MAIN])` and
   duplicate from the NEW id, then check `themes.updatedAt` again right before reporting;
