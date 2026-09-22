@@ -760,6 +760,45 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### AE/AG backfill for the sibling skill's 2026-09-22 batch (rows 453-461, done 2026-09-22)
+4th consecutive sibling-skill batch backfilled this way, and the toughest sourcing round yet: 6 of
+the 9 rows had "no qualifying supplier" going in (vs. the usual 1-3), all with genuinely close but
+not-quite-matching AliExpress search results already tried. Computed AG for all 9 via live price +
+fresh EUR rate + floor-to-.99:
+`453=38.99, 454=59.99, 455=71.99, 456=78.99, 457=68.99, 458=42.99, 459=51.99, 460=33.99, 461=29.99`.
+Retried sourcing on all 6 unsourced rows, found qualifying suppliers for 5:
+- **454 (SkyMaster 4K drone)**: broadening from an exact-spec 8K/GPS match (31 orders, fails) to a
+  general "4K camera drone GPS foldable" search surfaced a strong-match L900 Pro SE MAX drone,
+  1,000+ orders, 4.9*.
+- **455 (Hologram LED fan)**: the fix was pure vocabulary - earlier searches used "hologram"/
+  "pyramid" terms that pull DIY prism kits; searching "3D hologram LED fan display" (the actual
+  mechanism name) immediately surfaced the right product type, 1,000+ orders, 4.9*.
+- **456 (Jellyfish mist diffuser)**: same vocabulary fix - "jellyfish...light" pulled garden solar
+  lights; "jellyfish aroma diffuser humidifier" found the right category immediately, 3,000+
+  orders, 4.9*.
+- **457 (Suede trench coat)**: broadening past the literal "vintage flair" style wording found a
+  qualifying faux-suede trench at exactly 200 orders (the floor) - closest available match is
+  cropped-length rather than full-length, flagged as an imperfect fit.
+- **459 (Turtleneck + pants two-piece set)**: found a genuine matching two-piece listing (not just
+  the top alone) at 1,000+ orders, 4.9* - but flagged a real trade-off: a closer style match exists
+  (explicit "wide leg" pants, 600+ orders/4.7*) whose COGS ($67.68) would exceed the computed
+  selling price (51.99 EUR), i.e. a loss-making source. Went with the lower-COGS/decent-margin
+  option instead and documented the rejected alternative in case the style match matters more than
+  margin for this one.
+- **458 (Oak puzzle serving tray)**: STILL no qualifying supplier after 6 more search variations.
+  Every genuine divided/compartment wooden serving tray tops out at 43-177 orders; the only
+  wooden items clearing 200+ orders are small single-use sushi/taco racks, a poor match. Also
+  currently sold out on the live page. Second consecutive miss on this exact niche (small-format
+  wooden kitchen items with an unusual compartment design seem to be a recurring hard-to-source
+  category, alongside row 444's drafting tool and row 436's reader night light).
+- **Fake-anchor bug spotted again**: row 461 (Valcero compression socks) showed "sale" $49.95 >
+  "regular" $34.95 with a discount badge - same pattern flagged repeatedly in this ledger across
+  multiple unrelated stores; used the lower/real price as always.
+- **Method note reinforced**: the two products fixed by "vocabulary broadening" (455, 456) are a
+  useful reminder that when a supplier search comes up empty, the first thing to try isn't a
+  different platform or giving up - it's searching for the underlying mechanism/category name
+  instead of the storefront's marketing name for the product.
+
 ### AE/AG backfill for the sibling skill's 2026-09-18 batch (rows 446-452, done 2026-09-21)
 Same recurring pattern, 3rd consecutive sibling-skill batch backfilled this way. 7 rows this time.
 AG was blank on all 7; AE/AF were already correct for 6/7, with row 446 (Minopia Magic
