@@ -2085,6 +2085,26 @@ you earned "done".
   location-free `"Invalid JSON in <filename>"`. `body:{type:BASE64}` does not help
   (GraphQL literals cannot be concatenated). Treat this as the last resort; the
   staged URL body is the default.
+- **Learnings from SupremeStorage / Modlia (2026-09-22).** (1) Animated theme-side
+  section images (52 to 121 frame webps) hide English print: extract four frames with
+  Pillow before deciding to keep them; two of three here showed "Outer" and "Let's ...
+  up together" on the bag film and had to be replaced by renders. (2) The UGC grid
+  (`ss-ugc-1..4`) and the `pp-review-grid` photos (UGC5..7) come from ONE numbered pool:
+  map the review photos to the leftover renders and read the review text against the
+  photo (studio rack, bed with clip, entrance hall) before building; the first build
+  reused ugc-3 in both places. (3) Hanging vacuum bags: realistic space saving is 40 to
+  60 % (hanger and shoulders never compress), never the 75 to 80 % flat-bag figure the
+  supplier tiles carry; hook load about 5 kg (2 to 3 wool coats), 2 to 3 thick coats per
+  70 x 105 cm bag, recompress every 2 to 3 months, leave 2 cm above the hanger, down and
+  cashmere only light compression for one season. (4) A bold 800-weight header word
+  ("SupremeStorage") still clips in a 36 % column at 11.5 px on a 375 px phone: give the
+  product column 40 %, the feature column 24 %, and 10.5 px header text, then re-measure
+  `widestWord` against `cellW`. (5) `ThemeDuplicatePayload` exposes `newTheme`, not
+  `theme`. (6) The offline Playwright harness reports `scrollWidth` 512 on a 375 px
+  viewport from the PagePilot media slider on every Modlia page (same on CleanGel): it is
+  a harness artifact, not page overflow, as long as `wideEls` only lists `pp-w-10/12`
+  slider slides. (7) `theme.files(first:20, filenames:[15 names])` returned only 13 nodes;
+  query the missing names in a second call before declaring a checksum mismatch.
 - **Learnings from CleanGel / Modlia (2026-09-18).** (1) When the operator has just
   published your previous draft, MAIN changes id: re-query `themes(roles:[MAIN])` and
   duplicate from the NEW id, then check `themes.updatedAt` again right before reporting;
