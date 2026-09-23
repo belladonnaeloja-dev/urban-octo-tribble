@@ -277,7 +277,7 @@ def main():
                 "Difference (USD)": f"{diff:+.2f}" if diff != "" else "",
                 "Country": country,
                 "Order Date": date,
-                "Issue": reason + ("; " + "; ".join(notes) if notes else ""),
+                "Issue": reason + ("; " + "; ".join(dict.fromkeys(notes)) if notes else ""),
                 "Checked On": a.checked_on,
             })
         else:
