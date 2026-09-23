@@ -23,7 +23,13 @@ import re
 import sys
 from collections import defaultdict
 
-COUNTRIES = ("DE", "AT", "CH", "NL", "BE", "FR")
+COUNTRIES = ("DE", "AT", "CH", "NL", "BE", "FR", "CZ")
+
+# The price-check log tab (gid=1212070020) in the same file. read_file_content appends it after
+# the quote tab; this header row is where it starts.
+LOG_HEADER = ["Price Check Date", "Order #", "Product Name", "Quantity", "Quoted Price (USD)",
+              "Total Price (USD)", "Difference (USD)", "Country", "Issue", "Solution", "Fixed",
+              "Notes"]
 
 
 # ---------- quote sheet parsing ----------
@@ -108,6 +114,19 @@ def brand(title):
 
 def norm(s):
     return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def split_tabs(text):
+    """Return (quote tab text, set of order numbers already in the log tab)."""
+    marker = LOG_HEADER[0] + ","
+    if marker not in text:
+        return text, set()
+    quote_text, log_text = text.split(marker, 1)
+    logged = set()
+    for r in _tokenize_width(marker + log_text.strip(), len(LOG_HEADER))[1:]:
+        if len(r) > 1 and unescape(r[1]).strip():
+            logged.add(unescape(r[1]).strip().lstrip("#").upper())
+    return quote_text, logged
 
 
 def parse_quotes(text):
@@ -224,10 +243,15 @@ def main():
     ap.add_argument("--checked-on", default="")
     ap.add_argument("--tolerance", type=float, default=0.02)
     ap.add_argument("--dump-quotes", action="store_true")
+    ap.add_argument("--log-out", help="TSV of new rows for the price-check log tab")
+    ap.add_argument("--known-fees", default="3.80,0.20",
+                    help="overcharges (USD, +/-0.01) left out of the log, comma-separated")
     a = ap.parse_args()
 
     with open(a.quotes, encoding="utf-8") as f:
-        products, names, usd_col, cost_col = parse_quotes(f.read())
+        quote_text, logged = split_tabs(f.read())
+    products, names, usd_col, cost_col = parse_quotes(quote_text)
+    known_fees = [float(x) for x in a.known_fees.split(",") if x.strip()]
 
     print("USD quote columns:", ", ".join(f"{c}={col_letter(i)}" for c, i in usd_col.items()),
           f"| product cost = {col_letter(cost_col)}")
@@ -244,7 +268,7 @@ def main():
         with open(a.items, encoding="utf-8") as f:
             items = {k.lstrip("#").upper(): v for k, v in json.load(f).items()}
 
-    out_rows, stats = [], defaultdict(int)
+    out_rows, log_rows, stats = [], [], defaultdict(int)
     for o in orders:
         num = pick(o, "order number", "order #", "order").strip()
         total = money(pick(o, "total (usd)", "order total charged to customer (usd)", "total"))
@@ -299,10 +323,20 @@ def main():
         if reason:
             stats[reason] += 1
             diff = round(total - expected, 2) if (total is not None and isinstance(expected, float)) else ""
+            qty_total = sum(int(li.get("qty") or 1) for li in lines) if lines else ""
+            # The log only gets real overcharges: positive, and not one of the known flat fees.
+            if reason == "price mismatch" and diff != "" and diff > a.tolerance \
+                    and not any(abs(diff - fee) <= 0.011 for fee in known_fees):
+                if num.lstrip("#").upper() in logged:
+                    stats["already in log"] += 1
+                else:
+                    log_rows.append([a.checked_on, num, " + ".join(labels), qty_total,
+                                     f"${expected:.2f}", f"${total:.2f}", f"${diff:.2f}",
+                                     country, "price mismatch", "", "FALSE", ""])
             out_rows.append({
                 "Order #": num,
                 "Product Name": " + ".join(labels) or "(unknown)",
-                "Quantity": sum(int(li.get("qty") or 1) for li in lines) if lines else "",
+                "Quantity": qty_total,
                 "Quoted Price (USD)": f"{expected:.2f}" if isinstance(expected, float) else "",
                 "Total Price (CSV, USD)": f"{total:.2f}" if total is not None else "",
                 "Difference (USD)": f"{diff:+.2f}" if diff != "" else "",
@@ -320,8 +354,13 @@ def main():
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         w.writerows(out_rows)
+    if a.log_out:
+        with open(a.log_out, "w", newline="", encoding="utf-8") as f:
+            csv.writer(f, delimiter="\t", lineterminator="\n").writerows(log_rows)
+    stats["new log rows"] = len(log_rows)
     print(json.dumps(stats, indent=1))
-    print(f"wrote {len(out_rows)} rows to {a.out}")
+    print(f"wrote {len(out_rows)} flagged orders to {a.out}" +
+          (f" and {len(log_rows)} new log rows to {a.log_out}" if a.log_out else ""))
 
 
 if __name__ == "__main__":

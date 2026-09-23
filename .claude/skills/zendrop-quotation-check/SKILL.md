@@ -1,16 +1,16 @@
 ---
 name: zendrop-quotation-check
-description: 'Cross-check every order in a Zendrop orders CSV (Order Number, Total (USD), Country) for the Zanaro Berlin store against the quoted prices in the "Zendrop_quote_request" Google Sheet — the order total must equal the quoted USD price (column Q for DE, the matching country column for AT/CH/NL/BE/FR) for one unit, or (column O product cost × quantity) + (Q − O) for more than one unit. Line items come from Shopify. Every order that does not match is written to one persistent Google Sheet, "Zendrop Quotation Mismatches", with order #, product name, quantity, quoted price, CSV total and the difference. Use when the user asks to check/verify/cross-check Zendrop quotations, orders or order totals, run the weekly quotation check, or shares a Zendrop orders CSV plus the quote sheet.'
+description: 'Cross-check every order in a Zendrop orders CSV (Order Number, Total (USD), Country) for the Zanaro Berlin store against the quoted prices in the "Zendrop_quote_request" Google Sheet — the order total must equal the quoted USD price (column Q for DE, the matching country USD column for AT/CH/NL/BE/FR/CZ) for one unit, or (column O product cost × quantity) + (Q − O) for more than one unit. Line items come from Shopify. Overcharges are logged in one place only: the price-check tab (gid=1212070020) of that same Zendrop_quote_request file. Use when the user asks to check/verify/cross-check Zendrop quotations, orders or order totals, run the weekly quotation check, or shares a Zendrop orders CSV plus the quote sheet.'
 ---
 
 # Zendrop quotation check (orders CSV × Zendrop_quote_request)
 
 Checks that Zendrop charged what it quoted. For each order in the CSV, the expected charge is the
 country quote for the first unit plus the product cost (column O) for every extra unit.
-The quote column depends on the order's destination country. Orders that don't match go into the mismatch Google Sheet.
+The quote column depends on the order's destination country. Overcharges go into the price-check tab of the quote file.
 
-The check itself never changes the quote sheet, Shopify or the CSV. It only writes to the
-mismatch sheet.
+The only thing this skill ever writes to is that price-check tab. It never changes the quote tab,
+Shopify or the CSV, and it never creates other sheets or files.
 
 ## Inputs (ask for whichever is missing)
 
@@ -26,7 +26,9 @@ example sheets from Drive on your own.
 
 ## Fixed IDs
 
-- **Mismatch sheet and folder:** see `state.json` (`mismatch_sheet_id`, `folder_id`).
+- **Quote file and price-check log tab:** see `state.json`. The log is the tab with
+  gid `1212070020` inside the quote file (`1SvNOGcVRPUv2DruK6yNZBneZm3WoLvxY`):
+  https://docs.google.com/spreadsheets/d/1SvNOGcVRPUv2DruK6yNZBneZm3WoLvxY/edit?gid=1212070020#gid=1212070020
 - **Shopify store:** the Zanaro Berlin store, whose orders are named `#BC…`. Verify it with
   `get-shop-info`, then `get-order` on the first order number in the CSV, before looking up
   the rest. If a different store is connected, don't switch on your own: tell the
@@ -42,7 +44,11 @@ string exactly as returned to `<scratchpad>/quotes.txt`, then check how it parse
 python3 .claude/skills/zendrop-quotation-check/scripts/check_quotes.py --quotes <scratchpad>/quotes.txt --dump-quotes
 ```
 
-The first output line must be `USD quote columns: DE=Q, AT=S, CH=U, NL=W, BE=Y, FR=AA`.
+The first output line must be
+`USD quote columns: DE=Q, AT=S, CH=U, NL=W, BE=Y, FR=AA, CZ=AC | product cost = O`.
+`read_file_content` returns both tabs one after the other. The script splits them at the log
+tab's header row (`Price Check Date,Order #,…`) and reads the order numbers already in the log,
+so they aren't added twice.
 **Column Q is the DE price in USD.** The script finds these columns from the header rows
 ("Zendrop Quotes" → country code → "USD ($)"). If DE isn't Q, or the script exits with a
 layout error, the sheet has been restructured. Stop and tell the user rather than guessing.
@@ -87,7 +93,7 @@ every physical product.
 ```
 python3 .claude/skills/zendrop-quotation-check/scripts/check_quotes.py \
   --quotes <scratchpad>/quotes.txt --orders <path to CSV> --items <scratchpad>/items.json \
-  --out <scratchpad>/mismatches.csv --checked-on <today YYYY-MM-DD>
+  --out <scratchpad>/flagged.csv --log-out <scratchpad>/log_rows.tsv --checked-on <today YYYY-MM-DD>
 ```
 
 Rules the script applies:
@@ -111,47 +117,46 @@ Rules the script applies:
   - A note says so when a variant couldn't be matched to one of the product's variant rows and
     the first row was used instead. Mention these to the user.
 
-## Step 4: Review before writing
+## Step 4: Decide what goes in the log
 
-Read `mismatches.csv` and the summary. If most orders to one country mismatch by the same
-amount, or dozens of products are "not in quote sheet", the cause is probably a parsing or
-lookup problem, not real overcharges. Look into it before writing anything.
+`flagged.csv` lists every order that didn't match, for the report. `log_rows.tsv` holds only
+the rows for the log tab. An order goes in the log only when **all** of these are true:
+- it's a `price mismatch` (not "no quote for destination country" and not "product not in
+  quote sheet");
+- Zendrop charged **more** than the quote (undercharges stay out);
+- the overcharge isn't one of the known flat amounts, **+$3.80 or +$0.20** (±$0.01, so +$3.81
+  is also left out). Change these with `--known-fees`;
+- its order number isn't in the log already.
 
-## Step 5: Write to the mismatch Google Sheet
+Before writing anything, read the summary. If most orders to one country are off by the same
+amount, or dozens of products come back "not in quote sheet", the cause is probably a parsing
+or lookup problem, not real overcharges. Look into it first.
 
-Everything lives in the Drive folder **"Zendrop Quotation Checks"** (`state.json` → `folder_id`).
-The master sheet is **"Zendrop Quotation Mismatches"** (`state.json` → `mismatch_sheet_id`). Both
-were created in the user's own Google Drive (belladonnaeloja@gmail.com). Claude can't own a
-Google file itself. Because they were created through the user's connected Drive, every later
-run can open and edit them.
+## Step 5: Add the rows to the price-check log tab
 
-Columns (always in this order):
-`Order #, Product Name, Quantity, Quoted Price (USD), Total Price (CSV, USD), Difference (USD), Country, Order Date, Issue, Checked On`.
-Quantity = total units in the order (all line items). Quoted Price is the whole-order figure from
-Step 3 (for 2+ units: O × quantity + (Q − O)).
-Difference = CSV total − quoted price (positive means Zendrop charged more than the quote).
+**The price-check tab (gid `1212070020`) is the only place this skill writes. Don't create
+any other sheet or file, not even as a fallback.**
 
-The Google Drive connector can create files but **cannot edit a sheet's cells**. Editing cells
-goes through Autosheet:
+The log's columns, in order:
+`Price Check Date, Order #, Product Name, Quantity, Quoted Price (USD), Total Price (USD), Difference (USD), Country, Issue, Solution, Fixed, Notes`.
+New rows get today's date, prices written like `$16.07`, Issue `price mismatch`, Solution and
+Notes blank, and Fixed `FALSE`. The Solution, Fixed and Notes columns belong to the team.
+Never change an existing row.
 
-1. **Add to the master sheet (preferred).** Start an Autosheet agent
-   (`autosheet_start_agent_google_sheets_spreadsheet`) on `mismatch_sheet_id`. Tell it to
-   append the new rows under the existing ones on the first tab, keep the same columns, and
-   skip any row whose `Order #` is already in the sheet. Paste the rows into the prompt. Then
-   confirm the result with `read_file_content`.
-2. **If Autosheet fails** (for example with a billing error like `api-billing-free-trial-ended`),
-   use Google Drive `create_file` to make a new sheet named
-   `Zendrop Quotation Mismatches – <YYYY-MM-DD>`, with `contentMimeType: "text/csv"`,
-   `textContent` = the mismatch CSV and `parentId` = `folder_id`. Tell the user the master
-   sheet wasn't updated and why, and give them the new sheet's link.
-3. If `mismatch_sheet_id` can't be opened (the sheet was deleted), tell the user. Create a
-   new master sheet in the folder only once they agree, then update `state.json` and commit
-   and push it.
-
-If there are no mismatches, don't touch any sheet. Just say so.
+How to write the rows:
+1. Start an Autosheet agent (`autosheet_start_agent_google_sheets_spreadsheet`) with the
+   log tab URL from `state.json`. Tell it to append the rows from `log_rows.tsv` below the last
+   filled row of that tab, in the same columns, and not to touch any other tab or row. Then
+   confirm with `read_file_content` that the new order numbers show up after `Price Check Date`.
+2. If Autosheet fails, don't write anywhere else. It fails, for example, with a billing error
+   like `api-billing-free-trial-ended`, or because the file is an `.xlsx` it can't edit. Tell
+   the user what failed. Then give them the contents of `log_rows.tsv` in a code block, so they
+   can paste it into the first empty row of the log tab (tab-separated, so it fills the columns).
+3. If there are no new log rows, don't touch the file. Just say so.
 
 ## Step 6: Report back
 
 Tell the user: how many orders were checked, how many matched, and how many were flagged per
-issue type. List the biggest price differences, mention any variant rows that were guessed,
-and give the mismatch sheet link.
+issue type. Then say how many rows went into the log (or are waiting to be pasted in), and how
+many were left out: known fees, undercharges, no quote, or already logged. List the biggest
+overcharges, mention any variant rows that were guessed, and link the log tab.
