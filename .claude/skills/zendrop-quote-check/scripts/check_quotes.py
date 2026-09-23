@@ -241,9 +241,9 @@ def main():
             if note:
                 notes.append(note)
             q = row["quotes"].get(country)
-            label = names[b] + (f" ({li.get('variant')})" if li.get("variant") else "") + \
-                (f" x{qty}" if qty != 1 else "")
-            labels.append(label)
+            label = names[b] + (f" ({li.get('variant')})" if li.get("variant") else "")
+            # per-line quantity only matters in the name when the order has several lines
+            labels.append(label + (f" x{qty}" if qty != 1 and len(lines) > 1 else ""))
             if q is None:
                 notes.append(f"no {country} quote for {names[b]}")
                 expected = None
@@ -272,6 +272,7 @@ def main():
             out_rows.append({
                 "Order #": num,
                 "Product Name": " + ".join(labels) or "(unknown)",
+                "Quantity": sum(int(li.get("qty") or 1) for li in lines) if lines else "",
                 "Quoted Price (USD)": f"{expected:.2f}" if isinstance(expected, float) else "",
                 "Total Price (CSV, USD)": f"{total:.2f}" if total is not None else "",
                 "Difference (USD)": f"{diff:+.2f}" if diff != "" else "",
@@ -283,7 +284,7 @@ def main():
         else:
             stats["match"] += 1
 
-    fields = ["Order #", "Product Name", "Quoted Price (USD)", "Total Price (CSV, USD)",
+    fields = ["Order #", "Product Name", "Quantity", "Quoted Price (USD)", "Total Price (CSV, USD)",
               "Difference (USD)", "Country", "Order Date", "Issue", "Checked On"]
     with open(a.out, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fields)

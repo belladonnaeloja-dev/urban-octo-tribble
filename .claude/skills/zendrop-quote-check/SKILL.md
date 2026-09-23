@@ -1,6 +1,6 @@
 ---
 name: zendrop-quote-check
-description: 'Cross-check every order in a Zendrop orders CSV (Order Number, Total (USD), Country) for the Zanaro Berlin store against the quoted prices in the "Zendrop_quote_request" Google Sheet — the order total must equal the quoted USD price (column Q for DE, the matching country column for AT/CH/NL/BE/FR) times the quantity of each product. Line items come from Shopify. Every order that does not match is written to one persistent Google Sheet, "Zendrop Quotation Mismatches", with order #, product name, quoted price, CSV total and the difference. Use when the user asks to check/verify/cross-check Zendrop quotations, orders or order totals, run the weekly quotation check, or shares a Zendrop orders CSV plus the quote sheet.'
+description: 'Cross-check every order in a Zendrop orders CSV (Order Number, Total (USD), Country) for the Zanaro Berlin store against the quoted prices in the "Zendrop_quote_request" Google Sheet — the order total must equal the quoted USD price (column Q for DE, the matching country column for AT/CH/NL/BE/FR) times the quantity of each product. Line items come from Shopify. Every order that does not match is written to one persistent Google Sheet, "Zendrop Quotation Mismatches", with order #, product name, quantity, quoted price, CSV total and the difference. Use when the user asks to check/verify/cross-check Zendrop quotations, orders or order totals, run the weekly quotation check, or shares a Zendrop orders CSV plus the quote sheet.'
 ---
 
 # Zendrop quotation check (orders CSV × Zendrop_quote_request)
@@ -118,7 +118,8 @@ Google file itself. Because they were created through the user's connected Drive
 run can open and edit them.
 
 Columns (always in this order):
-`Order #, Product Name, Quoted Price (USD), Total Price (CSV, USD), Difference (USD), Country, Order Date, Issue, Checked On`.
+`Order #, Product Name, Quantity, Quoted Price (USD), Total Price (CSV, USD), Difference (USD), Country, Order Date, Issue, Checked On`.
+Quantity = total units in the order (all line items). Quoted Price is already quote × quantity.
 Difference = CSV total − quoted price (positive means Zendrop charged more than the quote).
 
 The Google Drive connector can create files but **cannot edit a sheet's cells**. Editing cells
