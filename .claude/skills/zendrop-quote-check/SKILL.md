@@ -1,13 +1,13 @@
 ---
 name: zendrop-quote-check
-description: 'Cross-check every order in a Zendrop orders CSV (Order Number, Total (USD), Country) for the Zanaro Berlin store against the quoted prices in the "Zendrop_quote_request" Google Sheet — the order total must equal the quoted USD price (column Q for DE, the matching country column for AT/CH/NL/BE/FR) times the quantity of each product. Line items come from Shopify. Every order that does not match is written to one persistent Google Sheet, "Zendrop Quotation Mismatches", with order #, product name, quantity, quoted price, CSV total and the difference. Use when the user asks to check/verify/cross-check Zendrop quotations, orders or order totals, run the weekly quotation check, or shares a Zendrop orders CSV plus the quote sheet.'
+description: 'Cross-check every order in a Zendrop orders CSV (Order Number, Total (USD), Country) for the Zanaro Berlin store against the quoted prices in the "Zendrop_quote_request" Google Sheet — the order total must equal the quoted USD price (column Q for DE, the matching country column for AT/CH/NL/BE/FR) for one unit, or (column O product cost × quantity) + (Q − O) for more than one unit. Line items come from Shopify. Every order that does not match is written to one persistent Google Sheet, "Zendrop Quotation Mismatches", with order #, product name, quantity, quoted price, CSV total and the difference. Use when the user asks to check/verify/cross-check Zendrop quotations, orders or order totals, run the weekly quotation check, or shares a Zendrop orders CSV plus the quote sheet.'
 ---
 
 # Zendrop quotation check (orders CSV × Zendrop_quote_request)
 
-Checks that Zendrop charged what it quoted. For each order in the CSV, the expected total is the
-sum of `quoted USD price × quantity` for every product in the order, using the quote column for the
-order's destination country. Orders that don't match go into the mismatch Google Sheet.
+Checks that Zendrop charged what it quoted. For each order in the CSV, the expected charge is the
+country quote for the first unit plus the product cost (column O) for every extra unit.
+The quote column depends on the order's destination country. Orders that don't match go into the mismatch Google Sheet.
 
 The check itself never changes the quote sheet, Shopify or the CSV. It only writes to the
 mismatch sheet.
@@ -91,8 +91,16 @@ python3 .claude/skills/zendrop-quote-check/scripts/check_quotes.py \
 ```
 
 Rules the script applies:
-- **Expected total** = Σ (quoted USD price for the destination country × quantity).
-  DE → Q, AT → S, CH → U, NL → W, BE → Y, FR → AA.
+- **Quoted price for the order** (the country quote column: DE → Q, AT → S, CH → U, NL → W,
+  BE → Y, FR → AA; product cost is column O, "Product Cost ($)"):
+  - **1 unit:** the country quote, e.g. column Q.
+  - **More than 1 unit:** `(O × quantity) + (Q − O)`. The first unit is charged the full quote
+    and each extra unit only the product cost. For other countries, use that country's column
+    in place of Q.
+  - **Several products/variants in one order:** every unit at its own O, plus the largest
+    `(quote − O)` once.
+  - If a product has no USD cost in column O (blank, or written in €), the script falls back
+    to quote × quantity and says so in `Issue`.
 - **Match** if `|CSV total − expected| ≤ $0.02`. The tolerance covers rounding.
 - Anything else is written to the output with an `Issue`:
   - `price mismatch`: a quote exists and the total differs.
@@ -119,7 +127,8 @@ run can open and edit them.
 
 Columns (always in this order):
 `Order #, Product Name, Quantity, Quoted Price (USD), Total Price (CSV, USD), Difference (USD), Country, Order Date, Issue, Checked On`.
-Quantity = total units in the order (all line items). Quoted Price is already quote × quantity.
+Quantity = total units in the order (all line items). Quoted Price is the whole-order figure from
+Step 3 (for 2+ units: O × quantity + (Q − O)).
 Difference = CSV total − quoted price (positive means Zendrop charged more than the quote).
 
 The Google Drive connector can create files but **cannot edit a sheet's cells**. Editing cells

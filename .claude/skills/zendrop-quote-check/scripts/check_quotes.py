@@ -125,6 +125,9 @@ def parse_quotes(text):
                 usd_col[code] = i + 1
     if "DE" not in usd_col:
         raise SystemExit("Quote sheet: DE USD column not found - layout changed?")
+    cost_col = next((i for i, c in enumerate(head0) if c.lower().startswith("product cost")), None)
+    if cost_col is None:
+        raise SystemExit("Quote sheet: 'Product Cost ($)' header (column O) not found - layout changed?")
     detail_cols = [i for i, c in enumerate(head1) if c.startswith("Product Details") or
                    c.startswith("Product Quality")]
 
@@ -135,6 +138,8 @@ def parse_quotes(text):
         name, store = r[0], r[1]
         quotes = {c: money(r[i]) for c, i in usd_col.items() if i < len(r)}
         label = " ".join(r[i] for i in detail_cols if r[i] and r[i] not in ("TRUE", "FALSE"))
+        # a cost written in EUR can't be combined with USD quotes
+        cost = None if "€" in r[cost_col] else money(r[cost_col])
         if name:
             b = brand(name)
             if not b:
@@ -142,11 +147,13 @@ def parse_quotes(text):
                 continue
             last = norm(b)
             names.setdefault(last, b)
-            products[last].append({"label": label, "store": store, "quotes": quotes, "title": name})
+            products[last].append({"label": label, "store": store, "quotes": quotes, "cost": cost,
+                                   "title": name})
         elif last and any(v is not None for v in quotes.values()):
             store = store or products[last][-1]["store"]  # variant rows often leave it blank
-            products[last].append({"label": label, "store": store, "quotes": quotes, "title": ""})
-    return products, names, usd_col
+            products[last].append({"label": label, "store": store, "quotes": quotes, "cost": cost,
+                                   "title": ""})
+    return products, names, usd_col, cost_col
 
 
 # ---------- matching ----------
@@ -174,6 +181,28 @@ def pick_row(rows, variant):
     return zrows[0], f"variant '{variant}' not matched to a quote row; used '{zrows[0]['label'] or 'first row'}'"
 
 
+def quoted_price(priced, notes):
+    """Expected Zendrop charge for an order.
+
+    One unit: the country quote (column Q for DE). More than one unit: the first unit at the
+    full quote, every extra unit at product cost (column O), i.e. O * qty + (Q - O). Across
+    different products/variants every unit is costed at O and the per-order part (Q - O) is
+    added once, using the largest one.
+    """
+    if not priced:
+        return None
+    units = sum(qty for _, _, qty, _ in priced)
+    if units == 1:
+        return round(priced[0][0], 2)
+    missing = sorted({n for _, cost, _, n in priced if cost is None})
+    if missing:
+        notes.append("no USD product cost (column O) for " + ", ".join(missing) +
+                     "; used quote x quantity")
+        return round(sum(q * qty for q, _, qty, _ in priced), 2)
+    return round(sum(cost * qty for _, cost, qty, _ in priced) +
+                 max(q - cost for q, cost, _, _ in priced), 2)
+
+
 def load_orders(path):
     with open(path, newline="", encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
@@ -198,13 +227,14 @@ def main():
     a = ap.parse_args()
 
     with open(a.quotes, encoding="utf-8") as f:
-        products, names, usd_col = parse_quotes(f.read())
+        products, names, usd_col, cost_col = parse_quotes(f.read())
 
-    print("USD quote columns:", ", ".join(f"{c}={col_letter(i)}" for c, i in usd_col.items()))
+    print("USD quote columns:", ", ".join(f"{c}={col_letter(i)}" for c, i in usd_col.items()),
+          f"| product cost = {col_letter(cost_col)}")
     if a.dump_quotes:
         for k, rows in products.items():
             for r in rows:
-                print(f"{names[k]:<16} {r['store']:<8} {r['label'][:30]:<30} " +
+                print(f"{names[k]:<16} {r['store']:<8} {r['label'][:30]:<30} cost:{r['cost']} " +
                       " ".join(f"{c}:{r['quotes'].get(c)}" for c in usd_col))
         return
 
@@ -229,7 +259,7 @@ def main():
         if lines is None:
             lines = []
 
-        notes, labels, expected, unknown = [], [], 0.0, 0
+        notes, labels, priced, unknown, no_quote = [], [], [], 0, False
         for li in lines:
             b = norm(brand(li.get("title", "")))
             qty = int(li.get("qty") or 1)
@@ -246,17 +276,17 @@ def main():
             labels.append(label + (f" x{qty}" if qty != 1 and len(lines) > 1 else ""))
             if q is None:
                 notes.append(f"no {country} quote for {names[b]}")
-                expected = None
+                no_quote = True
                 continue
-            if expected is not None:
-                expected += q * qty
+            priced.append((q, row["cost"], qty, names[b]))
+
+        expected = None if no_quote else quoted_price(priced, notes)
 
         reason = None
         if not lines:
             reason = "no line items found for this order"
         elif unknown == len(lines):
             reason = "product not in quote sheet"
-            expected = None
         elif expected is None:
             reason = "no quote for destination country"
         else:
