@@ -1,9 +1,9 @@
 ---
-name: zanaro-quotation-check
+name: quotation-check
 description: Check supplier quotation cost against Shopify selling price to flag thin-margin best sellers, delivered as a Google Sheet. Use this whenever the user uploads a supplier-quotation xlsx export (columns like "Product name", "Lowest quoted 1 pcs price", "Highest quoted 1 pcs price", "Store name") and wants it compared against Shopify prices — trigger phrases include "quotation check", "quotation percentage", "quotation %", "compare quotation to Shopify price", "margin check against supplier quote", "check the quotation for my best sellers", or requests to cross-reference a supplier-price xlsx with a Shopify store's selling prices. Also use this proactively when the user asks for "best sellers by revenue" or "top products" cross-referenced against a cost/quotation file, even if they don't name the metric "quotation %" explicitly.
 ---
 
-# Zanaro Quotation Check
+# Quotation Check
 
 Cross-reference a supplier-quotation export against live Shopify prices for
 a store's best sellers, and surface the ones where the supplier's cost eats
