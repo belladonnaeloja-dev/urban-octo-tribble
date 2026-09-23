@@ -83,10 +83,15 @@ you're using and move on; they can correct you.
    moving on in case it points at a real data problem (e.g. wrong store
    filtered) rather than an expected drift in title text.
 
-7. **Publish the Google Sheet.** Read the produced CSV and pass it to the
-   Google Drive MCP's `create_file` with `contentMimeType: "text/csv"` and
-   the CSV as `textContent` — Drive auto-converts it to a native Google
-   Sheet. Give the file a title that names the store and metric, e.g.
+7. **Deliver to the store's Google Sheet tab.** First check
+   `references/store_sheets.md`. If the store has a mapped tab, **update
+   that tab — do not create a new file** — following the update rules in
+   that reference (refresh existing rows, keep the user's Supplier/Note
+   columns, add 10 products not already in the tab, check duplicates,
+   re-sort by Quotation % descending). Only for a store with no mapped tab,
+   create a new sheet: pass the CSV to the Google Drive MCP's `create_file`
+   with `contentMimeType: "text/csv"` and the CSV as `textContent` (Drive
+   auto-converts it to a native Google Sheet), titled e.g.
    "<Store> Top 20 Bestsellers by Quotation %".
 
 8. **Reply to the user** with the Sheet link and a short summary: how many
