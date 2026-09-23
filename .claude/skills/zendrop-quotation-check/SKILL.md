@@ -1,5 +1,5 @@
 ---
-name: zendrop-quote-check
+name: zendrop-quotation-check
 description: 'Cross-check every order in a Zendrop orders CSV (Order Number, Total (USD), Country) for the Zanaro Berlin store against the quoted prices in the "Zendrop_quote_request" Google Sheet — the order total must equal the quoted USD price (column Q for DE, the matching country column for AT/CH/NL/BE/FR) for one unit, or (column O product cost × quantity) + (Q − O) for more than one unit. Line items come from Shopify. Every order that does not match is written to one persistent Google Sheet, "Zendrop Quotation Mismatches", with order #, product name, quantity, quoted price, CSV total and the difference. Use when the user asks to check/verify/cross-check Zendrop quotations, orders or order totals, run the weekly quotation check, or shares a Zendrop orders CSV plus the quote sheet.'
 ---
 
@@ -39,7 +39,7 @@ Call Google Drive `read_file_content` with the quote sheet ID. Save the returned
 string exactly as returned to `<scratchpad>/quotes.txt`, then check how it parsed:
 
 ```
-python3 .claude/skills/zendrop-quote-check/scripts/check_quotes.py --quotes <scratchpad>/quotes.txt --dump-quotes
+python3 .claude/skills/zendrop-quotation-check/scripts/check_quotes.py --quotes <scratchpad>/quotes.txt --dump-quotes
 ```
 
 The first output line must be `USD quote columns: DE=Q, AT=S, CH=U, NL=W, BE=Y, FR=AA`.
@@ -85,7 +85,7 @@ every physical product.
 ## Step 3: Run the check
 
 ```
-python3 .claude/skills/zendrop-quote-check/scripts/check_quotes.py \
+python3 .claude/skills/zendrop-quotation-check/scripts/check_quotes.py \
   --quotes <scratchpad>/quotes.txt --orders <path to CSV> --items <scratchpad>/items.json \
   --out <scratchpad>/mismatches.csv --checked-on <today YYYY-MM-DD>
 ```
