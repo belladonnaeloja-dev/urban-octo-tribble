@@ -760,6 +760,31 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### AE/AG backfill for the sibling skill's second 2026-09-22 batch (rows 462-471, done 2026-09-23)
+5th consecutive sibling-skill batch backfilled, but this one was different: only 4 of the 10 rows
+(462-465) are TEST NOW; rows 466-471 are explicit WATCH rows with their own documented
+deferral reasons already in AE ("source only if the ad restarts," "high-ticket bulky item - quote
+shipping first," "verify real mulberry silk momme weight before quoting") — **these are not gaps,
+they're intentional holds, and should NOT be treated as missing data to fill on a routine backfill
+pass.** Checking column X (Verdict) before assuming every blank AE/AG needs work saved real effort
+here — always check verdict/tier before backfilling a batch that might contain WATCH rows, not just
+TEST NOW ones.
+Computed AG for the 4 real TEST NOW rows: `462=23.99, 463=23.99, 464=25.99, 465=25.99`. Retried
+sourcing on the 2 unsourced ones:
+- **463 (AquaBlock waterproof sealant)**: found an excellent match immediately on the first search
+  term tried ("invisible waterproof spray sealant") - 10,000+ orders, 4.9*, extremely low COGS
+  ($2.33). The previous miss's own note said the cheapest qualifying equivalent found was a roof
+  coating priced ABOVE the selling price - this new listing is a much closer product-type match at
+  a fraction of that cost, so the earlier search was likely using the wrong category entirely
+  (roofing sealants vs. general household/spray sealants).
+- **464 (Clarivo faucet filter)**: broadening past "slip-on pack" specifically (which topped out at
+  11-30 orders) to general faucet-attach filter cartridges found a qualifying ceramic filter at
+  402 orders, 4.7*.
+- Also confirmed the fake-anchor pricing bug on BOTH Brinoa-store rows in this batch (462 Drain
+  Nozzle and 463 AquaBlock) - the same store showing the pattern on 2 different product pages at
+  once is further evidence this is a store/theme-level issue rather than a one-off copy mistake,
+  consistent with the cross-store pattern already logged in the 2026-09-16 batch entry above.
+
 ### AE/AG backfill for the sibling skill's 2026-09-22 batch (rows 453-461, done 2026-09-22)
 4th consecutive sibling-skill batch backfilled this way, and the toughest sourcing round yet: 6 of
 the 9 rows had "no qualifying supplier" going in (vs. the usual 1-3), all with genuinely close but
