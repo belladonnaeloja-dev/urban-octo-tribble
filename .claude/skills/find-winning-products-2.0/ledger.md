@@ -760,6 +760,40 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### Full first-time sourcing for the WATCH rows 466-471 (done 2026-09-23, operator-requested override)
+The immediately preceding entry left rows 466-471 alone because they were intentional WATCH holds
+with their own deferral notes. The operator then explicitly asked to complete them anyway - a
+deliberate override of that WATCH status, not a mistake to flag. Did full first-time sourcing (live
+price + stock check + AliExpress supplier), same as any other backfill, and filled AE/AF/AG for all
+6. **Left the Verdict (column X) as WATCH rather than promoting any to TEST NOW** - 2 of the 6 have
+real stock problems (466's variants and 470 outright) surfaced during this pass, so auto-promoting
+would have violated the standing "never deliver sold-out as TEST NOW" rule; that promotion decision
+is left to the operator now that the data exists to make it.
+- **466 (SilentSweep wipers)**: AG 25.99, supplier found (316 orders/4.6*). Flagged: the base
+  listing reads as in-stock but every individual color/size variant shows sold out - a real product
+  may not currently be purchasable despite appearances.
+- **467 (TireShine polish)**: AG 26.99, supplier found (4,000+ orders/4.9*), no issues.
+- **468 (Car nap headrest)**: AG 60.99, supplier found (3,000+ orders/4.9*). Live price has risen
+  to $70.00 from the $59.99 cached value (+17%) - a real price change, not a pricing bug, still
+  worth knowing before quoting this number elsewhere.
+- **469 (BurnForge workout machine)**: AG 97.99, supplier found (300 orders/4.7*, equivalent
+  category not exact SKU). **Correction to the original deferral note**: this was flagged "high-
+  ticket bulky item - quote shipping first," but the live page describes a compact handheld chrome
+  rotational-grip trainer, not bulky gym equipment - the original flag looks stale/wrong. Worth
+  remembering that a deferral note written weeks earlier isn't necessarily still accurate; verify
+  it rather than trusting it blindly when finally acting on a long-deferred row.
+- **470 (CurlEclat treatment)**: AG 39.99, supplier found (2,000 orders/4.9*). Flagged: product is
+  currently SOLD OUT on the live page despite a "stock ending soon" urgency banner still showing.
+- **471 (Emilys silk pillowcase)**: AG 74.99, supplier found (500 orders/4.9*) with an exact
+  momme-weight AND silk-grade match (22 momme, Grade 6A) - this is the one case where the original
+  deferral note ("verify real mulberry silk momme weight before quoting") was fully actionable: the
+  live page does state a specific momme/grade/OEKO-TEX claim, and the matched supplier was chosen
+  specifically because it states the same 22 momme / Grade 6A spec rather than a vague "silk-like"
+  listing. Live price also rose from EUR69.00 cached to EUR75.00 live.
+- **General note**: every one of these deferred rows turned out to be sourceable on the first
+  attempt (no "no qualifying supplier" results this round) - a reminder that WATCH/deferred status
+  in this sheet reflects "not yet attempted" far more often than "genuinely hard to source."
+
 ### AE/AG backfill for the sibling skill's second 2026-09-22 batch (rows 462-471, done 2026-09-23)
 5th consecutive sibling-skill batch backfilled, but this one was different: only 4 of the 10 rows
 (462-465) are TEST NOW; rows 466-471 are explicit WATCH rows with their own documented
