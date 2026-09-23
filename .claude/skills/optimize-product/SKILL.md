@@ -2105,6 +2105,20 @@ you earned "done".
   a harness artifact, not page overflow, as long as `wideEls` only lists `pp-w-10/12`
   slider slides. (7) `theme.files(first:20, filenames:[15 names])` returned only 13 nodes;
   query the missing names in a second call before declaring a checksum mismatch.
+- **Rebasing a draft onto a newer live theme (SupremeStorage / Modlia 2026-09-23).** The
+  operator published a different theme after your draft was branched and asked for a
+  publishable theme that keeps both the page work and the pages created since. Recipe:
+  (1) list the OLD draft's files with `updatedAt`; everything later than the draft's
+  creation timestamp is the delta (here: the template plus 14 snippets, nothing else),
+  and it catches operator edits made in the theme editor on the draft, which you would
+  otherwise overwrite with your local build (here the review badge had been shortened to
+  "Vérifié" at 09:58). Download that file's `body.content` and ship it verbatim; realign
+  `content.json` afterwards. (2) Confirm the new MAIN still carries the ORIGINAL version of
+  your template (md5 of the pre-run snapshot) and none of your snippets, so there is no
+  three-way conflict. (3) `themeDuplicate` the current MAIN, upsert only the delta, verify
+  every checksum, and prove the newer pages survived by listing
+  `templates/product.pagepilot-<newer epoch prefix>*` on the new theme versus the old
+  draft. `files(filenames:["templates/*"])` accepts wildcard patterns and pages at 250.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
