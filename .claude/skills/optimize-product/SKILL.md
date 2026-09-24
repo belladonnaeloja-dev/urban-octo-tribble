@@ -2141,6 +2141,11 @@ you earned "done".
   pixels above ~50 % flags a plain tile), rebrand the hit locally with Pillow, swap it
   into the same slot (create, delete old, reorder one item), and re-check the FAQ
   count; on this run that surfaced one cream tile and a missing delivery/guarantee FAQ.
+  (8) Do NOT strip existing customer review photos from the `pp-review-grid` when
+  building the fresh UGC set; the operator asked for them back (*"There were more
+  customer reviews with photos on the older page. Restore those review photos"*).
+  Keep every original review photo that shows OUR product on its own review, add the
+  new renders on the text-only reviews, and drop only photos of a different product.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
