@@ -2136,6 +2136,11 @@ you earned "done".
   on supplier tiles); publish the tile figure, keep the photo, and put the size question
   first in the hand-off. (6) A 4 x 3 grid of vertical UGC renders on mobile needs no
   "last card spans two columns" rule; drop that rule when the count is even.
+  (7) A re-invocation of the skill right after a finished run is a Definition-of-Done
+  pass, not a rebuild: rerun the white-tile heuristic (fraction of near-white border
+  pixels above ~50 % flags a plain tile), rebrand the hit locally with Pillow, swap it
+  into the same slot (create, delete old, reorder one item), and re-check the FAQ
+  count; on this run that surfaced one cream tile and a missing delivery/guarantee FAQ.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
