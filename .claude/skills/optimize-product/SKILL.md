@@ -2119,6 +2119,23 @@ you earned "done".
   every checksum, and prove the newer pages survived by listing
   `templates/product.pagepilot-<newer epoch prefix>*` on the new theme versus the old
   draft. `files(filenames:["templates/*"])` accepts wildcard patterns and pages at 250.
+- **Learnings from VitaNails / Modlia (2026-09-24).** (1) A copied build script keeps
+  the OLD prefix in any path that is not wrapped in the quote pattern you replaced
+  (`'snippets/ss-legacy-…'` survived a `'ss-` to `'vn-` replace): after adapting, `ls
+  snippets/` and assert every file starts with the new prefix before staging. (2) A
+  live review grid can hide four word-for-word identical marketing "reviews" plus an
+  English one ("Love it!") and a typo badge ("Aheteur Vérifié"); add build assertions
+  for duplicate `review_text`, duplicate `image`, and a regex for English/typo strings,
+  and drop a review's star count when its text says "je retire une étoile". (3) Cosmetic
+  and health products: never claim faster growth, add a build assertion for "pousse plus
+  vite", state "sans formol" only when the supplier INCI confirms it, and flag any
+  toenail before/after tile as a possible health-claim risk in the hand-off. (4) A small
+  product needs the SCALE block too, in the other direction: "roughly the size of a
+  lipstick tube, fits inside her palm", otherwise the bottle renders mouthwash-sized.
+  (5) Gallery bottle labels can disagree with the copy (15 ML on the real photo, 16 ml
+  on supplier tiles); publish the tile figure, keep the photo, and put the size question
+  first in the hand-off. (6) A 4 x 3 grid of vertical UGC renders on mobile needs no
+  "last card spans two columns" rule; drop that rule when the count is even.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
