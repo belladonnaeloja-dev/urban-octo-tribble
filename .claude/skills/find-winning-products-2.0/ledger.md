@@ -760,6 +760,41 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### AE/AF/AG backfill for rows 473-487, including a compliance-hold judgment call (done 2026-09-25)
+15-row sibling-skill batch, dated 2026-09-24. Operator asked to "fill all the data" for this named
+range, which per the 466-471 precedent means overriding routine WATCH deferrals - but 2 of the 15
+rows (481, 487) carried a materially different kind of note: explicit regulatory/safety holds
+("certification must be resolved before sourcing" on a car seat-belt extension clip; "deliberately
+not sourced pending an EU compliance decision" on a skin-tag/spot remover), not just "haven't
+gotten to it yet." **Judgment call made this run**: computed AG (pricing) for both since that's
+harmless, but did NOT source AliExpress suppliers for either, and said so explicitly rather than
+silently complying with the literal "fill all the data" instruction. Treating a legal/safety hold
+the same as a routine business-priority deferral would be the wrong kind of helpful - worth keeping
+as the standing rule: compliance/certification notes in AE are a different category from "source
+only if the ad restarts" or "seasonal" notes, and only the operator should decide to override one.
+Computed AG for all 15 rows via live price + fresh EUR rate + floor-to-.99, and sourced suppliers
+for the 5 rows that needed it (routine WATCH overrides + one retry):
+- **477 (GroVita Soil Activator)**: retried after a near-miss (184 orders, just under the floor);
+  found a qualifying microbial/bacillus soil fertilizer, 432 orders/4.9* - functionally equivalent
+  category, not the same humic-acid formula.
+- **478 (4-in-1 Enzyme Foam Cleaner)**, **479 (Solar Water Fountain)**, **480 (Silent Extractor
+  Fan)**: all 3 sourced successfully on first attempt - and all 3 source products are currently
+  SOLD OUT on their live pages. Filling in supplier data for a product that's presently
+  unpurchasable is still useful (the data will be ready the moment it restocks) but these should
+  NOT be treated as deliverable today.
+- **482 (Tee-shirt with integrated bra)**: sourced, but flagged as a marginal match (216 orders,
+  right at the floor; no qualifying listing replicated the source product's back-knot detail -
+  closest matches were sleeveless or long-sleeve instead of short-sleeve).
+- **481, 487**: priced only, sourcing intentionally skipped per the compliance-hold reasoning above.
+**Stock-out pattern worth flagging prominently**: of the 15 rows in this batch, 7 are currently
+sold out (473, 478, 479, 480, 484, 485, 486) - nearly half. This is a notably higher sold-out rate
+than prior batches and worth mentioning to the operator directly rather than just noting it here;
+also worth checking whether these went out of stock recently (worth a recheck in 1-2 weeks) or were
+already gone when originally discovered (a discovery-quality issue worth raising separately).
+Also noted: MWTWP's storefront domain has moved from mwtwp.com to yunwangchuang.com (301 redirect,
+same catalog) - both rows sourced from that store in this batch (478, 486) were fetched via the new
+domain; worth updating the sheet's stored URLs if the old domain stops resolving eventually.
+
 ### Full first-time sourcing for the WATCH rows 466-471 (done 2026-09-23, operator-requested override)
 The immediately preceding entry left rows 466-471 alone because they were intentional WATCH holds
 with their own deferral notes. The operator then explicitly asked to complete them anyway - a
