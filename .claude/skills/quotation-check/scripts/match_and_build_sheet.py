@@ -116,7 +116,9 @@ def main():
         if len(unmatched) > 15:
             print(f"  ... and {len(unmatched) - 15} more", file=sys.stderr)
 
-    bs_rank = {r["title"]: i + 1 for i, r in enumerate(sorted(results, key=lambda x: -x["revenue"]))}
+    # Rank among ALL best sellers checked (not just the matched ones), so the
+    # rank matches the store's real revenue order even when some rows are skipped.
+    bs_rank = {e[0]: i + 1 for i, e in enumerate(sorted(bestsellers, key=lambda e: -float(e[1])))}
     ranked = sorted(results, key=lambda r: -r["pct"])
     top = ranked[:args.top_n]
 

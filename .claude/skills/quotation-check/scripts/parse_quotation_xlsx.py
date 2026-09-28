@@ -74,8 +74,11 @@ def brand_key(title: str) -> str:
 
 def latest_row(rows):
     """Pick the most-recently-approved quote among duplicate rows for the
-    same product (falls back to the last row if approval_date is missing)."""
-    return sorted(rows, key=lambda r: (r.get('approval_date') or ''), reverse=True)[0]
+    same product, preferring rows that actually carry a quoted price (a
+    blank row is an unanswered re-quote, not a price). Falls back to the
+    last row if approval_date is missing."""
+    return max(reversed(rows), key=lambda r: (r.get('lowest') is not None,
+                                              r.get('approval_date') or ''))
 
 
 def parse(xlsx_path: str, store: str):
