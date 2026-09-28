@@ -669,6 +669,13 @@ Interpret:
   Deliverable, pending Stage C's supplier check.
 - `200` + page explicitly shows "Sold out" / "Out of stock" / "Notify me when available" →
   **Sold out.** Not deliverable this run — log to RECHECK_QUEUE, do not write to the spreadsheet.
+  **Caveat added 2026-09-28**: on Shopify Dawn-theme stores specifically, a "Sold out" badge can
+  appear unconditionally in the raw HTML as boilerplate markup that's actually hidden by
+  client-side CSS/JS — a plain WebFetch text summary can misreport a genuinely in-stock product as
+  sold out because it doesn't execute that JS. If a "sold out" finding looks surprising (e.g. a
+  product with strong traction/reviews, or every variant showing sold out identically), verify
+  against the store's own `/products/<handle>.js` JSON endpoint, which carries an authoritative
+  `available` boolean per variant, before logging it as sold out.
 - `404` → **Dead** (the guessed/reported URL is wrong, or the product was delisted). Try the
   store's own `/search?q=` or `/collections/all` page to find the real current URL before giving
   up — store domains and product handles both migrate (seen twice: a 301 domain redirect, and a

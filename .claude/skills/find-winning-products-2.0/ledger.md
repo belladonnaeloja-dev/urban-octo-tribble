@@ -760,6 +760,40 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
+5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
+needed); 3 needed real work, one of which was a genuinely different kind of gap:
+- **491 (Castivaro GrillMaster Pro)** wasn't a "no supplier found" case - it was flagged
+  UNVERIFIED because the product page's own mechanism was ambiguous between two very different
+  candidate suppliers already found (a EUR 3.09 pumice/stone brick vs. a EUR 47.99 electric 3-speed
+  rotating brush). Resolved by reading the live page's own spec language directly ("high-torque
+  motor," "180-degree rotating head," bristle-free/wireless/automated, no pumice/stone/mineral
+  wording anywhere) - genuinely an ELECTRIC rotating brush, not a stone block. Then re-verified the
+  electric candidate was still live and qualifying, and found an even better one in the process
+  (5,000+ orders/4.9* vs. the originally-noted 3,000+/4.5*, at lower COGS) - worth remembering that
+  re-verifying an old candidate is a good moment to also check whether a better one has since
+  appeared, not just confirm the old one still works.
+- **488 (Buckmen Christmas tree)**: retried per the "recurring seasonal item, check for
+  accumulated order history" hint - the narrow "berries" search still failed, but broadening to
+  generic "tabletop led lights" found a qualifying listing that's been live across 2 holiday
+  seasons (launched 2024-08-30), confirming seasonal listings DO accumulate real order history if
+  you search broadly enough rather than by the source product's exact decorative detail.
+- **490 (Patricia Sicardi orthopedic heels)**: STILL no qualifying supplier after 7 more search
+  variations. Confirmed structural finding, not a search-effort gap: on AliExpress, "orthopedic"
+  and "heel" essentially don't co-occur in listings that also clear 200 orders/4.5 stars - every
+  orthopedic-labeled shoe at volume is a flat/sandal/sneaker, and every heeled shoe at volume
+  carries no orthopedic claim. Worth remembering as a category-level limitation, not something to
+  keep re-trying with new keywords.
+- **Stock-status correction worth remembering broadly**: an initial pass on all 5 products (via
+  WebFetch's page-text summary) misreported 3 of them as sold out. The real cause: these stores'
+  theme renders a static "Sold out" badge unconditionally in the raw HTML as boilerplate, hidden by
+  client-side CSS/JS that a text-only fetch doesn't execute. Re-checking via each store's own
+  Shopify `/products/<handle>.js` JSON API (which has an authoritative `available` boolean per
+  variant) corrected all 3 to genuinely in-stock. **Standing lesson**: don't trust a WebFetch
+  summary's stock-status call at face value on Shopify (Dawn-theme) stores - prefer the `.js`
+  product endpoint directly, or at least sanity-check a "sold out" finding before writing it down,
+  since this theme's markup makes false-positives structurally likely.
+
 ### AE/AF/AG backfill for rows 473-487, including a compliance-hold judgment call (done 2026-09-25)
 15-row sibling-skill batch, dated 2026-09-24. Operator asked to "fill all the data" for this named
 range, which per the 466-471 precedent means overriding routine WATCH deferrals - but 2 of the 15
