@@ -153,22 +153,33 @@ confirm before creating.
 - `C` is stored **truncated at roughly 90 characters**, mid-word. Do not treat the cut-off tail as
   part of the product's name, and open `N` if you need the full listing title.
 - **If `V` is empty for a batch row, fill it yourself (rule updated 2026-09-29).** Derive the offer
-  from `H` (TikTok price, USD) — the store page in `T` lists many products, so it is not a price
-  source:
-  1. Convert `H` to EUR at the **live USD→EUR rate** (`curl -s https://open.er-api.com/v6/latest/USD`,
-     read `rates.EUR`; the `frankfurter.app` endpoint redirects and fails).
-  2. Subtract **1€**.
-  3. Round to the **nearest xx.99** (`round(x - 0.99) + 0.99`).
-  4. **If that single-unit price is below 19.99€, make the offer 1+1**: multiply the price by 2 and
-     round the result to the nearest xx.99. Write it as `1+1: 29.99€`. At 19.99€ or above, keep the
-     single-unit price, written `21.99€`.
-  5. Write the result to column `V` of that row **and** use it on the card. Only `V`, only for batch
+  from the **live TikTok listing price**, not from `H` (`H` is Kalodata's average price and is
+  usually well below what the listing charges):
+  1. **Find the price.** Open the store page in `T` (server-rendered; reachable with
+     `curl -s -L -A "Mozilla/5.0" <T>`) and find the product by its **TikTok product ID, which is the
+     same number as column `M`** — `C` is truncated, so never match on the title. Then fetch
+     `https://shop.tiktok.com/view/product/<M>?region=US&locale=en` and read each SKU's
+     `"sale_price_decimal"`, `"origin_price_decimal"` and `"discount_decimal"`. The store page lists
+     only part of the catalogue; a product missing from it can still be read on its own page.
+     Basis = the **lowest single-unit SKU sale price** (for "1 PC / 2 PCS" take 1 PC). Note the shown
+     discount (e.g. 55% off $77.99) on the `proof:` line. If no price can be read, leave `V` empty,
+     say so in the report, and do not fall back to `H` without telling the operator.
+  2. Convert that USD price to EUR at the **live USD→EUR rate** (`curl -s
+     https://open.er-api.com/v6/latest/USD`, read `rates.EUR`; the `frankfurter.app` endpoint
+     redirects and fails).
+  3. Subtract **1€**.
+  4. Round to the **nearest xx.99** (`round(x - 0.99) + 0.99`).
+  5. **If that single-unit price is below 19.99€, make the offer 1+1**: multiply the price by 2 and
+     round the result to the nearest xx.99. Write it as `1+1: 35.99€`. At 19.99€ or above, keep the
+     single-unit price, written `27.99€`.
+  6. Write the result to column `V` of that row **and** use it on the card. Only `V`, only for batch
      rows whose `V` is empty — never overwrite a value a colleague already entered.
-  Example: `$18.39` → 15.17€ → 14.99€ (below 19.99) → 1+1 → 2×14.99 = 29.98 → `1+1: 29.99€`.
-- **Follow the competitor's offer where it can be seen.** Their format (50% off, 1+1, 2+1 …) beats
-  the formula above when known. TikTok store pages usually cannot be scraped from the container; try
-  Claude in Chrome only if the operator has the extension open. When the competitor's offer is not
-  visible, use the formula and say in the report that the competitor's offer was not checked.
+  Example: listing $22.09 → 19.42€ − 1 = 18.42€ → 17.99€ (below 19.99) → 1+1 → 2×17.99 = 35.98 →
+  `1+1: 35.99€`.
+- **Follow the competitor's offer where it can be seen.** The listing's shown discount (e.g. "55%
+  off") is recorded on the `proof:` line. If the seller runs a different offer format (1+1, 2+1 …)
+  that the pages show, it beats the formula above. When no offer is visible, use the formula and say
+  in the report that the competitor's offer was not checked.
 - `E`, `F`, `G`, `H`, `J` feed the `proof:` line. Copy the figures as the sheet has them and say
   they are **USD, 7-day, US TikTok Shop** — that is TikTok demand, not Pinterest demand.
 
