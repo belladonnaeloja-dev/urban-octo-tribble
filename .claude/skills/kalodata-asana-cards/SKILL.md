@@ -34,7 +34,7 @@ its header on row 4 and 34 columns, and every letter below would be wrong there.
 | `E` | Revenue 7d (USD) | the `proof:` line, and the reason it was ticked |
 | `F` | Growth 7d % | `proof:` |
 | `G` | Units 7d | `proof:` |
-| `H` | TikTok price | what the market actually pays — margin check |
+| `H` | TikTok price | Kalodata's *average* price — usually below the live listing price; not the basis for the offer (step 3 reads the listing via `T`) |
 | `I` | Launch date | |
 | `J` | Days live | risk check — see step 6 |
 | `K` | Video rev % | how demand is generated: ~100% = video-native, low = search/shop |
@@ -164,6 +164,12 @@ confirm before creating.
      Basis = the **lowest single-unit SKU sale price** (for "1 PC / 2 PCS" take 1 PC). Note the shown
      discount (e.g. 55% off $77.99) on the `proof:` line. If no price can be read, leave `V` empty,
      say so in the report, and do not fall back to `H` without telling the operator.
+     Product pages sometimes return a "Security Check" captcha page (about 5 KB, no prices). Retry
+     once after a pause; if it persists, read the product's price from the seller's store page
+     (`T`) around its ID and title, and flag that it was read there. If the product is on neither,
+     leave `V` empty and ask the operator for the price or for Claude in Chrome. Some SKUs carry
+     `"unavailable_info"` / "This item is out of stock": still compute the price, but add an
+     out-of-stock line to the `risk:` line.
   2. **Work in USD, the local currency of the US board. Do not convert to EUR.**
   3. Subtract **$1**.
   4. Round to the **nearest xx.99** (`round(x - 0.99) + 0.99`).
@@ -254,9 +260,9 @@ marketing angle: <one or two sentences: what it is, who it is for, what it is so
 
 competitor's link: <TikTok store page from T>
 kalodata: <url from N>
-proof: <E> rev / <G> units in 7d (USD, US TikTok Shop) · <F> growth · live <J>d · TikTok price <H> · video rev <K>
+proof: <E> rev / <G> units in 7d (USD, US TikTok Shop) · <F> growth · live <J>d · TikTok listing price <lowest SKU price from step 3> (shown <N>% off <origin price>; Kalodata average <H>) · video rev <K>
 source (<O>): <url from Q> @ <P>
-Note: <V verbatim, e.g. "1+1: 39.99" — leave blank if V is empty>
+Note: <V verbatim, e.g. "$33.99" or "1+1: $31.99" — leave blank only if no price could be read>
 
 ad: 
 ad library: 
@@ -277,8 +283,9 @@ The lines worth stating twice:
   `1+1: $39.99`. Not the TikTok price, not the reference price, not the COGS. If `V` was empty, step 3
   has already filled it with the computed offer, so the card and the sheet always agree. Copy `V`
   verbatim, and never overwrite an offer a colleague entered.
-- **Thin-margin check uses the offer as sold:** for a 1+1 offer compare two units at the reference
-  price `P` (USD, no conversion) against the 1+1 price, not one unit.
+- **Thin-margin check uses the offer as sold, in USD:** for a 1+1 offer compare two units at the
+  reference price `P` against the 1+1 price; for a single-unit offer compare one unit. An offer at or
+  below `P` is a thin-margin flag.
 - **`ad:` and `ad library:` stay blank.** Kalodata rows have no WinningHunter or Meta creative
   behind them — the product was found on TikTok Shop revenue, not on an ad. The creative comes
   later from the video-research run. Do not paste the Kalodata link or the TikTok store on those
@@ -320,8 +327,8 @@ genuine concern:
   "clinically proven", before/after results).
 - **Hard seasonality.** Advent calendars and Christmas countdowns are dated to the day. A test
   started too late is really a test for next year — say which.
-- **Thin margin.** Reference price (`P`) against the TikTok price (`H`) shows the room the page
-  has. Check it even though neither number goes in the Note.
+- **Thin margin.** Reference price (`P`) against the selling price in `V` (USD) shows the room the page
+  has. Check it even though the reference price does not go in the Note.
 - **Unproven.** Low `Days live` (`J`) — a product live under ~14 days has a revenue figure but no
   durability, and a 100% growth figure on 3 days live is an artefact, not a trend.
 - **Dead link.** `R` ("Link status") not confirming the listing opened and was in stock means the
