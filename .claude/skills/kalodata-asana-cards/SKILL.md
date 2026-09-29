@@ -170,7 +170,9 @@ confirm before creating.
   5. **If that single-unit price is below $19.99, make the offer 1+1**: multiply the price by 2 and
      round the result to the nearest xx.99. Write it as `1+1: $35.99`. At $19.99 or above, keep the
      single-unit price, written `$27.99`.
-  6. Write the result to column `V` of that row **and** use it on the card. Only `V`, only for batch
+  6. Write the result to column `V` of that row **and** use it on the card. Always keep the `$`: the
+     Sheets API turns a bare `$33.99` into a plain number and drops the symbol, so write single-unit
+     prices with a leading apostrophe (`'$33.99`) to store them as text. `1+1: $31.99` is already text. Only `V`, only for batch
      rows whose `V` is empty — never overwrite a value a colleague already entered.
   Example: listing $22.09 → $21.09 → $20.99 (at or above $19.99, single unit) → `$20.99`. Listing
   $16.89 → $15.89 → $15.99 (below $19.99) → 1+1 → 2×15.99 = 31.98 → `1+1: $31.99`.
