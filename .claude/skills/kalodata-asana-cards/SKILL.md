@@ -107,10 +107,15 @@ a bare invocation.
 ### 2. Skip products that already have a card
 
 **Asana search is premium-only in this workspace** (`search_tasks` returns `payment_required`), so
-use `get_tasks` and paginate. The US, NL and DE lists are large (~350, ~1,100 and ~1,200 tasks), so
-delegate the paging to a subagent: have it save all names to a scratchpad file and report only the
-matches for the batch's Kalodata IDs and ASINs. Then check each coined name against that file with
-`grep`, normalised. Also try `search_products` on the connected Shopify store (currently only
+use `get_tasks` and paginate.
+
+**The duplicate check looks only at the cards inside Asana project "1E. Pinterest - US"**
+(`1215906766476002`, ~350 tasks, all sections, completed included, with `name,notes`). Match on the
+Kalodata product ID, the source ASIN / item id, and the name, as listed below. Do not scan NL or DE
+for duplicates. Delegate the paging to a subagent and have it report only the matches for the
+batch's Kalodata IDs and ASINs. The NL and DE projects (~1,100 and ~1,200 tasks) are read in step 4
+for **coined-name uniqueness only**, names only: have the subagent save every name from the three
+projects to a scratchpad file, then check each coined name against it with `grep`, normalised. Also try `search_products` on the connected Shopify store (currently only
 Solundi) and say in the report which stores could not be checked.
 
 A run that was interrupted, or an operator who re-ticks a row, lands the same product twice. The
