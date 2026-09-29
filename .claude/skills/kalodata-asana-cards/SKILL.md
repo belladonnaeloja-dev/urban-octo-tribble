@@ -145,7 +145,7 @@ confirm before creating.
 ### 3. Pull the details
 
 - `V` ("Selling price /Offer") must be read as a **`FORMATTED_VALUE`, never as a formula**. The
-  cell is currency-formatted, so a formula read returns `34` where the operator wrote `34€` — and
+  cell is currency-formatted, so a formula read returns `34` where the operator wrote `$34` — and
   the `Note:` line is their text verbatim, currency symbol included.
 - `N`, `Q` and `T` are usually plain URLs on this tab, but may be stored as
   `=HYPERLINK(url,"label")` — a normal read then returns the label and not the URL. Read them with
@@ -164,18 +164,16 @@ confirm before creating.
      Basis = the **lowest single-unit SKU sale price** (for "1 PC / 2 PCS" take 1 PC). Note the shown
      discount (e.g. 55% off $77.99) on the `proof:` line. If no price can be read, leave `V` empty,
      say so in the report, and do not fall back to `H` without telling the operator.
-  2. Convert that USD price to EUR at the **live USD→EUR rate** (`curl -s
-     https://open.er-api.com/v6/latest/USD`, read `rates.EUR`; the `frankfurter.app` endpoint
-     redirects and fails).
-  3. Subtract **1€**.
+  2. **Work in USD, the local currency of the US board. Do not convert to EUR.**
+  3. Subtract **$1**.
   4. Round to the **nearest xx.99** (`round(x - 0.99) + 0.99`).
-  5. **If that single-unit price is below 19.99€, make the offer 1+1**: multiply the price by 2 and
-     round the result to the nearest xx.99. Write it as `1+1: 35.99€`. At 19.99€ or above, keep the
-     single-unit price, written `27.99€`.
+  5. **If that single-unit price is below $19.99, make the offer 1+1**: multiply the price by 2 and
+     round the result to the nearest xx.99. Write it as `1+1: $35.99`. At $19.99 or above, keep the
+     single-unit price, written `$27.99`.
   6. Write the result to column `V` of that row **and** use it on the card. Only `V`, only for batch
      rows whose `V` is empty — never overwrite a value a colleague already entered.
-  Example: listing $22.09 → 19.42€ − 1 = 18.42€ → 17.99€ (below 19.99) → 1+1 → 2×17.99 = 35.98 →
-  `1+1: 35.99€`.
+  Example: listing $22.09 → $21.09 → $20.99 (at or above $19.99, single unit) → `$20.99`. Listing
+  $16.89 → $15.89 → $15.99 (below $19.99) → 1+1 → 2×15.99 = 31.98 → `1+1: $31.99`.
 - **Follow the competitor's offer where it can be seen.** The listing's shown discount (e.g. "55%
   off") is recorded on the `proof:` line. If the seller runs a different offer format (1+1, 2+1 …)
   that the pages show, it beats the formula above. When no offer is visible, use the formula and say
@@ -274,11 +272,11 @@ Our Store URL:
 The lines worth stating twice:
 
 - **`Note:`** holds **only** the `Selling price /Offer` cell (`V`) — the offer and its price, e.g.
-  `1+1: 39.99€`. Not the TikTok price, not the reference price, not the COGS. If `V` was empty, step 3
+  `1+1: $39.99`. Not the TikTok price, not the reference price, not the COGS. If `V` was empty, step 3
   has already filled it with the computed offer, so the card and the sheet always agree. Copy `V`
   verbatim, and never overwrite an offer a colleague entered.
 - **Thin-margin check uses the offer as sold:** for a 1+1 offer compare two units at the reference
-  price `P` (converted to EUR) against the 1+1 price, not one unit.
+  price `P` (USD, no conversion) against the 1+1 price, not one unit.
 - **`ad:` and `ad library:` stay blank.** Kalodata rows have no WinningHunter or Meta creative
   behind them — the product was found on TikTok Shop revenue, not on an ad. The creative comes
   later from the video-research run. Do not paste the Kalodata link or the TikTok store on those
