@@ -48,7 +48,7 @@ its header on row 4 and 34 columns, and every letter below would be wrong there.
 | `S` | Angle / note | the run's own angle *and* its recorded risk — read it |
 | `T` | TikTok store page | the `competitor's link:` line |
 | `U` | Date added | |
-| `V` | Selling price /Offer | **the whole `Note:` line** — the colleague fills this in |
+| `V` | Selling price /Offer | **the whole `Note:` line** — a colleague may fill it; if empty, step 3 computes it |
 | **`W`** | *(no header text)* | **the checkbox — this is the filter** |
 
 Two traps in that table, both of which have already cost a run elsewhere in this sheet:
@@ -106,6 +106,13 @@ a bare invocation.
 
 ### 2. Skip products that already have a card
 
+**Asana search is premium-only in this workspace** (`search_tasks` returns `payment_required`), so
+use `get_tasks` and paginate. The US, NL and DE lists are large (~350, ~1,100 and ~1,200 tasks), so
+delegate the paging to a subagent: have it save all names to a scratchpad file and report only the
+matches for the batch's Kalodata IDs and ASINs. Then check each coined name against that file with
+`grep`, normalised. Also try `search_products` on the connected Shopify store (currently only
+Solundi) and say in the report which stores could not be checked.
+
 A run that was interrupted, or an operator who re-ticks a row, lands the same product twice. The
 US project holds ~350 tasks and grows every week; one duplicate inside it is invisible until the
 page builder has already built it.
@@ -140,6 +147,23 @@ confirm before creating.
   a formula read (`valueRenderOption=FORMULA`, or the XLSX export) and handle both shapes.
 - `C` is stored **truncated at roughly 90 characters**, mid-word. Do not treat the cut-off tail as
   part of the product's name, and open `N` if you need the full listing title.
+- **If `V` is empty for a batch row, fill it yourself (rule updated 2026-09-29).** Derive the offer
+  from `H` (TikTok price, USD) — the store page in `T` lists many products, so it is not a price
+  source:
+  1. Convert `H` to EUR at the **live USD→EUR rate** (`curl -s https://open.er-api.com/v6/latest/USD`,
+     read `rates.EUR`; the `frankfurter.app` endpoint redirects and fails).
+  2. Subtract **1€**.
+  3. Round to the **nearest xx.99** (`round(x - 0.99) + 0.99`).
+  4. **If that single-unit price is below 19.99€, make the offer 1+1**: multiply the price by 2 and
+     round the result to the nearest xx.99. Write it as `1+1: 29.99€`. At 19.99€ or above, keep the
+     single-unit price, written `21.99€`.
+  5. Write the result to column `V` of that row **and** use it on the card. Only `V`, only for batch
+     rows whose `V` is empty — never overwrite a value a colleague already entered.
+  Example: `$18.39` → 15.17€ → 14.99€ (below 19.99) → 1+1 → 2×14.99 = 29.98 → `1+1: 29.99€`.
+- **Follow the competitor's offer where it can be seen.** Their format (50% off, 1+1, 2+1 …) beats
+  the formula above when known. TikTok store pages usually cannot be scraped from the container; try
+  Claude in Chrome only if the operator has the extension open. When the competitor's offer is not
+  visible, use the formula and say in the report that the competitor's offer was not checked.
 - `E`, `F`, `G`, `H`, `J` feed the `proof:` line. Copy the figures as the sheet has them and say
   they are **USD, 7-day, US TikTok Shop** — that is TikTok demand, not Pinterest demand.
 
@@ -234,9 +258,11 @@ Our Store URL:
 The lines worth stating twice:
 
 - **`Note:`** holds **only** the `Selling price /Offer` cell (`V`) — the offer and its price, e.g.
-  `1+1: 39.99`. Not the TikTok price, not the reference price, not the COGS. `V` is filled in by a
-  colleague and is usually **still empty when you create the card**: leave the line bare in that
-  case. Never compute, estimate or back-fill an offer yourself.
+  `1+1: 39.99€`. Not the TikTok price, not the reference price, not the COGS. If `V` was empty, step 3
+  has already filled it with the computed offer, so the card and the sheet always agree. Copy `V`
+  verbatim, and never overwrite an offer a colleague entered.
+- **Thin-margin check uses the offer as sold:** for a 1+1 offer compare two units at the reference
+  price `P` (converted to EUR) against the 1+1 price, not one unit.
 - **`ad:` and `ad library:` stay blank.** Kalodata rows have no WinningHunter or Meta creative
   behind them — the product was found on TikTok Shop revenue, not on an ad. The creative comes
   later from the video-research run. Do not paste the Kalodata link or the TikTok store on those
@@ -255,8 +281,8 @@ sells — near 100% video revenue means the page has to carry a demo, a low figu
 in search and the page must carry specs and comparison. When `S` is empty, say so in the notes and
 tell the builder to open the Kalodata link — an invented angle is worse than an admitted gap.
 
-**Never write back to the sheet.** This procedure reads only: never tick or untick `W`, never fill
-`V`, and never touch the tab in any other way.
+**The only write to the sheet is column `V`, and only per step 3.** Never tick or untick `W`, never
+touch any other column, never overwrite a filled `V`, and never touch the tab in any other way.
 
 ### 6. Carry the warnings across
 
