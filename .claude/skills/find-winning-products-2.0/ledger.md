@@ -760,6 +760,51 @@ honest "no qualifying supplier" note rather than being empty. Computed AG for al
   after being delivered. AG was still computed and filled per the request, but these 4 are not
   currently purchasable — worth a stock recheck in the next couple of weeks.
 
+### AE/AF/AG backfill for rows 493-501, Meta-sourced batch with 4 genuine gate fixes (done 2026-09-29)
+9-row sibling-skill batch across 2 sub-batches, both dated 2026-09-28. **Note on the source data
+itself**: this batch's Y-column notes are noticeably richer than prior ones - full duplication
+checks against the sheet's other 488-492 rows, ad-spend/ad-rank/view-count figures, days-running
+history, and explicit self-flagged caveats (e.g. "read the price off the page for YOUR market,"
+"decide which supplier you will actually order before you budget the test"). Whatever produced this
+batch is doing real analytical work, not just a raw WinningHunter dump - worth treating its own
+caveats as trustworthy leads rather than re-deriving everything from scratch, which is what made
+this backfill efficient despite involving 4 genuine gate-level fixes rather than routine "not yet
+sourced" gaps.
+All 9 needed AG; 5 needed AE/AF work, and none of the 5 were simple "haven't tried yet" cases:
+- **494 (USPoplar Christmas wreath)**: retried past a genuine no-supplier finding from earlier the
+  same day - broadening the search terms (dropping "handmade" specificity) surfaced a qualifying
+  finished-wreath listing this time, 400 orders/4.8*. Reinforces the standing lesson that a search
+  failing once doesn't mean the category is unsourceable, especially same-day re-tries with
+  slightly different phrasing.
+- **496 (Toolsons MultiTool)**: had a genuine currency ambiguity flagged (163 RON vs. a possible
+  USD 64.99 on a second domain) - resolved by checking the store's own `.js` endpoint directly,
+  which confirmed 163 RON is the real charged price on this specific URL. Also confirmed via the
+  same endpoint that the product is **genuinely sold out** (available:false), not a theme
+  false-positive - the .js-endpoint check cuts both ways, confirming real stock-outs just as
+  reliably as it corrects false ones.
+- **497 (Pinauto phone holder)**: the existing sourced supplier technically FAILED the >=4.5-star
+  gate (4.4 stars) and should never have been left as the working candidate - replaced with a
+  vacuum-suction-specific match at 4.9*/10,000+ orders that preserves the exact "vacuum mechanism"
+  the product's own differentiation depends on (a cheaper generic suction-cup alternative was
+  found and rejected specifically because it wasn't confirmed to be the same vacuum-pump
+  mechanism - cheaper-but-wrong-mechanism is not a better choice than pricier-but-exact-match here).
+- **498 (SEURE watch band)**: had a supplier with NO order-count/star-rating data returned on the
+  first pass (a genuine data gap, not a low-quality match) - re-running the same search-results-JSON
+  method against the same product concept fully resolved it: 10,000+ orders/4.9*.
+- **499 (CozyBand sleep headphones)**: retried past a real under-the-floor finding (112 orders,
+  just short of 200) - broader phrasing across 8 search variants found a comfortably-qualifying
+  match (10,000+ orders/4.9*).
+**Standing lesson reinforced twice in this batch**: the Shopify `.js` product endpoint (documented
+in SKILL.md section40 after the last batch) is now doing real work both ways - it corrected 2 false
+"sold out" readings (494, and partially 501's in-stock variant) AND confirmed one genuine sold-out
+(496) that a first pass might otherwise have second-guessed. Keep using it as the tie-breaker
+whenever a stock-status or price finding looks surprising, not just when it looks like a
+false-positive risk.
+Also worth flagging: row 501 (Glod LED Lysbar) hit the fake-anchor pricing bug on its one in-stock
+variant (30cm: charged 349 DKK vs. a LOWER 279 DKK "compare-at" - the charged price is HIGHER than
+the reference price) - used the lower 279 DKK as the real price per the standing rule, consistent
+with every other fake-anchor case logged in this file.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
