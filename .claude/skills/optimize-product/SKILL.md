@@ -2146,6 +2146,31 @@ you earned "done".
   customer reviews with photos on the older page. Restore those review photos"*).
   Keep every original review photo that shows OUR product on its own review, add the
   new renders on the text-only reviews, and drop only photos of a different product.
+- **Learnings from CircuitSense / Modlia (2026-09-30).** (1) Diagnostic gadgets ship
+  with supplier claims that are physically wrong ("sans contact", "1 seconde", "any
+  board"): an inductance probe needs a POWERED board, reads 2 to 3 cm from the coil,
+  gives no value in µH and does not see shorts. Write the honest mechanism into the
+  specs row ("Limites"), one FAQ per limit, and the objection cards, and add the false
+  claims to the build's forbidden-claim regex; that regex must not be a bare `100 ?%`,
+  which matches CSS `width:100%` in your own snippets. (2) A one-word row label in a
+  24 % comparison column still overflows on 375 px when it is long ("Démontage",
+  "Compétence", "Si ça ne convient pas"): read the mobile table screenshot, not only
+  the header `widestWord` metric, and prefer short nouns (Effort, Niveau, Garantie).
+  Same for spec-table `th` labels ("Ne mesure pas" wrapped onto the value column). (3)
+  Numbers you write in the buy-box icons must match the footer the theme already
+  renders (footer said 10 000 clients, my icon said 8 000); grep the preview for every
+  count before pushing. (4) A render that contradicts the copy is a reject even when
+  it looks best: an unboxing render showed a USB-C cable while the page says "câble
+  non fourni", and a console scene carried a PlayStation logo. Check every render
+  against the spec sheet, not only for text. (5) A how-it-works diagram built from the
+  real product cutout needs a mask of `lum<140 | sat>40` with a tip-only column below
+  62 % height and one erode pass; a plain threshold leaves a white fringe or a grey
+  shadow blob. (6) Staged-upload targets are returned once; when the tool result is
+  too large to hold, recover the exact target set from the transcript JSONL by its
+  unique bulk key and assert the key's basename before each curl. (7) When the run is
+  compacted mid-way, re-query the product's media list before deleting or reordering:
+  media IDs from the summary are trustworthy only after `productDeleteMedia` returns
+  them in `deletedMediaIds`.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
