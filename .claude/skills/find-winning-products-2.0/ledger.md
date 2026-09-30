@@ -805,6 +805,38 @@ variant (30cm: charged 349 DKK vs. a LOWER 279 DKK "compare-at" - the charged pr
 the reference price) - used the lower 279 DKK as the real price per the standing rule, consistent
 with every other fake-anchor case logged in this file.
 
+### AE/AF/AG backfill for rows 501-509, 2 form-factor mismatches fixed + 1 confirmed dead end (done 2026-09-29)
+9-row batch dated 2026-09-29. All 9 needed AG. AG values: 501=52.99, 502=29.99, 503=29.99,
+504=30.99, 505=23.99, 506=25.99, 507=25.99, 508=34.99, 509=48.99.
+- **501-506** (Bare Ritual Tallow Balm, Domisana Magnetic Door Stopper, Revoget Alignment Pillow,
+  FootFix Kids Insoles, Byteberst Headlamp, Domisana ClearGuard): AG-only, existing suppliers held
+  up on re-check. Row 504 hit a Dawn-theme false "sold out" badge, corrected via the store's own
+  `.js` endpoint per the standing §40 method - confirmed genuinely in stock.
+- **507 (Obtenirie Fence Post Repair Kit)**: confirmed genuine sourcing dead end, checked from both
+  directions across 2 independent search rounds. Every fence-post-repair-specific AliExpress
+  listing tops out at ~42 orders (well under the 200-order floor); items that clear 200+ orders in
+  this exact search space turn out to be a different product category (garden stakes, generic
+  replacement posts), not a repair-kit equivalent. Left AE marked EQUIVALENT/UNVERIFIED with an
+  explicit "no order count published, volume floor NOT applied" note rather than forcing a
+  mismatched high-volume supplier into place. Same shape as the previously-logged dead ends for
+  orthopedic heels (row 490) and the oak puzzle serving tray (row 458) - worth treating "no
+  qualifying listing exists in this specific sub-category" as a real, recurring outcome, not a
+  process failure to keep re-trying indefinitely.
+- **508 (Hugger Comfort Hot Water Bottle)**: the previously-sourced supplier was a plain PVC bottle
+  set, not the wearable waist-belt form factor the product actually is - a genuine form-factor
+  mismatch, not a "not yet sourced" gap. Replaced with a correctly-matched wearable-belt listing
+  (340 orders, 4.9*, ~EUR 14.40 COGS).
+- **509 (Wunsch-Stern Baby Backpack)**: same pattern - the previous supplier was a plain backpack
+  missing the product's key differentiating feature (integrated foldable changing bed). Found on a
+  2nd search round: a correctly-matched 3-in-1 diaper backpack WITH the integrated changing bed
+  (2,000+ orders, 4.9*, ~EUR 16.16 COGS).
+**Standing lesson reinforced**: rows 508/509 are the 3rd and 4th cases this session (after 497
+Pinauto and 491 Castivaro) where a previously-sourced supplier was structurally wrong - not a gate
+failure or a stale price, but the wrong product entirely (wrong mechanism/form-factor). Worth a
+periodic sweep of older AE entries specifically checking "does this supplier's product actually
+match the sheet's own product description," not just re-verifying order count/stars/stock on
+whatever is already linked.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
