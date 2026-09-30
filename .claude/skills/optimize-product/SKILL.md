@@ -2180,7 +2180,26 @@ you earned "done".
   the brand gradient with the lockup, and retype the bullets from the comparison table
   (Effort / Lecture / Où) instead of the supplier's "précision absolue"; a wrong
   baked caption is patched by cloning the strip below it, blurring, and retyping in
-  DejaVu Sans Bold with a 1 px dark stroke.
+  DejaVu Sans Bold with a 1 px dark stroke. (9) SIBLING DRAFTS: when the previous
+  run's draft was never published, a new draft duplicated from MAIN carries the OLD
+  version of that earlier page, and publishing either draft loses the other. The
+  operator caught this (*"is the optimized page for vitanails included in the new
+  theme draft?"*). At the END of every run: list `themes(roles:[UNPUBLISHED])`, and
+  for every earlier "<Store> <Product> CRO" draft whose template md5 on MAIN still
+  equals the pre-run snapshot, layer that draft's delta (template + its snippets,
+  verified byte-equal to the local build) onto the new draft, then verify all
+  checksums and curl the earlier product's preview on the new draft. Also compare
+  `theme.updatedAt` of MAIN with the duplicate time and list every file with
+  `updatedAt` after it (wildcards `templates/*`, `config/*`, `sections/*`,
+  `snippets/*`, `assets/*`, `layout/*`, `locales/*`; ~800 files on Modlia); here none
+  had changed. Report ONE theme to publish. (10) An operator edit made in the theme
+  editor on your draft shows up as a new `updatedAt` on the template plus a body
+  that differs from your build by one setting (here Sophie R.'s review lost its
+  photo at 07:38): download the body, diff it against your build section by
+  section, and fold the change back into `content.json` (an empty `image` value
+  makes the build drop the key) so a later re-push cannot undo it. The reported
+  `size` of a theme-editor-saved template can differ from the body length you
+  download; trust the parsed content, not the size.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
