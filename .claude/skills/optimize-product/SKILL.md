@@ -2170,7 +2170,17 @@ you earned "done".
   unique bulk key and assert the key's basename before each curl. (7) When the run is
   compacted mid-way, re-query the product's media list before deleting or reordering:
   media IDs from the summary are trustworthy only after `productDeleteMedia` returns
-  them in `deletedMediaIds`.
+  them in `deletedMediaIds`. (8) The DoD re-invocation caught two things the first
+  pass had reported as done: a KEPT supplier before/after tile that was 93 % white
+  and a fresh render whose baked caption said "1 seconde" while the page says
+  "quelques secondes". Run the border-pixel white-tile heuristic over EVERY image on
+  the rendered page (gallery, section, UGC) and read each baked caption against the
+  spec sheet BEFORE the first report, not only when re-invoked. A white supplier tile
+  with feature bullets is rebuilt with Pillow in minutes: crop its photos, put them on
+  the brand gradient with the lockup, and retype the bullets from the comparison table
+  (Effort / Lecture / Où) instead of the supplier's "précision absolue"; a wrong
+  baked caption is patched by cloning the strip below it, blurring, and retyping in
+  DejaVu Sans Bold with a 1 px dark stroke.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
