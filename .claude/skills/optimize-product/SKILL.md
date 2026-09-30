@@ -2191,8 +2191,15 @@ you earned "done".
   checksums and curl the earlier product's preview on the new draft. Also compare
   `theme.updatedAt` of MAIN with the duplicate time and list every file with
   `updatedAt` after it (wildcards `templates/*`, `config/*`, `sections/*`,
-  `snippets/*`, `assets/*`, `layout/*`, `locales/*`; ~800 files on Modlia); here none
-  had changed. Report ONE theme to publish. (10) An operator edit made in the theme
+  `snippets/*`, `assets/*`, `layout/*`, `locales/*`). PAGE THE TEMPLATES: Modlia has
+  ~330 `templates/*` files and `first:250` silently drops the UUID-named PagePilot
+  pages (`product.pagepilot.<uuid>.json`), which are exactly the ones the operator
+  creates day to day. A first scan here reported "none changed" and missed a page
+  created 20 minutes after the duplicate; the operator's question *"are all added
+  pages from sep 24 to today included?"* caught it. Follow `pageInfo.hasNextPage`
+  with `after` (the cursor is base64 of the quoted filename) until it is false, for
+  every theme you compare. Port each missing file (download `body.content`, staged
+  upload, `themeFilesUpsert`, verify md5) before reporting ONE theme to publish. (10) An operator edit made in the theme
   editor on your draft shows up as a new `updatedAt` on the template plus a body
   that differs from your build by one setting (here Sophie R.'s review lost its
   photo at 07:38): download the body, diff it against your build section by
