@@ -837,6 +837,45 @@ periodic sweep of older AE entries specifically checking "does this supplier's p
 match the sheet's own product description," not just re-verifying order count/stars/stock on
 whatever is already linked.
 
+### AG backfill for rows 510-516, 1 supplier upgrade + 2 confirmed dead-end mismatches (done 2026-10-01)
+7-row batch, rows 510-516 dated 2026-09-30. **Unusual source-data shape this time**: the sibling
+skill had already filled AE (supplier) and AF (COGS) for all 7 rows itself - only AG (selling price)
+was missing. Three of the seven AE notes self-flagged a genuine form/feature mismatch on the
+sourced supplier; treated those as gate-level fixes to attempt, not routine gaps, consistent with
+the 508/509/497/491 pattern logged above.
+- **511 (Dogsnug dachshund dog carrier)**: note said the whole margin depends on a breed-specific
+  spinal-support carrier, but the sourced supplier was a generic carrier. Ran 7 search phrasings
+  (dachshund/long-body/IVDD/sausage-dog/tunnel carrier) - every result, including re-surfacing the
+  exact same already-sourced item, was a generic mesh/sling carrier. **Confirmed genuine dead end**:
+  no breed-specific/long-body/spinal-support dog carrier exists on AliExpress at any traction level,
+  let alone the 200/4.5 floor. Kept the existing generic supplier with its mismatch flag intact.
+- **513 (Yummikeys silicone teether keys)**: note said the car-key silhouette is the whole idea but
+  the sourced supplier was a generic ring/bead teether. Ran 7 phrasings (car-key teether, key fob
+  teether, simulation car key toy, etc.) - closest matches were TV-remote-shaped teethers, never a
+  car-key shape, at the required 200-orders/4.5-star floor. **Confirmed dead end**, same treatment.
+  Also found while verifying the live price: the product itself is NOT silicone at all - the live
+  yummikeys.com page markets it as stainless-steel teething rings ("no silicone, no plastic"),
+  ring-shaped. Worth flagging to the operator that the sheet's own product description may be stale
+  relative to the store's current product, independent of the supplier-sourcing question.
+- **515 (Coco Seat high chair/trolley cover)**: note explicitly called this a FORM MISMATCH (sourced
+  supplier was a stroller cushion pad, not a high-chair/cart cover) and said the angle "collapses" if
+  nothing better exists. Ran 6 phrasings (shopping cart cover, trolley seat cover, 2-in-1 high
+  chair/cart cover) and this time **found a genuine match**: a 2-in-1 shopping-cart + high-chair
+  cover at 283 orders/4.9 stars/~EUR 14.14 COGS (cheaper than the mismatched supplier it replaces,
+  EUR 17.19). Supplier swapped and the mismatch flag cleared.
+- **510, 512, 514, 516**: AG-only, no sourcing issues - existing suppliers (Cloudpillo pregnancy
+  pillow, Middo hip-seat carrier, Ozzi Gear camping chair, Cohopt safety shoes) held up on live-price
+  re-verification. No fake-anchor pricing or Dawn-theme stock issues hit in this batch.
+**Method change worth flagging for every future AliExpress sourcing pass**: AliExpress's
+`/wholesale?SearchText=` page no longer embeds the parseable `_init_data_= { data: {...} }` JSON
+blob that every prior sourcing pass this session relied on. It now server-renders result cards
+directly in the HTML. The working fallback (used successfully in this batch): regex the
+`search-card-item` anchor blocks for title, the sale-price aria-label, star rating, "sold" trade
+text, and order counts embedded in the `pdp_ext_f` query param, rather than brace-counting a JSON
+object. Update the standing sourcing method to try `_init_data_` first and fall back to
+`search-card-item` card-scraping if it's absent, rather than treating a missing `_init_data_` blob as
+a hard failure.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
