@@ -2207,6 +2207,46 @@ you earned "done".
   makes the build drop the key) so a later re-push cannot undo it. The reported
   `size` of a theme-editor-saved template can differ from the body length you
   download; trust the parsed content, not the size.
+- **Learnings from ScratchGone / Modlia (2026-10-01).** (1) A store can carry the
+  SAME product twice under different handles (`scratchgone` on a PagePilot template,
+  `scratchgone1` on the 2024 default template, one sale each in 365 days): optimise the
+  PagePilot one that the ads point at, say so, and put "archive or redirect the
+  duplicate" in the hand-off. (2) Supplier bottle photos carried an English generic
+  label ("Car paint to scratch artifact") and one tile even a different red and white
+  bottle: write ONE canonical bottle paragraph (cobalt blue hourglass bottle, red
+  ribbed twist cap, black label, checkered flag, brand spelled letter by letter,
+  French sub-line) and render every new tile from it; cull the English-label tiles
+  and the wrong-bottle tile, keep the label-free before/after photos. (3) Polish
+  compounds: never publish "rayure profonde" or "un passage" claims; the honest
+  frame is the fingernail test (glides = clear coat = ScratchGone, catches = body
+  shop), no headlight or raw-plastic claim, a dose of about 2 g per hand-sized zone
+  with 2 to 3 passes, so a 100 g bottle is "une quinzaine de retouches", not a whole
+  car. French body-shop anchors that held up to sources: 80 to 200 EUR for a
+  clear-coat scratch, 100 to 350 EUR smart repair per element, 400 to 800 EUR to
+  repaint an element, 100 to 300 EUR trade-in deduction for micro-scratches. Put the
+  carrossier's genuine advantage (deep scratches) in the comparison table as a
+  checkmark on THEIR side; it reads as honesty, not weakness. (4) A supplier
+  six-photo "multi-usage" collage with blue label bars can be rebuilt with Pillow:
+  measure the blue bands to find the photo rectangles (the cream background defeats
+  a plain non-background scan: the white bumper photo reads as background), crop
+  above the band, and retype honest labels; same for a two-pair before/after tile.
+  A supplier CGI diagram whose bottle carries the foreign label is cheaper to
+  REGENERATE with gpt_image_2 (short French labels render fine) than to mask.
+  (5) The theme-preview URL answers 302 to a plain curl: follow redirects with the
+  cookie jar (`curl -L -c jar -b jar`) or every section check reads 0. (6) When a
+  staged-upload result lands in context instead of a file, recover it from the
+  transcript JSONL by walking each line's JSON for the string that STARTS with
+  `{"data":{"stagedUploadsCreate"` and contains the unique key; a plain "last
+  match" picks up your own later command text. (7) A how-it-works cutout from a
+  studio render needs the per-row bounds restricted to the cap columns above the
+  shoulder, or the background highlight next to the cap becomes a grey blob.
+  (8) Problem-card paragraphs at 14 px wrap to 5 lines on 375 px above about
+  150 characters; measure `benefitParas` for the problem grid too, not only the
+  benefit sections. (9) Three keepable supplier before/after tiles plus the new set
+  make a 16-image gallery: keep them, and hand the trim to the operator with the
+  pairs named. A theme-referenced white tile (FR_05, Nissan wheel) stays in the
+  gallery at the back until the draft is published, with its media id in the
+  hand-off for deletion.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
