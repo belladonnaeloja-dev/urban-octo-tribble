@@ -2285,6 +2285,14 @@ you earned "done".
   existing MediaImage keeps the filename and every `shopify://shop_images/` reference;
   Shopify re-encodes the file, so verify by pixel diff against old and new, not by
   byte size. The storefront answers 429 after a few preview fetches; wait 60 to 90 s.
+  (15) When the operator asks for one consistent bottle, do the WHOLE page in one
+  pass, not the section they named: list every tile where the product is visible
+  (gallery, benefit sections, stat block, UGC grid, review grid), re-render all of
+  them from the same reference in one batch, and keep only the tiles with no product
+  or the reference tile itself. The operator came back twice here (reviews + UGC
+  first, then benefit sections + gallery). Gallery swaps are create new, repoint the
+  variants, delete old, then one reorder with the offer tile left out of the moves;
+  section images are fileUpdate in place.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
