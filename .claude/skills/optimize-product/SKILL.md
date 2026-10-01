@@ -2334,7 +2334,15 @@ you earned "done".
   or the reference tile itself. The operator came back twice here (reviews + UGC
   first, then benefit sections + gallery). Gallery swaps are create new, repoint the
   variants, delete old, then one reorder with the offer tile left out of the moves;
-  section images are fileUpdate in place. (16) A supplier tile that the LIVE
+  section images are fileUpdate in place. (17) `themeDuplicate` returning
+  `newTheme: null` with EMPTY userErrors means the store is at Shopify's 20-theme
+  cap (count `themes(roles:[UNPUBLISHED])` + MAIN); nothing was created, and
+  `themeDelete` is blocked, so ask the operator to delete old drafts, or rebase the
+  existing draft instead: sweep every file group on MAIN (templates need 3 pages
+  plus a re-fetch of the gap when new UUID pages push a page past 250), port every
+  file newer than the duplicate by download + staged upload + upsert, verify size
+  and md5 against the downloaded body. `themeFilesCopy` with MAIN as the source is
+  refused by the MCP policy, so the copy always goes through your machine. (16) A supplier tile that the LIVE
   template still references cannot be deleted before publish, but it can be
   REPLACED in place with `fileUpdate(originalSource)`: the gallery slot and the live
   section both pick up the new render and nothing goes blank. Do that instead of
