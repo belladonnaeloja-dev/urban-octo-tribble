@@ -1,0 +1,40 @@
+<div class="rp-aso">
+  <p class="rp-aso-label">As seen in</p>
+  <div class="rp-aso-viewport">
+    <div class="rp-aso-track">
+      <div class="rp-aso-item rp-aso-forbes">Forbes</div>
+      <div class="rp-aso-item rp-aso-buzz">BuzzFeed</div>
+      <div class="rp-aso-item rp-aso-cosmo">COSMOPOLITAN</div>
+      <div class="rp-aso-item rp-aso-sun">THE SUN</div>
+      <div class="rp-aso-item rp-aso-gh">Good Housekeeping</div>
+      <div class="rp-aso-item rp-aso-forbes">Forbes</div>
+      <div class="rp-aso-item rp-aso-buzz">BuzzFeed</div>
+      <div class="rp-aso-item rp-aso-cosmo">COSMOPOLITAN</div>
+      <div class="rp-aso-item rp-aso-sun">THE SUN</div>
+      <div class="rp-aso-item rp-aso-gh">Good Housekeeping</div>
+    </div>
+  </div>
+</div>
+<style>
+.rp-aso{text-align:center;padding:22px 0;border-top:1px solid #ece7e0;border-bottom:1px solid #ece7e0;background:#fff;overflow:hidden}
+.rp-aso-label{font-size:12px;letter-spacing:.18em;color:#9a9188;text-transform:uppercase;margin:0 0 16px;font-weight:600}
+.rp-aso-viewport{overflow:hidden;width:100%}
+.rp-aso-track{display:flex;width:max-content;animation:rp-aso-marquee 26s linear infinite}
+.rp-aso-track:hover{animation-play-state:paused}
+.rp-aso-item{display:flex;align-items:center;padding:0 34px;color:#8d8880;white-space:nowrap;line-height:1}
+.rp-aso-forbes{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:26px;letter-spacing:.01em}
+.rp-aso-buzz{font-family:Helvetica,Arial,sans-serif;font-weight:800;font-size:24px;letter-spacing:-.02em}
+.rp-aso-cosmo{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:20px;letter-spacing:.06em}
+.rp-aso-sun{font-family:Helvetica,Arial,sans-serif;font-weight:800;font-size:24px;letter-spacing:.02em}
+.rp-aso-gh{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-style:italic;font-size:22px}
+@keyframes rp-aso-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@media(max-width:600px){
+  .rp-aso-item{padding:0 22px}
+  .rp-aso-forbes{font-size:21px}
+  .rp-aso-buzz{font-size:19px}
+  .rp-aso-cosmo{font-size:16px}
+  .rp-aso-sun{font-size:19px}
+  .rp-aso-gh{font-size:18px}
+}
+@media(prefers-reduced-motion:reduce){.rp-aso-track{animation:none;flex-wrap:wrap;justify-content:center}}
+</style>
