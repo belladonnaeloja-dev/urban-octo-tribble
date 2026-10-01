@@ -271,6 +271,25 @@ generalise it away, and do not drop it because this product seems different.
 - Keep the store's proven theme mechanics intact (bundle upsell, scarcity,
   Riverty, live-viewer count). We optimize the description + media, not the
   theme form.
+- **ONE PRODUCT, ONE SHAPE, EVERYWHERE: render every tile that shows the product
+  from the SAME reference image.** Operator corrections on ScratchGone, three in a
+  row: *"the shape of the bottle is not consistent"* (reviews + UGC), *"also fix the
+  bottle in the benefit sections and the gallery images"*, then *"photo 3, 9 and 15
+  are also different from the product"*. Seven of ten UGC renders and half the
+  gallery had drifted because each tile was generated from prompt text alone. The
+  fix that held: crop a clean product cutout from your best packshot, host it
+  (staged upload + `fileCreate`), `media_import_url` it, and pass it as
+  `medias:[{role:"image_references", value:<media_id>}]` on `gpt_image_2_5` for
+  EVERY render where the product is visible: hero, contents, packaging, authority,
+  both before/afters, diagrams, as-seen-in base, offer, benefit-section photos, the
+  stat block photo, the UGC grid AND the review-grid photos. Open each prompt with
+  "Use the reference image as the EXACT product: identical silhouette, proportions,
+  colours and label layout, do not restyle, stretch, widen or redesign it", then
+  describe the scene. Test ONE render before the batch. Keep the product upright and
+  fully visible (a tilted, inverted or cut-off product is where the silhouette still
+  drifts). Before uploading, lay every tile next to the reference and reject any
+  whose shape, cap, label or printed weight differs. Do the WHOLE page in one pass,
+  not the section the operator happened to name.
 - **NEVER use the same photo twice anywhere on the page (gallery + description
   combined).** This is a hard rule from operator feedback. A base photo may appear
   in exactly ONE deliverable: if a lifestyle shot becomes the base of the summary
@@ -955,7 +974,8 @@ it is NOT installed, do it here — it is six steps, not a separate project:**
    whether the layout is worth keeping. It nearly always is.
 3. For each, `generate_image` a REPLACEMENT that keeps the exact layout,
    composition and photo, and swaps ONLY the words into the store language.
-   Describe the original layout in words, since references are dropped.
+   Pass the original tile as an `image_references` media on `gpt_image_2_5` and
+   still describe its layout in words.
 4. `Read` every result before uploading and reject any with typos, wrong accents,
    or a changed layout.
 5. Upload the `_min.webp` and put it where the original was: `productCreateMedia`
@@ -1215,22 +1235,24 @@ object, not CGI. This is a hard operator rule (they made me re-do the hero, the
 authority shot, the packaging, the "as seen in", and two benefit graphics because
 the bottle looked plastic/3D).** nano_banana renders text and layout well but
 tends to produce a plasticky, obviously-AI product. So:
-- **Render any graphic whose PRODUCT is prominent with `gpt_image_2`, grounded on
-  the REAL product photo** (`media_import_url` the best real packshot, pass it as
-  a `medias` `image` role). Prompt explicitly for photographic realism: "genuine
+- **Render any graphic whose PRODUCT is prominent with `gpt_image_2_5`, grounded on
+  the REAL product photo** (`media_import_url` the best real packshot or your clean
+  cutout, pass it as `medias:[{role:"image_references", value:<media_id>}]`; this
+  model keeps the reference, the job echoes `reference_images`). Prompt explicitly for photographic realism: "genuine
   studio product photograph, real glass refraction and reflections, real cardboard/
   material texture, natural soft shadow and depth of field, NOT a 3D render, NOT
   plastic, NOT AI generated." nano_banana_pro is now the FALLBACK, used only when
   gpt_image_2 stalls (see moderation note) or for pure text/logo/diagram panels
   with no prominent product.
-- **`gpt_image_2` silently DEFAULTS TO `quality:"low"`** which looks cheap. ALWAYS
+- **`gpt_image_2` and `gpt_image_2_5` silently DEFAULT TO `quality:"low"`** which looks cheap. ALWAYS
   pass `quality:"high"` (both top-level and inside `params`). A low-quality render
   is an automatic re-do. It is also slower (~2-4 min/tile at high) — fire it, then
   wait on a background timer or poll `job_display`; do not assume it failed.
-- **Targeted EDITS are currently NOT possible** because references are dropped
-  (first Gotcha). A render with one wrong element is a full re-roll: keep the
-  prompt, fix the sentence that produced the defect, add an explicit negative, and
-  regenerate. Budget for this instead of hoping for an edit pass.
+- **Targeted EDITS: use `gpt_image_2_5` with the finished tile AND the product
+  cutout as `image_references`.** On the older `gpt_image_2` references are dropped
+  (see the Gotcha), so a wrong element there means a full re-roll: keep the prompt,
+  fix the sentence that produced the defect, add an explicit negative, regenerate.
+  Either way, re-read the result against the reference before shipping.
 - **When gpt_image_2 refuses or MANGLES a press-logo / text band** (the "as seen
   in" tile comes back `status:"nsfw"` on gpt_image_2 on every store), do NOT ship
   the nano_banana_pro version whole: nano ignores the wearing/product spec and
@@ -1348,14 +1370,16 @@ with your machine's image library into a clean grid on a neutral canvas with a s
 match the real SKUs, so a generated variant grid is wrong. Real photos only for the
 variant overview.
 
-**Prompt recipe** (same engine as translate skill): `generate_image` with `params`
-as a JSON string `{"prompt":"…","model":"gpt_image_2","resolution":"1k",
-"aspect_ratio":"1:1","quality":"high"}` (`3:4` for UGC portraits; `quality`
-defaults to `low`, and low looks cheap). No `medias`: references are dropped, so
-always include the canonical product paragraph (exact shape, colours, materials,
-size against a hand, where each part sits) AND, for worn products, the
-wearing-position paragraph, AND the photographic-realism line from "Product
-realism" above. Spell out any on-image caption text exactly, in the store
+**Prompt recipe** (same engine as translate skill): `generate_image` (or
+`generate_image_batch` for up to 12 distinct tiles) with `params`
+`{"model":"gpt_image_2_5","aspect_ratio":"1:1","resolution":"1k","quality":"high",
+"medias":[{"role":"image_references","value":"<product cutout media_id>"}],
+"prompt":"…"}` (`3:4` for UGC portraits; `quality` defaults to `low`, and low looks
+cheap). The reference carries the product's shape; STILL include the canonical
+product paragraph (exact shape, colours, materials, size against a hand, where each
+part sits) as a safety net, AND, for worn products, the wearing-position paragraph,
+AND the photographic-realism line from "Product realism" above. Poll with
+`jobs_wait` (up to 12 job ids, 15 s per call). Spell out any on-image caption text exactly, in the store
 language, and note "no dashes, correct spelling".
 
 - **Pin the product's ONE canonical look and repeat it in EVERY prompt so the whole
@@ -1416,7 +1440,7 @@ whole frame, and move the headline onto the photo over a soft dark gradient scri
   no warning, so fire the highest-priority tiles first.
 - Fetch each result with `job_display(id)`; ~2-4 min/tile at `quality:"high"`.
   Do not use `show_generations` (it dumps your whole history into context).
-- If `gpt_image_2` stalls or returns `nsfw` (people shots, press logos), fire
+- If `gpt_image_2_5` stalls or returns `nsfw` (people shots, press logos), fire
   `nano_banana_pro` in parallel. Nano IGNORES the product/wearing spec and draws
   the generic product, so use it only for text/logo bands and composite them
   over a gpt photo (see "Product realism"); never ship a nano person shot.
@@ -1431,6 +1455,16 @@ whole frame, and move the headline onto the photo over a soft dark gradient scri
   FRESH SESSION reconnects the MCP servers. When the human says "check now",
   re-run `ToolSearch` for the tools before answering — do not assume it is still
   down.
+- **Replacing an image that is ALREADY on the page: `fileUpdate(files:[{id,
+  originalSource}])` on the existing MediaImage, not a new upload.** It keeps the
+  filename, so every `shopify://shop_images/` reference in the template and every
+  snippet keeps working, and it works for product media too. Use it for theme-side
+  section images, UGC/review photos, and for a supplier tile that the LIVE template
+  still references (that tile cannot be deleted before publish, but it can be
+  replaced: the gallery slot and the live section both pick up the new render).
+  Shopify re-encodes the file, so verify by pixel diff against old and new, not by
+  byte size. Gallery tiles that need a new filename go the long way: create new,
+  repoint the variants, delete old, one reorder with the offer tile left out.
 - **Images destined for the DESCRIPTION go to Shopify Files (`fileCreate`), not
   `productCreateMedia`.** `productCreateMedia` appends them to the gallery, which
   you usually do not want for UGC/benefit shots. `fileCreate` returns a CDN URL
@@ -1443,7 +1477,7 @@ whole frame, and move the headline onto the photo over a soft dark gradient scri
   library, so it works the same on every machine.
   Regenerate any image that fails ANY of these, and do NOT ship it until it passes:
   1. **Product realism.** Does the product look like a real photographed object, or
-     plasticky/CGI/AI? If it reads as CGI, re-render with `gpt_image_2` +
+     plasticky/CGI/AI? If it reads as CGI, re-render with `gpt_image_2_5` +
      `quality:"high"` grounded on the real packshot (see "Product realism"). This is
      the single most common re-do the operator asks for.
   2. **Anatomy / glitches.** Zoom every hand, foot, and body part: exactly FIVE
@@ -1811,7 +1845,13 @@ the reason. Never delete a line to make the list pass.
 [ ] C21 default variant's mediaId = the hero, so the page opens on the hero
 [ ] C22 every render looked at with Read individually, never as a contact sheet,
         and any nano_banana_pro tile is a text/logo band only, composited over a
-        gpt_image_2 photo
+        gpt_image_2_5 photo
+[ ] C23 EVERY tile that shows the product (gallery, benefit sections, stat block,
+        UGC grid, review grid) was rendered from the SAME product reference on
+        gpt_image_2_5, and each one was laid next to the reference: same silhouette,
+        cap, label layout and printed weight. Any drift is a re-roll, not a note
+[ ] C24 benefit-section and stat-block photos are lifestyle shots with the whole
+        product visible and the label legible, not a macro or cut-off product
 
 ## D. Browser-measured (these cannot be verified by reading your own markup)
 [ ] D1  comparison table fits 375px, no side-scroll, no mid-word header break
@@ -1847,8 +1887,9 @@ you earned "done".
 
 ## Gotchas checklist
 
-- **Higgsfield accepts NO reference images at all in the current MCP build. Plan for
-  it.** `medias` inside `params` is a hard validation error; `medias` at top level and
+- **SUPERSEDED for `gpt_image_2_5` (verified 2026-10-01: `image_references` are
+  kept and the product matches). The note below still describes `gpt_image_2`.**
+  **Higgsfield accepts NO reference images on `gpt_image_2`. Plan for it there.** `medias` inside `params` is a hard validation error; `medias` at top level and
   `image_ids` are both accepted and then silently dropped (the stored job shows
   `"medias":[]`). `media_import_url` still returns a valid id that cannot be attached
   to anything. Consequences: (a) the targeted-EDIT technique is dead, so a good render
@@ -1930,8 +1971,9 @@ you earned "done".
 - `templateSuffix: null` means NO PagePilot CSS. Never inherit `pagepilot-features`
   or `pagepilot-featuredReview` there; they render as invisible empty spans.
 - Optimize the TITLE too, not just the description. It is the easiest step to forget.
-- Render prominent-product graphics with `gpt_image_2` (real packshot as ref) for a
-  PHOTOREAL product; nano_banana is fallback only. `gpt_image_2` defaults to
+- Render prominent-product graphics with `gpt_image_2_5` (product cutout as
+  `image_references`) for a PHOTOREAL, consistent product; nano_banana is fallback
+  only. Both gpt models default to
   `quality:"low"` — always force `quality:"high"`. Fix one broken element (bottle,
   foot, label colour) with a targeted gpt_image_2 EDIT, not a full re-roll.
 - Before finalizing, LOOK at every generated image for: CGI-looking product,
