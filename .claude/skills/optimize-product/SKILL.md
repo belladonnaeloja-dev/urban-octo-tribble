@@ -2292,7 +2292,13 @@ you earned "done".
   or the reference tile itself. The operator came back twice here (reviews + UGC
   first, then benefit sections + gallery). Gallery swaps are create new, repoint the
   variants, delete old, then one reorder with the offer tile left out of the moves;
-  section images are fileUpdate in place.
+  section images are fileUpdate in place. (16) A supplier tile that the LIVE
+  template still references cannot be deleted before publish, but it can be
+  REPLACED in place with `fileUpdate(originalSource)`: the gallery slot and the live
+  section both pick up the new render and nothing goes blank. Do that instead of
+  parking a white tile at the back with a "delete after publish" note. For a diagram
+  tile, ask for the bottle standing upright beside the action, not pouring: a tilted
+  or inverted bottle is where the silhouette drifts even with a reference.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
