@@ -1975,7 +1975,7 @@ you earned "done".
   `image_references`) for a PHOTOREAL, consistent product; nano_banana is fallback
   only. Both gpt models default to
   `quality:"low"` — always force `quality:"high"`. Fix one broken element (bottle,
-  foot, label colour) with a targeted gpt_image_2 EDIT, not a full re-roll.
+  foot, label colour) with a targeted gpt_image_2_5 EDIT (tile + product cutout as references), not a full re-roll.
 - Before finalizing, LOOK at every generated image for: CGI-looking product,
   anatomy glitches (six toes/fingers, merged limbs), low resolution, off-palette or
   wrong background, and inconsistent product label/colour across tiles. The operator
