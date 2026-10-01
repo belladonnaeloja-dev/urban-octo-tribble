@@ -2246,7 +2246,15 @@ you earned "done".
   make a 16-image gallery: keep them, and hand the trim to the operator with the
   pairs named. A theme-referenced white tile (FR_05, Nissan wheel) stays in the
   gallery at the back until the draft is published, with its media id in the
-  hand-off for deletion.
+  hand-off for deletion. (10) The Definition-of-Done pass (second invocation on
+  the same product) caught two things the full run's checks had passed: a
+  baked caption on the how-it-works tile ("Sans solvant agressif") that no copy
+  on the page backs, and a specs row narrower than the gallery tile next to it
+  (the efface tile named pollution, the Efface row did not). Read every baked
+  caption AGAINST the copy, not only for spelling. When you re-render a Pillow
+  tile, size callout titles by measuring against the real free width (image
+  width minus the text x minus the margin) and loop the font size down until it
+  fits; a single `if textlength < W-cx-80` guard shipped a clipped title once.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
