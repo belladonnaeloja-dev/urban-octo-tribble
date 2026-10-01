@@ -2261,6 +2261,15 @@ you earned "done".
   moved, re-sweep all seven file groups, re-port whatever is newer than the
   duplicate, and only then report. Confirm sibling drafts are merged by listing
   MAIN's `snippets/*` prefixes rather than re-diffing every old draft.
+  (12) Operator correction on the stat section photo (`pp-image-with-percentage`):
+  *"looks unrealistic and far from the other photos of the product"*. The tile was
+  a macro of a foam pad on swirl marks with half a bottle out of focus. Macro and
+  cut-off product shots read as CGI next to lifestyle renders and hide the label,
+  so the viewer cannot tie the tile to the product. Render EVERY theme-side section
+  image (benefit blocks AND the stat block) in the same recipe as the gallery
+  lifestyle tiles: a person in a real scene, the whole bottle held toward the lens
+  with the canonical label legible, same lens and light. Reserve macro framing for
+  the before/after pairs where the paint is the subject.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
