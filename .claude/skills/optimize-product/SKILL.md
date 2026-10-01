@@ -2255,6 +2255,12 @@ you earned "done".
   tile, size callout titles by measuring against the real free width (image
   width minus the text x minus the margin) and loop the font size down until it
   fits; a single `if textlength < W-cx-80` guard shipped a clipped title once.
+  (11) Operators keep editing MAIN while a draft waits: the SilkSculpt page changed
+  at 07:03 (new page) and again at 07:16 (size-chart app block, GIF swap) on the
+  same morning. Every DoD pass re-reads `themes(roles:[MAIN]).updatedAt`; when it
+  moved, re-sweep all seven file groups, re-port whatever is newer than the
+  duplicate, and only then report. Confirm sibling drafts are merged by listing
+  MAIN's `snippets/*` prefixes rather than re-diffing every old draft.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
