@@ -2270,6 +2270,21 @@ you earned "done".
   lifestyle tiles: a person in a real scene, the whole bottle held toward the lens
   with the canonical label legible, same lens and light. Reserve macro framing for
   the before/after pairs where the paint is the subject.
+  (13) REFERENCE IMAGES WORK AGAIN on `gpt_image_2_5` (medias role
+  `image_references`; the job echoes `reference_images`), verified 2026-10-01 after
+  the operator caught *"the shape of the bottle is not consistent"* across 7 of 10
+  UGC renders made from prompt text alone. Recipe: crop a clean product cutout from
+  your best render, host it (staged upload + fileCreate), `media_import_url` it,
+  open every prompt with "Use the reference image as the EXACT product: identical
+  silhouette, proportions, colours and label layout, do not restyle, stretch, widen
+  or redesign it", then describe the scene. Test ONE render before the batch. All
+  ten came back with the same bottle. The older "medias are silently dropped" note
+  above still describes `gpt_image_2`; prefer `gpt_image_2_5` with the reference
+  for every tile where the product is visible. (14) To swap a theme-side image
+  without touching the template, `fileUpdate(files:[{id, originalSource}])` on the
+  existing MediaImage keeps the filename and every `shopify://shop_images/` reference;
+  Shopify re-encodes the file, so verify by pixel diff against old and new, not by
+  byte size. The storefront answers 429 after a few preview fetches; wait 60 to 90 s.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
