@@ -2424,6 +2424,20 @@ you earned "done".
   cleavage"). Each correction cost a full 22-tile batch plus fileUpdate in place, so ask
   at the START of a run: "consistent product, varied scenes?" is the default, and only an
   explicit "same setting everywhere" changes it.
+  (13) Fourth correction, on the product itself: *"photo 2,3,7,8 shows a different style of
+  the shoes. the garter lace should wrap around the ankle like the other photos"*. The
+  product paragraph said "two crossed elastic straps forming an X over the instep", which
+  is true but incomplete: on this shoe the straps continue up and wrap around the back of
+  the ankle, and in every off-foot render (pair on the floor, shoe in the box) and the
+  static infographic the generator drew short vamp straps with no ankle loop, a different
+  shoe. Worn renders got it right because the reference showed it worn. So: describe the
+  product's distinctive CONSTRUCTION in motion terms, not just its parts ("two LONG
+  elastic straps anchored at the vamp that cross the instep and CONTINUE UP AND AROUND THE
+  BACK OF THE ANKLE like a ballet ribbon; on an empty shoe the ankle loop stays raised above
+  the heel"), and prefer showing the product WORN or held next to a worn one in the
+  contents, packaging and how-it-works tiles when the feature only exists on the body.
+  Before uploading, lay every off-foot render beside a worn one and check the same
+  construction is visible on both.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
