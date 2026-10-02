@@ -2399,6 +2399,19 @@ you earned "done".
   the dark runs of the title row for a short, thin bar between words and paint it into a
   middle dot. Read every kept infographic's bullets against the copy as well (two of them
   had no backing sentence until the specs row named "respirant" and "amortit").
+  (12) Operator correction after delivery: *"the photo of the product are not consistent in
+  style. I want you to follow the style from the uploaded photo"* (the supplier packshot:
+  shoe in hand, weathered grey deck, straw hat, warm daylight). The reference rule covers the
+  PRODUCT; it does not cover the SCENE, and twenty tiles in twenty different settings
+  (hallway, classroom, pharmacy, cafe terrace, train, supermarket) read as inconsistent
+  even when the shoe is identical. From now on, pick ONE photographic world per product,
+  taken from the operator's best existing photo (its surface, light, props and camera
+  angle), write it as a style paragraph ("match the EXACT photographic style of the
+  reference: ...") that opens EVERY prompt, and vary only the person, pose and a prop or
+  two. UGC renders keep the phone-shot imperfections but live in the same world. Fix is a
+  single 22-tile batch plus fileUpdate in place (no reorder, no template change except a
+  review line that named the old scene). Ask for the style photo at the START of a run
+  when the gallery carries a coherent supplier set; do not invent a new world per tile.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
