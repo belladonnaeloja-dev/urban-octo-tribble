@@ -2349,6 +2349,47 @@ you earned "done".
   parking a white tile at the back with a "delete after publish" note. For a diagram
   tile, ask for the bottle standing upright beside the action, not pouring: a tilted
   or inverted bottle is where the silhouette drifts even with a reference.
+- **Learnings from Avela / Modlia (2026-10-02, women's wedge ballerina, 5 colours x 7 sizes).**
+  (1) APPAREL WITH COLOUR VARIANTS: the reference rule still holds, but per colour. Import
+  the REAL variant photo of each colour (navy, camel, grey, khaki) and pass THAT as the
+  `image_references` media for every tile in that colour; the black packshot only drives the
+  black tiles. Seven UGC renders in four colours came back with the same silhouette on the
+  first pass. The "choose your colour" tile is built from the five real variant photos with
+  Pillow, never generated. (2) Shoes: the questions that convert are sizing ones. Publish a
+  size tile in slot 4 (EU pointure, foot length in cm, UK equivalent) plus the rule "pied fin
+  ou normal: pointure habituelle; pied large, oignon ou entre deux: au-dessus; pas de
+  demi-pointures", and repeat it in the offer bar, the how-it-works step 1, the first FAQ and
+  the closing note. The variant picker in this theme already carries a size-chart app block
+  (`bf_size_charts_block`), so the Phase 5 size-table item becomes "check it is configured",
+  not "add one". (3) DGCCRF forbids "cuir", "daim", "similicuir" for synthetics: write
+  "microfibre aspect daim" everywhere and add `cuir véritable|daim véritable|orthopédique
+  certifi|recommandé par des podologues|mémoire de forme` to the build's forbidden-claim
+  regex. Note the regex also catches your own honest negation ("ni du daim véritable"):
+  phrase it "ni cuir ni daim naturel". (4) Honest shoe numbers that held up to sources:
+  low wedge 2 to 5 cm (publish "environ 3 cm" from the photos), podologue 30 to 60 EUR,
+  semelles sur mesure 75 to 200 EUR with about 180 EUR reste à charge, comfort brands 90 to
+  150 EUR, one nurse in two with foot pain and about 10 km per shift, standing over 4 h a day
+  adds 70 % lower-limb complaints. Do not claim orthopaedic, anti-slip-on-wet-tile or
+  machine-washable. (5) French dropship shoe stores lose on the delivery/return complaint,
+  not the product (Trustpilot 1.2/5 on the category leader): one objection card about
+  French-speaking service and a 30-day size exchange is the differentiator, phrased without
+  "gratuit" or a day count. (6) A 20-theme store that was at the cap the day before can have
+  room again (the operator published a merged "Wizio bundle fix" theme and deleted one):
+  count `themes(roles:[UNPUBLISHED])` + MAIN at the START of every run before deciding
+  between `themeDuplicate` and a rebase. Here the duplicate worked and MAIN already carried
+  every earlier CRO page (cg, pb, sa, ss, vn, cs, sg snippets + the ScratchGone template at
+  the build md5), so the sibling-draft check reduced to listing MAIN's snippet prefixes.
+  (7) Pin banner and problem cards at 13.5 to 14 px wrap to 5 or 6 lines on 375 px above
+  about 120 characters when they sit beside an icon; the Playwright `benefitParas` list
+  covers them, read every entry over 4 lines and shorten, then re-run (two passes here).
+  (8) A render can carry a dash inside the scene (a pharmacy sign "FERMETURE – 19h00"):
+  the dash regex cannot see it, so read every background sign; a feathered Gaussian patch
+  (rounded mask, blur 10) removes it without a re-roll. (9) A `pp-image-with-text` section
+  whose image was a branded comparison infographic (FR_02) is freed by the new benefit
+  render; re-home that graphic in the gallery with `productCreateMedia` from its CDN URL
+  (Shopify makes a copy, the theme file is untouched) rather than deleting it.
+  (10) `search_products` with `title:Vivian™` style filters returns 0 on ™ names; use the
+  bare free-text word.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
