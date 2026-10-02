@@ -2446,6 +2446,22 @@ you earned "done".
   A before/after render with the product as reference can also bleed the straps onto the
   "before" pair: describe the before shoes as "plain, paper-thin, no heel, no straps, no
   elastic, tiny bow only" and check the left half separately.
+  (14) Sixth correction, on the review and UGC grids: *"customer review and feedbacks section
+  still shows inconsistent product shoe style. Fix and follow the attached photo. do not copy
+  the background as instructed before. I want you to create a consistent product with no
+  visible difference"*. Those 12 tiles had been rendered before the construction was pinned
+  down, and nothing had re-checked them. Two rules. (a) When a product-construction rule
+  changes mid-run, EVERY tile that shows the product is stale, not only the ones the operator
+  named: list them all and re-render in one batch. (b) The recipe that produced 12 consistent
+  tiles first time: the operator's own worn photo as the construction authority on every
+  render regardless of colour ("the SECOND reference shows the SAME shoe model in khaki worn
+  on both feet and is the authority for the shape and the strap layout"), the colour photo
+  first, the rear view third, the construction paragraph with its negatives, and a framing
+  line that forces the feature into view ("both shoes fully visible, large in the frame, from
+  a front three-quarter or overhead angle where the X over each instep and the strap along
+  the ankle are plainly visible"). Twelve prompts with three references each exceeded the
+  MCP's 60 s submit window: send batches of six. A timed-out submit may or may not have
+  created jobs, so check generation history before retrying.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
