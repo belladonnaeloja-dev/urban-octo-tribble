@@ -2399,19 +2399,31 @@ you earned "done".
   the dark runs of the title row for a short, thin bar between words and paint it into a
   middle dot. Read every kept infographic's bullets against the copy as well (two of them
   had no backing sentence until the specs row named "respirant" and "amortit").
-  (12) Operator correction after delivery: *"the photo of the product are not consistent in
-  style. I want you to follow the style from the uploaded photo"* (the supplier packshot:
-  shoe in hand, weathered grey deck, straw hat, warm daylight). The reference rule covers the
-  PRODUCT; it does not cover the SCENE, and twenty tiles in twenty different settings
-  (hallway, classroom, pharmacy, cafe terrace, train, supermarket) read as inconsistent
-  even when the shoe is identical. From now on, pick ONE photographic world per product,
-  taken from the operator's best existing photo (its surface, light, props and camera
-  angle), write it as a style paragraph ("match the EXACT photographic style of the
-  reference: ...") that opens EVERY prompt, and vary only the person, pose and a prop or
-  two. UGC renders keep the phone-shot imperfections but live in the same world. Fix is a
-  single 22-tile batch plus fileUpdate in place (no reorder, no template change except a
-  review line that named the old scene). Ask for the style photo at the START of a run
-  when the gallery carries a coherent supplier set; do not invent a new world per tile.
+  (12) Operator corrections after delivery, three in a row, and the rule they settled on.
+  First: *"the photo of the product are not consistent in style. I want you to follow the
+  style from the uploaded photo"* (a supplier shot: black pair on a grey deck). Read as
+  "copy the scene", I re-rendered all 22 tiles on the same deck with the same straw hat.
+  Second, with another supplier shot (khaki pair on a stone floor): *"there are still product
+  photos that are not consistent with the style"*. Third, when I started moving everything
+  to the stone floor: *"I mean do not follow the background, follow the product style, the
+  background should vary specially on the customer feedback and review sections to not look
+  like generated photos"*. So the rule is the one the skill already had, applied harder, not
+  a new scene rule: CONSISTENCY IS THE PRODUCT (silhouette, material look, strap layout,
+  sole, colour as photographed by the supplier), and BACKGROUNDS MUST VARY, most of all in
+  the UGC grid and the review photos, because twenty tiles sharing one floor and one prop
+  read as a generated set. Prompt shape that held on the final pass: "Use the reference
+  image ONLY for the product: reproduce it EXACTLY as photographed there (...). Do NOT copy
+  the reference background, floor, props, legs or framing: this is a different place, a
+  different day and a different person", then a specific real-world scene per tile
+  (hospital corridor, terracotta hallway, playground path, supermarket car park, sofa
+  unboxing, kitchen tiles, staircase, lawn, bedroom mirror, cafe terrazzo, office carpet,
+  park bench; office, Lyon quay, boutique parquet, Paris park for the benefit tiles).
+  Pass the operator's own photo of each colour as that colour's reference; it carries the
+  real suede grain better than a packshot. Read a cleavage check on every selfie render
+  (one floral-dress render came back low-cut and was re-rolled with "high-neck, no
+  cleavage"). Each correction cost a full 22-tile batch plus fileUpdate in place, so ask
+  at the START of a run: "consistent product, varied scenes?" is the default, and only an
+  explicit "same setting everywhere" changes it.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
