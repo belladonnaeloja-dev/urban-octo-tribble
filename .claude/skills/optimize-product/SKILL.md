@@ -2390,6 +2390,15 @@ you earned "done".
   (Shopify makes a copy, the theme file is untouched) rather than deleting it.
   (10) `search_products` with `title:Vivian™` style filters returns 0 on ™ names; use the
   bare free-text word.
+  (11) DoD re-invocation caught two things the first pass had rated PASS: the kept supplier
+  infographics (FR_01, FR_02) sit on a FLAT cream #f7f4f0, which the border-white heuristic
+  (threshold 235) does not flag but the "plain, unbranded background" rule does. Measure the
+  corner colour and the near-background fraction too (here 26 to 33 %), then rebrand with a
+  soft colour-distance mask onto the brand gradient and swap in place with fileUpdate. And a
+  baked title can carry an en dash ("Avela(TM) - Le confort") that no text regex sees: scan
+  the dark runs of the title row for a short, thin bar between words and paint it into a
+  middle dot. Read every kept infographic's bullets against the copy as well (two of them
+  had no backing sentence until the specs row named "respirant" and "amortit").
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
