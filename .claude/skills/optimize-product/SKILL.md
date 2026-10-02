@@ -2424,20 +2424,28 @@ you earned "done".
   cleavage"). Each correction cost a full 22-tile batch plus fileUpdate in place, so ask
   at the START of a run: "consistent product, varied scenes?" is the default, and only an
   explicit "same setting everywhere" changes it.
-  (13) Fourth correction, on the product itself: *"photo 2,3,7,8 shows a different style of
-  the shoes. the garter lace should wrap around the ankle like the other photos"*. The
-  product paragraph said "two crossed elastic straps forming an X over the instep", which
-  is true but incomplete: on this shoe the straps continue up and wrap around the back of
-  the ankle, and in every off-foot render (pair on the floor, shoe in the box) and the
-  static infographic the generator drew short vamp straps with no ankle loop, a different
-  shoe. Worn renders got it right because the reference showed it worn. So: describe the
-  product's distinctive CONSTRUCTION in motion terms, not just its parts ("two LONG
-  elastic straps anchored at the vamp that cross the instep and CONTINUE UP AND AROUND THE
-  BACK OF THE ANKLE like a ballet ribbon; on an empty shoe the ankle loop stays raised above
-  the heel"), and prefer showing the product WORN or held next to a worn one in the
-  contents, packaging and how-it-works tiles when the feature only exists on the body.
-  Before uploading, lay every off-foot render beside a worn one and check the same
-  construction is visible on both.
+  (13) Fourth and fifth corrections, on the product itself: *"photo 2,3,7,8 shows a different
+  style of the shoes. the garter lace should wrap around the ankle like the other photos"*,
+  then, after my first fix, *"it's still wrong, the elastic strap should look like this,
+  based it on the first photo"* with a rear-view photo of the grey pair. Two lessons.
+  (a) "Crossed elastic straps" is not a construction. The generator drew three different
+  shoes from it: short vamp straps with no heel attachment (off-foot renders), ballet
+  ribbons climbing the calf (my first fix), and the real thing only when the reference
+  happened to show the angle. Write the construction as a PATH from anchor to anchor:
+  "two thin flat elastic straps anchored at the top of the short heel collar, joined
+  across the centre back by a short band with a pull tab, coming forward along both sides
+  of the ankle at heel-collar height and crossing in an X over the instep to the sides of
+  the vamp opening; they never rise up the leg, no ankle ring, no ribbon". Name what it is
+  NOT as well as what it is. (b) One reference angle is not enough for a strapped or
+  fastened product. Ask the operator at the start for a front view AND a rear or side view
+  of the same shoe, upload both, and pass both on every render ("FIRST reference = exact
+  shoe, SECOND reference = how the straps attach at the heel"). Show the product worn or
+  held next to a worn one in contents, packaging and how-it-works tiles, and frame at
+  least one worn shoe from the rear three-quarter so the attachment is visible. Before
+  uploading, compare every render against the rear-view photo, not only the front one.
+  A before/after render with the product as reference can also bleed the straps onto the
+  "before" pair: describe the before shoes as "plain, paper-thin, no heel, no straps, no
+  elastic, tiny bow only" and check the left half separately.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
