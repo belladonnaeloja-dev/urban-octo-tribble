@@ -876,6 +876,37 @@ object. Update the standing sourcing method to try `_init_data_` first and fall 
 `search-card-item` card-scraping if it's absent, rather than treating a missing `_init_data_` blob as
 a hard failure.
 
+### AG backfill for rows 517-522, 1 supplier upgrade + 3 price-tier corrections (done 2026-10-02)
+6-row batch, rows 517-522 dated 2026-10-01. Same unusual shape as the previous batch (510-516):
+the sibling skill had already filled AE/AF for all 6 - only AG was missing.
+- **520 (Hard-Base Dog Back-Seat Extender)**: the sourced supplier was flagged outright - a
+  waterproof seat COVER, not clearly a hard-base design, and at EUR 47.99 it cost MORE than the
+  product's own EUR 39.95 entry tier. Ran 6 search phrasings (rigid/hard-base/hard-bottom dog car
+  seat extender) and this time found a genuine match: a "Detachable Solid Hard Bottom" dog car
+  back-seat extender at 359 orders/4.9 stars/~EUR 26.36 COGS - about EUR 21 cheaper than the
+  mismatched supplier it replaces, and the title itself confirms the rigid-platform design the
+  product needs. Supplier swapped, mismatch flag cleared.
+- **Three rows needed a price-TIER decision, not just a live-price check** - the batch's own notes
+  had already worked out that the entry-tier price doesn't clear a real margin against the sourced
+  COGS, and named which tier to use instead. Verified each recommended tier is still live at the
+  stated price before using it, rather than re-deriving the tier choice from scratch:
+  - **517 (FurryKing dog jacket)**: note said build the offer on "the larger sizes" without a
+    specific number - checked the live variant ladder directly (S-XL $29.99, 2XL-3XL $39.99,
+    4XL-5XL $49.99) and used the top 4XL/5XL tier, giving AG 43.99.
+  - **518 (Edubini copybooks)**: note named the EUR 29.90 "gift starter set" specifically as the
+    only variant that clears the 25 EUR floor - confirmed still live at that exact price (AG 28.99).
+  - **522 (Setago car desk)**: note named the USD 72.99 tier specifically as the only one with real
+    margin against the EUR 31.59 supplier - confirmed still live at that price (AG 63.99).
+  This is the first batch where multiple rows needed a tier decision rather than a flat live-price
+  check; worth treating "which variant is the real competitor price" as its own verification step
+  going forward whenever a note calls out more than one price tier, not just defaulting to column K.
+- **519, 521**: straightforward AG-only, single price each, no tier or sourcing complications
+  (Ultra Wipe car towel AG 38.99; Oxy Breathing Trainer AG 25.99).
+**Minor note**: row 520's store domain (tierbedarf-plus.de) now canonically redirects to
+tierbedarf-pro.de after a domain migration; the old domain's `.js` endpoints still resolve live
+against the same catalog, so no AC/AD link fixes were needed, but worth knowing this store migrated
+in case a future pass hits a dead old-domain link instead.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
