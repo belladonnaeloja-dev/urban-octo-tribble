@@ -2462,6 +2462,31 @@ you earned "done".
   the ankle are plainly visible"). Twelve prompts with three references each exceeded the
   MCP's 60 s submit window: send batches of six. A timed-out submit may or may not have
   created jobs, so check generation history before retrying.
+  (15) Seventh and eighth corrections, three tiles out of the twelve: *"Other's look good
+  except for the photo on Chloe O. review"*, then *"UGC 1 and 3 shows a different style shoe
+  as well. fix as how you fixed Chloe O. review photo"*. All three were the poses where a
+  shoe was HELD in a hand or shot STRAIGHT DOWN from above: an off-foot or top-down shoe
+  gives the generator no ankle to anchor the straps to, so it invents a buckle, a ring or a
+  single wide band. The pose rule that fixed all three in one roll each: "both shoes WORN,
+  nothing held, nothing in hand, front three-quarter from about knee height, not straight
+  down". Hold it for every tile of a strapped or fastened shoe; a held-shoe product shot is
+  fine only when it is the operator's own photo. Fix a single flagged tile by passing the
+  render itself as the reference with "edit with ONE change only, keep everything else
+  pixel-identical", which keeps the scene the operator already approved.
+  (16) Last operator ask before publish: *"check if all the recently added products on the
+  live theme are also added on the draft theme"*. A store that adds ten PagePilot products a
+  day can outrun a draft duplicated in the morning. Answer it with data, not with "the draft
+  was duplicated from MAIN": (a) `themes(ids:[MAIN])` updatedAt against the draft's createdAt
+  (unchanged here, so nothing could be missing); (b) page `theme.files(filenames:["templates/
+  product*"], first:250, after:cursor)` with checksumMd5 for BOTH themes and set-diff names
+  plus checksums (544 and 544, no difference, only the av-* files draft-only); (c) pull
+  `products(first:250, sortKey:CREATED_AT, reverse:true){templateSuffix}` and confirm each
+  suffix has its template file in both. The last step also surfaces products whose template
+  exists in NEITHER theme (eight here, created three weeks earlier, rendering on the default
+  product template on live already): report those as a pre-existing store issue, not as a
+  draft gap. If MAIN HAS moved since the duplicate, copy the missing template and snippet
+  files into the draft with `themeFilesCopy` or `themeFilesUpsert` before hand-off; never
+  re-duplicate, that loses the CRO page. Log the check in final-check.md.
 - **UGC scale correction, SupremeStorage / Modlia (2026-09-22).** The operator sent the
   first UGC set back: *"the products looks really small, make the product look more
   realistic"*. A 70 x 105 cm garment bag was rendered pouch-sized because the prompt
