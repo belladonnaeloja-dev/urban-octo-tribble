@@ -40,7 +40,7 @@ in the tab.
    seller, refresh its bestseller rank, selling price, revenue and orders and
    recompute Quotation %. If it dropped out of the top 100, set its bestseller
    rank to `>100`. Mention these rows in the reply.
-3. Add the **10 highest-quotation-% products not already in the tab**, with
+3. Add the **30 highest-quotation-% products not already in the tab**, with
    Note = `NEW <YYYY-MM-DD>` and Supplier (col L) left blank. On an empty
    tab, fill it with the default top 20 instead.
 4. Check that no product appears twice, then re-sort everything by Quotation %
