@@ -87,7 +87,7 @@ you're using and move on; they can correct you.
    `references/store_sheets.md`. If the store has a mapped tab, **update
    that tab — do not create a new file** — following the update rules in
    that reference (refresh existing rows, keep the user's Supplier/Note
-   columns, add 10 products not already in the tab, check duplicates,
+   columns, add 30 products not already in the tab, check duplicates,
    re-sort by Quotation % descending), and write it with the Google Sheets
    tools as described under "Writing to the tab". Only for a store with no mapped tab,
    create a new sheet: pass the CSV to the Google Drive MCP's `create_file`
