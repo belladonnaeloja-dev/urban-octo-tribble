@@ -2563,4 +2563,14 @@ you earned "done".
   curated. (6) A mascara page must carry the removal objection honestly (oil or
   biphase remover, micellar water alone is not enough) in the benefit block, the
   FAQ and the 4-star review, and never claim ophthalmological testing, fibres,
-  vegan status or "+X %" length without a source.
+  vegan status or "+X %" length without a source. (7) The DoD re-invocation caught what the first pass's dash
+  fixes had not: a legacy tile swapped in place for a dash still carried a "24h"
+  clock dial and a "Fixé en 3 secondes" line, both claims the page forbids. When you
+  edit a kept supplier tile for one defect, read the WHOLE tile against the
+  forbidden-claim list (icons and dials count, not only words) before you swap it.
+  Both were fixed with a one-change gpt_image_2_5 edit using the tile itself as the
+  reference; a replaced caption comes back in a lighter weight when the new text is
+  longer, so prefer a replacement of equal length ("Fixé en un instant").
+  (8) Measure the Pinterest banner, the problem cards AND the objection answers
+  with the benefit paragraphs: six objection answers at 13.5 px ran 6 to 8 lines on
+  375 px; trimmed to about 165 characters they sit at 5.
