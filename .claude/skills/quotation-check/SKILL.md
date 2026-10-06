@@ -86,8 +86,9 @@ you're using and move on; they can correct you.
 7. **Deliver to the store's Google Sheet tab.** First check
    `references/store_sheets.md`. If the store has a mapped tab, **update
    that tab — do not create a new file** — following the update rules in
-   that reference (refresh existing rows, keep the user's Supplier/Note
-   columns, add 30 products not already in the tab, check duplicates,
+   that reference (re-check the quote and the Shopify selling price of every
+   product already in the tab, not just this run's top 100, keep the user's
+   Supplier/Note columns, add 30 products not already in the tab, check duplicates,
    re-sort by Quotation % descending), and write it with the Google Sheets
    tools as described under "Writing to the tab". Only for a store with no mapped tab,
    create a new sheet: pass the CSV to the Google Drive MCP's `create_file`
@@ -97,8 +98,11 @@ you're using and move on; they can correct you.
 
 8. **Reply to the user** with the Sheet link and a short summary: how many
    best sellers were checked, how many matched and cleared the threshold,
-   and the top 2-3 flagged products by name and quotation %. Don't restate
-   the whole table in chat — the sheet is the deliverable.
+   and the top 2-3 flagged products by name and quotation %. Also list
+   every selling-price change, any quote that changed (noting pending
+   requote bids), and every product in the tab with **no quotation** in the
+   uploaded xlsx together with its xlsx status. Don't restate the whole
+   table in chat — the sheet is the deliverable.
 
 ## Why this shape, not something simpler
 

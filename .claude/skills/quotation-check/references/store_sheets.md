@@ -33,13 +33,29 @@ in the tab.
 ## Update rules (every run)
 
 1. Read the tab first (Google Sheets `get_values`, range `<Tab>!A1:M200`).
-2. For each product already in the tab, match it by brand name (the word
-   before ™). If it is in this run's results, refresh columns A–K with the
-   new figures and keep L and M as they are. If it has no current quote or is
-   no longer in the top 100, keep its old quote figures. If it is still a best
-   seller, refresh its bestseller rank, selling price, revenue and orders and
-   recompute Quotation %. If it dropped out of the top 100, set its bestseller
-   rank to `>100`. Mention these rows in the reply.
+2. Re-check **every** product already in the tab, not only the ones in this
+   run's top 100. Match each one by brand name (the word before ™); where the
+   title has no ™ in its last `|` segment, match on the exact title first so
+   the description text isn't used as the key. Keep columns L and M as they
+   are.
+   - **Quote:** look the product up in this run's uploaded xlsx and use its
+     latest row that has a price (`latest_row()` in
+     `parse_quotation_xlsx.py`), even if that row's status is a pending
+     requote or bid rather than an approved quote; say so in the reply when
+     a pending bid changed a product's quote. If the xlsx has no priced row for
+     it, keep the old quote figures and list it under "No quotation" in the
+     reply with its xlsx status (e.g. `Stop fullfilment`,
+     `Requote - Bidding`, or "not in file").
+   - **Selling price:** look up the current Shopify price for every product
+     in the tab, including ones outside the top 100, with the same batched
+     queries as step 4 of SKILL.md (exact title, minVariantPrice, skip
+     TEST/PRICE TEST/(Copy)/(kopie) and DRAFT listings, highest price if
+     several live listings share the title). List every price that changed
+     in the reply.
+   - **Rank, revenue, orders:** refresh from this run's best-seller query.
+     If it dropped out of the top 100, set its bestseller rank to `>100` and
+     keep its old revenue and orders.
+   - Recompute Quotation % from the refreshed quote and price.
 3. Add the **30 highest-quotation-% products not already in the tab**, with
    Note = `NEW <YYYY-MM-DD>` and Supplier (col L) left blank. On an empty
    tab, fill it with the default top 20 instead.
