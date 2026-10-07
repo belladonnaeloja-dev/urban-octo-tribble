@@ -4,11 +4,11 @@ Every mapped store lives in one spreadsheet, one tab per store:
 "Zanaro Top Bestsellers by Quotation %"
 (https://docs.google.com/spreadsheets/d/10oUKhWCvLNk-Y_HYNcdUayekezJXnPPXx88TPoTM_K8).
 
-| Store (xlsx "Store name" / myshopify subdomain) | Storefront | Tab | sheetId (gid) |
-|---|---|---|---|
-| `bycheri` | Zanaro Berlin | DE | 171846471 |
-| `solundi-com` | Solundi.com | NL | 754982655 |
-| `ccae3b-2` | Modlia | FR | 1926591558 |
+| Store (xlsx "Store name" / myshopify subdomain) | Storefront | Tab | sheetId (gid) | New products per run |
+|---|---|---|---|---|
+| `bycheri` | Zanaro Berlin | DE | 171846471 | 30 |
+| `solundi-com` | Solundi.com | NL | 754982655 | 20 |
+| `ccae3b-2` | Modlia | FR | 1926591558 | 20 |
 
 The sheetIds were checked against the live spreadsheet on 2026-09-28 (FR added 2026-10-07). If
 a Sheets call reports "No grid with id", look up the real IDs with
@@ -61,7 +61,9 @@ in the tab.
      If it dropped out of the top 100, set its bestseller rank to `>100` and
      keep its old revenue and orders.
    - Recompute Quotation % from the refreshed quote and price.
-3. Add the **30 highest-quotation-% products not already in the tab**, with
+3. Add the **N highest-quotation-% products not already in the tab**, where
+   N is the store's "New products per run" in the table above (30 for DE,
+   20 for NL and FR), with
    Note = `NEW <YYYY-MM-DD>` and Supplier (col L) left blank. On an empty
    tab, fill it with the default top 20 instead.
 4. Check that no product appears twice, then re-sort everything by Quotation %
