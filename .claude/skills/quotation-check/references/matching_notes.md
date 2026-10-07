@@ -50,3 +50,12 @@ Do not try to match on Product shopify ID in the xlsx — in practice this
 ID does not correspond to any live Shopify product or variant ID (it looks
 like it's sourced from the quotation platform's own internal reference,
 not synced live to Shopify). Title matching is the reliable path.
+
+# Titles that start with "-" (e.g. "-50 % · OFFRE LIMITÉE · ...")
+
+Shopify's product search treats a leading "-" as "exclude", so a batched
+lookup on a title like "-50 % · OFFRE LIMITÉE · RattlePals™ · ..." comes
+back empty. For any title whose search returns nothing, re-query with just
+the brand name (e.g. `RattlePals`) and pick the result whose title matches
+the best seller exactly. Ignore DRAFT listings; if only DRAFT listings
+match, treat the title as having no live price.
