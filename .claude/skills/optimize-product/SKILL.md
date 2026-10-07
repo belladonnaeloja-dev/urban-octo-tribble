@@ -2574,3 +2574,35 @@ you earned "done".
   (8) Measure the Pinterest banner, the problem cards AND the objection answers
   with the benefit paragraphs: six objection answers at 13.5 px ran 6 to 8 lines on
   375 px; trimmed to about 165 characters they sit at 5.
+
+- **Learnings from ChicVision / Modlia (2026-10-07).** (1) A two-finish accessory
+  (Or / Argent) needs ONE reference set per finish: render gold tiles from the gold
+  cutouts and silver tiles from the silver ones, then point each colour's variants at
+  a tile of its own colour (Or -> hero, Argent -> the silver "Vu dans" tile). A
+  single-finish reference drifts the other colour. (2) Blue-light reading glasses:
+  Cochrane 2023 finds no eye-strain benefit and clear lenses filter only part of
+  the blue light, so never write "réduit la fatigue", "protège la rétine", "99 %",
+  "progressif" or "anti-fatigue"; sell them as light, pretty readers with an honest
+  filter line, and keep the ophthalmologist as a COST line plus a "ces lunettes ne le
+  remplacent pas" disclaimer, never as an endorsement. Weight: 12 to 20 g is the
+  realistic band for rimless metal readers, so a supplier "22 g" passes but
+  anything under 10 g does not. (3) Live-referenced legacy tiles (a variant image or
+  a theme-side setting points at them) are swapped in place with `fileUpdate`
+  using a Pillow composite built from the kept real photos (force guide, colour
+  tile); that keeps the id, avoids a duplicate photo and keeps the gallery short.
+  (4) MAIN can move more than once during a run (two PagePilot templates were
+  created 15 and 60 minutes after the duplicate). Shopify returns `body.content`
+  pretty-printed with an auto-generated comment header, so a ported file never
+  matches MAIN's checksumMd5: strip the header, `json.loads` it, upsert, re-read
+  the draft copy and compare the PARSED JSON instead. (5) `curl` of a
+  `preview_theme_id` URL without a cookie jar silently returns the LIVE theme (the
+  preview is set by a cookie on the redirect); always pass `-c jar -b jar` and
+  assert `Shopify.theme.id` equals the draft before trusting a text scan. (6) The
+  benefit-grid icons must be re-chosen with the new titles (💻🌙🔍 under
+  "Invisible / Cristal / Deux finitions / Étui inclus" read wrong); treat icons as
+  copy. (7) Give the legacy urgency snippet a Liquid pre-fill of the date (as in
+  the LashLift run) so curl-based checks and no-JS crawlers see a date, and set
+  French alt text on every kept legacy gallery tile with `productUpdateMedia`
+  before reporting done. (8) A legacy animated tile can carry an English claim
+  (a "VISIBLE LIGHT PHOTOCHROMICS" lens clip) that the copy around it does not
+  make; name it first in the hand-off with a replacement recommendation.
