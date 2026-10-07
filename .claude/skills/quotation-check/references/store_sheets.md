@@ -8,14 +8,19 @@ Every mapped store lives in one spreadsheet, one tab per store:
 |---|---|---|---|
 | `bycheri` | Zanaro Berlin | DE | 171846471 |
 | `solundi-com` | Solundi.com | NL | 754982655 |
+| `ccae3b-2` | Modlia | FR | 1926591558 |
 
-The sheetIds were checked against the live spreadsheet on 2026-09-28. If
+The sheetIds were checked against the live spreadsheet on 2026-09-28 (FR added 2026-10-07). If
 a Sheets call reports "No grid with id", look up the real IDs with
 Google Sheets `get_spreadsheet` (fields `sheets.properties.sheetId`,
 `sheets.properties.title`) and fix this table.
 
 A store not listed here gets a new sheet (SKILL.md step 7), unless the
-user names a tab for it — then add a row here.
+user names a tab for it. In that case create the tab in this spreadsheet
+by duplicating an existing store tab (Sheets `update_spreadsheet` with a
+`duplicateSheet` request, `newSheetName` = the tab name), clear its data
+rows (`batch_clear_values` on `<Tab>!A2:Y`), so it keeps the header,
+column widths, frozen row and number formats, and add a row here.
 
 ## Tab layout
 
