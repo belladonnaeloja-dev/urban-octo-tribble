@@ -2606,3 +2606,12 @@ you earned "done".
   before reporting done. (8) A legacy animated tile can carry an English claim
   (a "VISIBLE LIGHT PHOTOCHROMICS" lens clip) that the copy around it does not
   make; name it first in the hand-off with a replacement recommendation.
+  (9) The DoD re-invocation caught a palette split the first pass had rated PASS:
+  the Pillow-built tiles (force guide, colour tile, comparison rebuild, "Vu dans"
+  band) used the snippet palette's copper #9a5a2c and the kept supplier
+  before/after a green pill, while every gpt_image_2_5 tile carried the plum
+  #43022f the hero had picked. Sample the dominant dark accent of the FIRST
+  approved render and feed THAT hex to every Pillow tile and to any recoloured
+  legacy pill; the snippet palette and the image palette are allowed to differ,
+  the image set is not. A legacy pill is recoloured in place by luminance-scaling
+  the brand colour over the pixels whose green channel leads by 25.
