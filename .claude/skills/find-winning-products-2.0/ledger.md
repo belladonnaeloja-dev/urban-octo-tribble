@@ -907,6 +907,40 @@ tierbedarf-pro.de after a domain migration; the old domain's `.js` endpoints sti
 against the same catalog, so no AC/AD link fixes were needed, but worth knowing this store migrated
 in case a future pass hits a dead old-domain link instead.
 
+### AG backfill for rows 530-539, 3 re-sourcing attempts all confirmed dead ends (done 2026-10-07)
+10-row batch dated 2026-10-07. Same shape as the two prior batches - AE/AF already filled by the
+sibling skill, only AG missing. AG values: 530=58.99, 531=34.99, 532=88.99, 533=51.99, 534=38.99,
+535=34.99, 536=34.99, 537=37.99, 538=38.99, 539=25.99.
+- **530-534, 537, 538**: AG-only, no sourcing action needed. Several AE notes carry minor caveats
+  (530/531/532/533 all "EQUIVALENT, confirm a specific detail" - left/right orientation, glow/
+  plating quality, compartment layout, size chart) but none of these are form-factor mismatches, so
+  no re-sourcing was attempted for them, consistent with how minor equivalence caveats have been
+  treated throughout this project (only a genuine wrong-object mismatch triggers a re-source
+  attempt, not "confirm a detail before listing").
+  **537 (RuffTopia washing machine cleaner) price moved materially since the row was written**: the
+  sheet's cached price was CAD 39.99 for a 12-tablet pack; the live store now shows a single
+  "Default Title" variant at CAD 62.00 with no separate pack tiers - the product listing itself
+  appears to have been restructured. Used the live CAD 62.00 price per the standing "always use
+  live, never cached" rule. Worth a human glance since this is a bigger jump than ordinary price
+  drift, not just FX movement.
+- **535 (Celeste Cherry Blossom Aura Tree), 536 (Snuggle Heroes voice-message bottle), 539
+  (Holiisummer bike horn+floodlight)**: all three had a flagged supplier problem (535: branch-shaped
+  light sourced for a standing-tree product; 536: best matching listing only has 31 orders, below
+  the 200-order floor; 539: sourced listing doesn't confirm the floodlight feature). Ran 4-5 search
+  phrasings each. **All three confirmed as dead ends** - no better-matching, gate-clearing supplier
+  exists for any of them right now. Existing suppliers and their mismatch/gap flags left untouched.
+**IMPORTANT METHOD BREAKDOWN, affects every future sourcing pass**: AliExpress's search page is no
+longer scrapable by curl OR WebFetch. It's gone past the earlier `_init_data_`-blob removal (logged
+2026-10-01) to a pure JS/XHR shell behind a slider captcha - curl gets an empty no-JS page, and
+WebFetch's page-summarization either reports a genuine "no results" or returns generic, unrelated
+cross-sell widget content that was verified to CROSS-CONTAMINATE between unrelated queries (the
+exact same irrelevant product blocks resurfaced across different search terms, confirming it's
+filler, not real search results). Until a working scrape method is found, treat any "could not find
+a qualifying supplier" result from a curl/WebFetch search attempt as genuinely unverifiable rather
+than conclusive - the dead ends logged above are honest best-effort outcomes, not proof no
+qualifying listing exists. Worth checking next run whether Claude in Chrome (a real authenticated
+browser session, not curl/WebFetch) can get past the captcha wall where these methods now fail.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
