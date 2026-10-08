@@ -941,6 +941,43 @@ than conclusive - the dead ends logged above are honest best-effort outcomes, no
 qualifying listing exists. Worth checking next run whether Claude in Chrome (a real authenticated
 browser session, not curl/WebFetch) can get past the captcha wall where these methods now fail.
 
+### Formula-deviation audit on rows 523-529 (operator-flagged, done 2026-10-08)
+The operator spotted row 524's AG (39.99) sitting ABOVE the live competitor price (~EUR 35-37) and
+asked why, since the standing AG rule (convert competitor price to EUR, floor to the next lower
+x.99) should always put AG at or below the competitor's own price. Investigating confirmed this
+wasn't something any backfill pass in this session touched - rows 523-529 (2026-10-02 batch,
+"LOAD-TESTED" AE format) already had AG filled when first checked on 2026-10-07, and were skipped
+as "already complete." They were never complete in the sense of being formula-correct.
+**Checked all 7 rows against the formula and found every single one deviates**, not just 524:
+
+| Row | Product | EUR price | Formula value | Actual AG | Diff |
+|---|---|---|---|---|---|
+| 523 | Swaveo Rose Box | 56.03 | 55.99 | 54.99 | -1.00 |
+| 524 | Venaro Cozy Set | 34.49 | 33.99 | 39.99 | +6.00 (documented - see below) |
+| 525 | Tulip Bracelet | 28.44 | 27.99 | 29.99 | +2.00 |
+| 526 | Alpensattel Saddle | 69.97 | 68.99 | 59.99 | -9.00 |
+| 527 | Mr Saker Trunks | 34.47 | 33.99 | 34.99 | +1.00 |
+| 528 | NOVA Bike Helmet | 99.90 | 98.99 | 89.99 | -9.00 |
+| 529 | Car Scratch Pen | 25.84 | 24.99 | 29.99 | +5.00 |
+
+Only row 524 has a documented reason in its own note ("best qualifying supplier is EUR 17.79...
+leaves ~EUR 17. Price it at EUR 39.99" - a deliberate margin-protection override, priced above
+competitor rather than the usual move of picking a higher price TIER of the same product on the
+competitor's own page, which is how every other margin-thin case this session was handled).
+The other 6 have no stated reason. Two (526, 528) are off by exactly EUR 9.00 in the same direction
+- consistent with a subtract-10-instead-of-1 arithmetic bug (69.97-10=>59.97=>59.99; 99.90-10=>
+89.90=>89.99, both match exactly) - but the remaining 4 (523, 525, 527, 529) don't fit that or any
+other single pattern checked; they read like hand-picked round price points rather than a
+mechanical formula output.
+**Operator's decision**: leave all 7 AG values as originally written (don't recompute), but add a
+note to each flagging the formula value vs. the actual value, so a future reader sees this was a
+known discrepancy rather than an unnoticed error. Done for all 7 cells.
+**Standing lesson**: "AG already has a non-blank value" is not the same check as "AG is
+formula-correct." A future pass that finds AG already filled in an unfamiliar batch (especially one
+using a different AE format, like this batch's raw-product-ID style instead of the usual
+HYPERLINK) should spot-check at least one or two rows against the formula before treating the batch
+as settled, rather than assuming "non-blank = done."
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
