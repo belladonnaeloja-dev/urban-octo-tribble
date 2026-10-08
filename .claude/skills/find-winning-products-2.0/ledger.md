@@ -1023,6 +1023,54 @@ touched. Future batches that only fill D and leave E blank should have E backfil
 as part of routine housekeeping, since the operator has now established this as the expected
 state of the column.
 
+### Correction: column E means the Asana card title, not a duplicate of D (done 2026-10-08)
+The operator clarified that "Product name" in column E (header-named, previously backfilled above
+as a plain duplicate of column D) was supposed to mean the TITLE of the actual Asana card already
+created for that row, not a repeat of the sheet's own descriptive product name. Column AH
+("Approved For Asana") marks exactly which 188 rows have a real card.
+**Where the cards actually live, and the naming-scheme confusion this resolves**: this project's
+own "1E. Pinterest - US" Asana project is NOT where these cards are - it turned out to be a mixed
+bag of an unrelated TikTok Shop/Kalodata sourcing pipeline (fields like "kalodata:", "source
+(Amazon):") plus some older unrelated store-link cards, and a full search of its 389 tasks matched
+ZERO of the 188 approved rows. The real cards live in the four COUNTRY-specific Pinterest projects:
+"1A. Pinterest - DE" (gid 1204544103564278, 1308 tasks), "1B. Pinterest - SE" (1206091429056562,
+963), "1C. Pinterest - NL" (1207494343020090, 1184), "1D. Pinterest - FR" (1214688737915575,
+1368). Each card's notes field follows a template with a `competitor's link: <url>` line that
+matches the sheet's own column AB product URL exactly, plus `aliexpress:` and `Note: <price>`
+lines that line up with this sheet's own AE/AG data - confirming these cards were generated FROM
+this sheet's approved rows, one card per market the product was launched in.
+**Method**: dispatched 5 parallel agents (one per project) to paginate every task (opt_fields=
+name,notes), regex-extract the `competitor's link:` value, and match it against the 188 approved
+rows' product URLs (normalized for encoding/trailing-slash/scheme differences). DE alone matched
+170 of 188 - the clear primary project. SE, NL and FR each found a handful more, some of which
+turned out to be the SAME multi-market product independently given a DIFFERENT card in each
+country project (confirmed by checking whether the matched gid repeated across agents' reports:
+identical gid across SE+NL = one real multi-project-membership card; different gids with the same
+title = coincidentally-identical independent cards, not duplicates to merge).
+**Result: 170 of 188 rows matched and written to column E** (overwriting the duplicate-name
+placeholder from the previous entry, for matched rows only - unmatched and non-approved rows kept
+their existing E value). Two rows had more than one real card and got both titles joined with
+" / ": row 508 (Hugger Comfort hot water bottle) -> "ThermaBelt™ / WarmHug™" (2 distinct cards,
+DE's WarmHug™ and a shared SE+NL+FR... actually SE+NL share one ThermaBelt™ gid, FR has its own
+separate ThermaBelt™ gid - 3 real cards, 2 distinct titles); row 531 (Glimmerrs butterfly jewellery)
+kept as plain "Faylume™" since all its real cards (SE+NL shared + FR separate) happen to share the
+identical title already.
+**18 rows unmatched** - still showing their old duplicate-name placeholder in column E, not a
+card title:
+- 12 have a valid product URL but no matching card was found in any of the 4 projects searched:
+  rows 100, 107, 110, 114, 115, 120, 146, 257, 279, 284, 333, 434.
+- 6 have a REAL product URL that the matching script failed to extract because column AB on these
+  specific rows is a plain URL string, not a `=HYPERLINK(...)` formula - the extraction regex only
+  handled the formula case. Corrected URLs found on manual check: row 184 (Magic Kids Squeegee
+  Painting Kit, us.minopia.com), 186 (Extra Large Kitchen Silicone Pad, marnetic.com), 189 (GapLock
+  Stove Gap Covers, marnetic.com), 190 (Memory Frame Kids Drawing Frame, shopvalcero.com), 193
+  (InstaLash Magnetic Kit, velleara.com), 376 (3-Piece Leaf-Print Cardigan Set, thereederfamily.com)
+  - these were NOT re-searched this pass (would require re-paginating all 4 projects again for just
+  6 targets); worth including in the next Asana cross-match pass specifically.
+**Standing lesson**: when extracting a "real" URL from a HYPERLINK-formula column for matching
+purposes, always check whether the cell might instead hold a plain string value - don't assume
+every row in a formula-heavy column uses the same cell type.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
