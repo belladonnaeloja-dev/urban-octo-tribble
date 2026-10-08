@@ -14,11 +14,14 @@ to include one they did not tick.
 ## Sources
 
 **Master log** — spreadsheet `1ha9uILlG-VetpFMqHCkP3F9P_o7k4nUrZS-zAk3pZJ4`, tab
-`Winning Products`. Header is on **row 4**; data starts at row 5.
+`Winning Products`. The header row is the row whose column `D` reads `Product` (it was row 4 until
+2026-09-29 and has been **row 3** since a blank row above it was deleted) — find it by content, not
+by number; data starts on the row after it.
 
 | Col (as of 2026-09-04) | Field | Used for |
 |---|---|---|
 | `D` | Product | the source name — you rename it, see step 4 |
+| `E` | Product name | **you write the coined name here** — see step 5 |
 | `X` | Verdict | not used directly — a newer column, ignore it |
 | `Y` | Main killer / risk | warnings worth carrying into the task |
 | `Z` | Their hook (first line) | the marketing angle |
@@ -28,7 +31,8 @@ to include one they did not tick.
 | `AD` | All their live ads | not used |
 | `AE` | AliExpress supplier | `aliexpress:` |
 | `AF` | COGS EUR | risk check only — does **not** go in the Note |
-| `AG` | Selling price /Offer | **the whole `Note:` line** — the colleague fills this in |
+| `I` / `J` | Cur. / Price | the competitor's price as the research run captured it — fallback for step 5 |
+| `AG` | Selling price /Offer | **the whole `Note:` line** — **you compute and write it**, see step 5 |
 | **`AH`** | **Approved For Asana** | **the checkbox — this is the filter** |
 
 **Do not trust this table blindly — re-read row 4 every run.** It has drifted twice already: `AE`
@@ -64,11 +68,27 @@ read starting at row 4 is column A) before trusting any of the steps that follow
      this: it renders hyperlinks the same lossy way as the CSV, silently truncates before reaching
      rows deep in a 300+ row sheet, and can concatenate content from other tabs into the same
      response with no clear boundary — don't use it for anything beyond a quick sanity check.
-   - The workbook has two tabs — `Winning Products` and `🏆  WINNERS LIBRARY` — open the sheet by
-     name (`wb['Winning Products']`), not by index; sheet order isn't guaranteed.
+   - The workbook has three tabs — `Winning Products`, `Kalodata Winning Products` and
+     `🏆  WINNERS LIBRARY` — open the sheet by name (`wb['Winning Products']`), not by index; sheet
+     order isn't guaranteed.
    - There's no dedicated Google Sheets MCP connector to install — Google Drive is the first-party
      one, and this two-export approach is the reliable way to get everything out of it. Don't burn
      time re-searching the connector registry for one.
+
+**Writing back to the sheet** — the Google Sheets connector's `update_values` (range in A1 notation,
+e.g. `Winning Products!E534`) writes plain values and works from this session. Use it for the two
+cells this skill owns on each approved row: `E` (coined name) and `AG` (selling price / offer). Never
+write anything else into the sheet. When writing a contiguous range, pass `null` for every cell that
+must stay untouched (un-ticked rows, rows that already have a card from an earlier run) — nulls are
+skipped, empty strings would blank the cell.
+
+**Live competitor price** — step 5 needs the price on the competitor's page today, not the one the
+research run captured weeks ago. For a Shopify store (almost all of them), fetch
+`<product-url>.js` with curl and read `price` / `variants[].price` (integers in minor units, so
+`4499` is 44.99) and `variants[].title` (bundle tiers like `BUY 2 GET 1 FREE` show up here with
+their own price). The store currency is in the page HTML as `Shopify.currency = {"active":"GBP"…}`.
+Fall back to `WebFetch` on the page itself for non-Shopify stores, and to the sheet's `I`/`J` when
+neither gives a price — say so in the report when you fall back.
 
 **Asana** — project `1204544103564278` ("1A. Pinterest - DE "),
 <https://app.asana.com/1/1202393474006143/project/1204544103564278>, section `1204544103564283`
@@ -211,7 +231,40 @@ Put the name in the marketing angle sentence too, the way the reference task doe
 ("Restore cloudy, yellowed headlights … with BeamRestore™, a simple 4-step kit that …") — that is
 where the page builder picks it up.
 
-### 5. Create the tasks
+### 5. Price it and write the name and price into the sheet
+
+Two cells on each approved row belong to this skill, and both get written **every run** for every
+ticked row in the window — including rows that already have a card, so a price that moved on the
+competitor's page is picked up.
+
+**Column `E` (Product name)** — the coined name from step 4, exactly as the task is named
+(`PlateSnap™`).
+
+**Column `AG` (Selling price /Offer)** — the selling price, computed from the competitor's own page:
+
+1. Take the competitor's **current** price from their product page (`AB`) — the sale price if the
+   page shows one, in the store's currency. Read it live (see Sources); the sheet's `I`/`J` is the
+   fallback only.
+2. Convert it to EUR at today's ECB rate (`https://api.frankfurter.dev/v1/latest?base=EUR`).
+3. Subtract **1 €**.
+4. Round to the **nearest `xx.99`** — the `.99` immediately below or above, whichever is closer
+   (56.03 → 55.03 → `54.99`; 58.16 → 57.16 → `56.99`; 88.95 → 87.95 → `87.99`).
+5. **Follow the competitor's offer.** If their page sells a free-item bundle — "buy 1 get 1",
+   "1+1", "buy 2 get 1 free", "2+1", "3+2" — price **that bundle** with the same four steps and
+   write the offer as a prefix: `2+1: 25.99`. When the bundle tier has its own price on the page
+   (a `BUY 2 GET 1 FREE` variant), use that price; when the page only says "buy 2 get 1 free",
+   the bundle price is 2 × the single price. A plain quantity discount ("2 for 74.90", "10% off
+   the second one"), a sitewide sale banner or a discount code is **not** a free-item offer — write
+   the single price. No offer → the price alone: `38.99`.
+
+`price.py` next to this SKILL.md has the conversion and rounding (`python3 price.py 44.99:GBP "29.98:USD:2+1"`) (`sell_price`, `offer_string`); use it rather
+than rounding by hand. The same string goes on the task's `Note:` line (step 6) — the sheet cell and
+the card must read identically, so when a re-run changes `AG` on a row that already has a card,
+re-fetch the card's notes and rewrite its `Note:` line, keeping every other line the builder has
+edited. Say in the report which of those cards are already built (they carry a store URL), because a
+price change on a built product has to reach the store too.
+
+### 6. Create the tasks
 
 Name: **`<CoinedName>™`** — no `TEST - ` prefix.
 
@@ -241,9 +294,8 @@ Our Store URL:
 Three lines carry all the rules worth stating twice:
 
 - **`Note:`** holds **only** the `Selling price /Offer` cell (`AG`) — the offer and its price, e.g.
-  `1+1: 39.99` or `2+1: 30.00`. It no longer carries the competitor's price or the COGS. `AG` is
-  filled in by a colleague and is usually **still empty when you create the task**: leave the line
-  bare after `Note:` in that case. Never compute, estimate, or back-fill an offer yourself.
+  `2+1: 25.99` or `38.99`, computed in step 5 and written to the sheet in the same run. It never
+  carries the competitor's price or the COGS. The cell and the line must match exactly.
 - **`ad:`** is the WinningHunter link from `AA`
   (`https://app.winninghunter.com/ad/<id>?platform=facebook`), pasted whole, `?platform=` included.
 - **`ad library:`** is the link from `AC`, **only when it applies** — that is, only when it is a
@@ -261,7 +313,7 @@ competitor's own first line, so it tells you what is working. When it says `n/a 
 say so in the notes and tell the builder to read the landing page — an invented angle is worse
 than an admitted gap.
 
-### 6. Carry the warnings across
+### 7. Carry the warnings across
 
 The master log holds real risk signals and they are worth surfacing where the work happens. Put
 them on **one short line at the very end of the notes**, after `Our Store URL:`, prefixed
@@ -282,7 +334,9 @@ concern; read it.
 
 ## Report back
 
-Give a table of what was created — coined name, the sheet product it came from, competitor price,
-COGS, and a link to each task — then state the warnings you attached and why. The operator is
+Give a table of what was created — coined name, the sheet product it came from, the live competitor
+price you priced from, the selling price / offer you wrote to `AG`, COGS, and a link to each task —
+then state the warnings you attached and why. List separately any existing card whose `AG` and
+`Note:` changed this run, and flag the ones that are already built. The operator is
 deciding what to build next from this, so the risky ones and the thin-margin ones are the useful
 signal, not the count.
