@@ -994,6 +994,35 @@ was attempted.
   doesn't always mean there's a second discount layer beyond what the store already shows as the
   live price - check the actual price field before assuming you need to dig for a lower number.
 
+### Operator follow-up on rows 523-529: recompute (not just flag) + light yellow highlight (done 2026-10-08)
+After the formula-deviation audit above, the operator came back and asked to actually FIX the 7
+mismatched selling prices (superseding the earlier "leave as-is, just flag" choice) and to mark the
+corrected cells with a light yellow background so they're easy to spot. Recomputed all 7 to the
+strict formula value (floor the live EUR price, round down to the next-lower x.99) and overwrote
+the text-annotated cells with clean numbers:
+- 523 Swaveo Rose Box: 54.99 -> 55.99
+- 524 Venaro Cozy Set: 39.99 -> 33.99 (this removes the deliberate margin-protection override from
+  the previous audit - the operator's new instruction to "fix the mismatched selling prices" takes
+  priority over the earlier margin-override rationale, since they explicitly asked for all 7 to be
+  corrected together)
+- 525 Tulip Bracelet: 29.99 -> 27.99
+- 526 Alpensattel Saddle: 59.99 -> 68.99
+- 527 Mr Saker Trunks: 34.99 -> 33.99
+- 528 NOVA Bike Helmet: 89.99 -> 98.99
+- 529 Car Scratch Pen: 29.99 -> 24.99
+Applied a light yellow background (RGB 1.0/0.949/0.8, Google Sheets' own default light-yellow
+highlight) to AG523:AG529 via `spreadsheets.batchUpdate` `repeatCell` (sheetId 461357650 for the
+"Winning Products" tab), so the operator can see at a glance which rows had their price corrected
+and may want to double-check the live store/ad economics against the new number (several of these
+corrections raise the selling price meaningfully, e.g. Alpensattel 68.99 vs the previous 59.99 -
+worth a sanity check against real margin before testing).
+**Also added in the same request**: column E ("Product name" per its own header, left blank by
+every prior write to this sheet) now holds a duplicate of column D's product name for every single
+data row (4 through 542, 539 rows) - purely for search/filter convenience, no other column
+touched. Future batches that only fill D and leave E blank should have E backfilled the same way
+as part of routine housekeeping, since the operator has now established this as the expected
+state of the column.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
