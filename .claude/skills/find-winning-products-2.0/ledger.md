@@ -978,6 +978,22 @@ using a different AE format, like this batch's raw-product-ID style instead of t
 HYPERLINK) should spot-check at least one or two rows against the formula before treating the batch
 as settled, rather than assuming "non-blank = done."
 
+### AG backfill for rows 540-542, second batch of 2026-10-07 (done 2026-10-08)
+3-row batch, same date as rows 530-539 but a separate later write (rank restarts at 1st). AE/AF
+already filled by the sibling skill, AG missing - same shape as every recent batch. AG values:
+540=33.99, 541=39.99, 542=68.99. All three AE notes carry only minor "confirm this detail"
+caveats (cut, sole/upper, frame shape) - none rise to a form-factor mismatch, so no re-sourcing
+was attempted.
+- **542 (Murwal Soundglasses)** needed a genuine pricing check, not just a live-price refresh: the
+  note flagged "they run a permanent '70% off' code, so the real price paid is lower - check before
+  copying it." Checked the live `.js` endpoint directly: price=69.95, compare_at=233.17 - the 70%
+  off IS the price field itself, not a further discount on top of it. No separate code box or
+  auto-applied coupon exists; the one banner code on the page ("FAST24") is free-shipping only. So
+  EUR 69.95 already is the real checkout price - used it as-is, no hidden further discount to
+  apply. Worth remembering as a method note: "runs a permanent X% off" in a batch's own commentary
+  doesn't always mean there's a second discount layer beyond what the store already shows as the
+  live price - check the actual price field before assuming you need to dig for a lower number.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
