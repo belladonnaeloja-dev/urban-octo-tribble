@@ -1071,6 +1071,15 @@ card title:
 purposes, always check whether the cell might instead hold a plain string value - don't assume
 every row in a formula-heavy column uses the same cell type.
 
+### Follow-up: unticked rows must keep column E empty (done 2026-10-08)
+The operator pointed out that unticked (AH=FALSE) rows should have an EMPTY column E, not the
+duplicate-of-D placeholder from two entries ago. Column E means "this row's real Asana card
+title" specifically - a row with no card (not approved for Asana) has nothing to put there, so it
+should read blank rather than carry a value that looks like data but isn't.
+Cleared E for all 351 unticked rows; left the 188 ticked rows exactly as the previous entry set
+them (170 real card titles, 18 still showing the old placeholder pending further matching work).
+Verified counts before writing: 188 kept + 351 cleared = 539, matching the full data range exactly.
+
 ### AE/AF/AG backfill for rows 488-492, including a mechanism-ambiguity resolution (done 2026-09-28)
 5-row sibling-skill batch, dated 2026-09-27. 2 rows already had suppliers (489, 492, AG only
 needed); 3 needed real work, one of which was a genuinely different kind of gap:
