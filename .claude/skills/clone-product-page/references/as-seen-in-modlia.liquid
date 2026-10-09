@@ -1,0 +1,32 @@
+<div class="pb-aso-wrap">
+  <p class="pb-aso-label">Vu dans</p>
+  <div class="pb-aso-track-wrapper">
+    <div class="pb-aso-track">
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-tf1">TF1</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-cond">M6</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-serif">ELLE</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-serif">Marie Claire</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-cond">Femme Actuelle</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-tf1">TF1</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-cond">M6</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-serif">ELLE</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-serif">Marie Claire</span></div>
+      <div class="pb-aso-item"><span class="pb-aso-logo pb-aso-cond">Femme Actuelle</span></div>
+    </div>
+  </div>
+</div>
+<style>
+.pb-aso-wrap{text-align:center;padding:22px 0;border-top:1px solid #e6e4dd;border-bottom:1px solid #e6e4dd;background:#fff;overflow:hidden}
+.pb-aso-label{font-size:11px!important;letter-spacing:.18em;color:#6b7078!important;text-transform:uppercase;margin:0 0 16px!important}
+.pb-aso-track-wrapper{overflow:hidden;width:100%}
+.pb-aso-track{display:flex;width:max-content;animation:pb-aso-marquee 22s linear infinite}
+.pb-aso-track:hover{animation-play-state:paused}
+.pb-aso-item{display:flex;align-items:center;padding:0 34px}
+.pb-aso-logo{color:#8a9098!important;filter:grayscale(1);white-space:nowrap;line-height:1;font-size:23px}
+.pb-aso-serif{font-family:Georgia,"Times New Roman",serif;font-weight:700;letter-spacing:.04em}
+.pb-aso-cond{font-family:Arial,Helvetica,sans-serif;font-weight:800;font-size:21px;letter-spacing:.02em}
+.pb-aso-tf1{font-family:Arial,Helvetica,sans-serif;font-weight:900;letter-spacing:.06em;background:#8a9098;color:#fff!important;padding:3px 9px;border-radius:3px;font-size:19px}
+@keyframes pb-aso-marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@media(max-width:600px){.pb-aso-item{padding:0 22px}.pb-aso-logo{font-size:19px}.pb-aso-cond{font-size:18px}.pb-aso-tf1{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.pb-aso-track{animation:none;flex-wrap:wrap;justify-content:center}}
+</style>
