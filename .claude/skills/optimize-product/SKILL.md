@@ -2615,3 +2615,22 @@ you earned "done".
   legacy pill; the snippet palette and the image palette are allowed to differ,
   the image set is not. A legacy pill is recoloured in place by luminance-scaling
   the brand colour over the pixels whose green channel leads by 25.
+  (10) "Check if there are new additions on the live theme and add them to the
+  draft" (asked two days after the run) found that MAIN had changed IDENTITY, not
+  only content: the operator had duplicated the old live theme, fixed one snippet
+  (custom-code.liquid, a sticky ATC fix) and published the copy, and PagePilot then
+  wrote 12 new product templates to that copy. A `theme.updatedAt` check on the OLD
+  live id proves nothing here; compare `themes(roles:[MAIN]).id` with the id the
+  draft was duplicated from first. When they differ, do not port file by file:
+  (a) diff every group by name + checksum anyway, to know what changed and to
+  confirm the live copies of your templates are still the pre-run originals and
+  live carries none of your snippets; (b) count the themes; with a free slot,
+  `themeDuplicate` the CURRENT live theme and layer only your delta (templates +
+  snippets, local md5s already proven equal to the old draft), 30 staged URL
+  bodies in one `stagedUploadsCreate` (the result lands in a saved file; parse it,
+  never retype signatures) and three upserts; (c) verify all 30 checksums plus the
+  live-only files on the new draft, render both pages with the preview cookie, and
+  hand over ONE theme id, naming the superseded drafts for deletion since the
+  store is then at the 20-theme cap. `files(first:250, filenames:[...])` with
+  prefix patterns ("templates/product.pagepilot-*", "templates/product.pagepilot.*",
+  "templates/4*" ... "templates/s*") pages a 550-template theme in three calls.
