@@ -2681,3 +2681,13 @@ you earned "done".
   (8) Review-grid images on PagePilot are masonry: on mobile only some cards
   show their photo. That is the theme, not a broken upload; check
   `naturalWidth` of every `.sb-ugc-img` and the six review images instead.
+  (9) The Definition-of-Done pass earns its keep even on a page that passed its
+  own build assertions: it caught a buy-box trust icon saying "8 000 clients"
+  next to a footer saying "10 000", and objection answers running 5 to 7 lines
+  at 375 px. Keep objection answers under ~170 characters and comparison notes
+  under ~175, and compare every customer count on the page against the footer's
+  number. The storefront serves theme images from `<shop-domain>/cdn/shop/files/`,
+  not only `cdn.shopify.com`; an image sweep that matches only the latter finds
+  three images instead of forty-seven. After every late upsert, re-query
+  `theme.files` for size and checksumMd5 before reporting done, since
+  themeFilesUpsert returns an empty body on success and on a silent no-op alike.
