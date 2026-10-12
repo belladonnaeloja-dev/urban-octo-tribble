@@ -5,8 +5,9 @@ description: >-
   acting as a senior CRO specialist. Four parts: (0) RESEARCH the product on
   Amazon (most-asked questions, negative-review themes, review photos) plus
   dropshipping competitors (pricing, angles), Pinterest virality, and the store's
-  winning video ad when provided (Higgsfield video analysis derives the ranked
-  benefit priority that orders the whole page); (1) rebuild
+  winning ads, which the skill always asks the operator to add before starting
+  (Higgsfield video analysis derives the ranked benefit priority that orders the
+  whole page); (1) rebuild
   the DESCRIPTION in the store's native language (hero, USPs, social proof,
   problem/solution, how-it-works, mandatory comparison table, reviews, Amazon-
   backed FAQ, objection-refutation, customer review photos, Pinterest-viral low-
@@ -76,10 +77,19 @@ generalise it away, and do not drop it because this product seems different.
   confirm if unsure. Never mix languages (copy AND image text both in-language).
 - **scope** — default all three phases. Can run any subset (e.g. "description
   only", "just add the 3 images").
-- **winning ad (optional but ask for it)** — if the store has a winning video ad
-  for this product, ask the human for the file/link and analyze it BEFORE writing
-  copy (see "Winning-ad analysis" in Phase 0). The ad's benefit hierarchy then
-  dictates the order of USPs, benefit sections, and gallery images.
+- **winning ads (REQUIRED ASK, blocking)** — before any research, copy or image
+  work, ask the operator to add the winning ads for this product (video files or
+  links, one or several) and WAIT for the answer. Operator instruction, stated
+  verbatim after the SnapBlocks run: *"for future runs. Please ask me to add the
+  winning ads of the product before optimizing"*. The ask is mandatory on every
+  run, even when the invocation names only the product, even when the operator
+  seems in a hurry, and even on a re-invocation that turns out to be a
+  Definition-of-Done pass (ask once per product, not once per session). Phase 0
+  does not start until the operator has either attached the ads or explicitly
+  said there are none for this product. Analyze every ad provided (see
+  "Winning-ad analysis" in Phase 0); the ads' benefit hierarchy dictates the
+  order of USPs, benefit sections and gallery images. Only an explicit "no ads"
+  answer unlocks the research-only ordering.
 
 ## Global rules
 
@@ -536,8 +546,17 @@ the delivery target changes from the product record to the theme template.
 
 ## Phase 0 — Research (do this FIRST; it feeds the copy)
 
-Spin up research (subagents are ideal, run in parallel) and let the findings
-drive Phase 1. Cover:
+**Step 0, before anything else: ask for the winning ads and stop.** Your first
+message of the run, after confirming the product and store, is a request to the
+operator to add the winning ads for this product (video files or links; use
+`AskUserQuestion` where it exists, otherwise ask in plain text and end the turn).
+Do not open Amazon, do not spawn a research agent, do not touch the theme until
+the ads are in hand or the operator has said there are none. A run that starts
+researching while "optionally" asking for the ad ends up ordering the whole page
+from research alone, and that is exactly what the operator asked us to stop doing.
+
+Once the ads are in, spin up research (subagents are ideal, run in parallel) and
+let the findings drive Phase 1. Cover:
 
 - **Amazon most-asked questions.** Find the product (or its generic equivalent)
   on Amazon and pull the 6-8 questions buyers ask most (Q&A section + review
@@ -563,9 +582,11 @@ drive Phase 1. Cover:
 - **Pinterest / scarcity — no research needed.** ALWAYS include the "viral op
   Pinterest, dus beperkte voorraad" section as a standard social-proof + scarcity
   device. Do not spend research effort confirming it.
-- **Winning-ad analysis (when the human provides a winning video ad).** This is the
-  strongest signal available, it outranks all other research for deciding benefit
-  ORDER. Pipeline: upload the local mp4 to Higgsfield via `media_upload` (presigned
+- **Winning-ad analysis (every ad the operator added at the start of the run).**
+  You asked for the ads before Phase 0 (see Inputs); analyze each one, and when
+  several were added, merge their rankings (an angle that leads in two ads outranks
+  one that leads in one). This is the strongest signal available, it outranks all
+  other research for deciding benefit ORDER. Pipeline: upload the local mp4 to Higgsfield via `media_upload` (presigned
   URL, then `curl -X PUT --data-binary @file`, then `media_confirm` with
   type "video"), run `video_analysis_create` (poll `video_analysis_status`) for a
   scene-by-scene breakdown, and `virality_predictor` (poll `job_display`) for
