@@ -2634,3 +2634,50 @@ you earned "done".
   store is then at the 20-theme cap. `files(first:250, filenames:[...])` with
   prefix patterns ("templates/product.pagepilot-*", "templates/product.pagepilot.*",
   "templates/4*" ... "templates/s*") pages a 550-template theme in three calls.
+- **Learnings from SnapBlocks / Modlia (2026-10-12, kids waffle building blocks, French).**
+  (1) A fresh cloud container wipes the scratchpad AND leaves the local branch
+  behind the remote; `git reset --hard` is refused by the auto-mode classifier, so
+  recover the skill with `git merge origin/<branch>` and rebuild every artifact
+  from Shopify (the MAIN template via `theme.files`, the previous run's snippets by
+  prefix) instead of looking for local copies. The cv-*/ll-* snippets on MAIN are
+  the fastest structural template for the next prefix: copy the CSS, swap prefix,
+  palette and copy.
+  (2) The staged-upload result for 15-25 files does NOT always get saved to a
+  file; when it lands in context, write ONE `targets.txt` of
+  `filename|bulk-uuid|signature|policy` and loop curl over it, and do it ONLY for
+  theme files. For images skip staged uploads entirely: `fileCreate` and
+  `productCreateMedia` accept the Higgsfield cloudfront PNG URL as
+  `originalSource`, with `filename` set to the name your snippets reference
+  (`sb-ugc-1.png`, so reference .png in `file_url`, not .webp). That removed 24
+  staged uploads from the run.
+  (3) `fileUpdate(files:[{id, originalSource}])` swapped the supplier size-guide
+  tile in place (en dash -> comma) with the gallery slot and filename untouched;
+  prefer it to delete-and-reappend for any tile the live template references.
+  (4) Pexels portraits from the same photographer series are the SAME model:
+  8613119 and 8613089 (Yan Krukau) produced an authority and a review avatar with
+  one face, both named Camille. Ground each human on a different photographer's
+  photo and check faces side by side before upload.
+  (5) The Phase 0 researcher is worth its 90 tool calls: it found the DGCCRF /
+  Autorite de la concurrence position that "sans BPA" and "non toxique" are
+  misleading on toys (BPA is already capped in toys under 36 months, CLP art.
+  25(4) bans "non toxique"), that "Montessori certifie" is a false claim while
+  "Montessori" alone is a free word, that the French 36-month warning is
+  mandatory on the page, and that 32,99 EUR for 48 pieces (0,69 EUR/piece) only
+  defends against Duplo (0,59), Playmags (0,60) and Magna-Tiles (0,84+), never
+  LEGO Classic (0,06). The comparison table therefore targets magnetic tiles, the
+  48 tier is positioned as a starter and the 100 tier as "le plus choisi". Price
+  the consequence with sourced French numbers: 1 h 22 of screen time per day at
+  3-5 (Sante publique France), 36,90 EUR/month activity box, 10,21 EUR/h
+  babysitting.
+  (6) The build script's dash/percentage/claim scan must strip `<style>` blocks
+  and HTML tags first, or `width:100%`, `offset="0%"` and `translateX(-50%)`
+  fail it; keep the 50 % offer badge on an allow-list.
+  (7) Before the first upload, measure paragraphs at 375 px: three problem cards
+  and the benefit-grid subtitle came back at 5 lines and had to be cut to 140
+  characters; USP bullets must be under ~42 characters to stay on one line at
+  16 px in the buy box. A centered dark CTA card needs `display:table;margin:0
+  auto` on its tick list, `inline-block` leaves it hugging the left edge next to
+  the button.
+  (8) Review-grid images on PagePilot are masonry: on mobile only some cards
+  show their photo. That is the theme, not a broken upload; check
+  `naturalWidth` of every `.sb-ugc-img` and the six review images instead.
