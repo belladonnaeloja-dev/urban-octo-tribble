@@ -23,6 +23,20 @@ If a colleague runs this skill against a different workspace/store, re-derive th
 (search Asana for the project/task by name, confirm the shop with `get-shop-info`) rather than
 reusing the values above blind.
 
+## Permanently excluded products
+
+These normalized keys (Step 3 normalization) must **never** be inserted by Mode A, no matter
+their rank or how many times they turn up in the top 100 — skip them in the missing-products
+check as if they matched an existing entry:
+
+- `joinerytool` (JoineryTool™) — deliberately removed from the list by the team; do not re-add.
+- `shapewear` (Shapewear) — explicitly flagged by the user: never add/re-add this one, even if it
+  shows up in the top 100 again (e.g. if the existing "Shapewear" entry is later struck through
+  or deleted).
+
+Add to this list whenever the user says not to (re-)add a specific product — don't wait to be
+asked again on a future run.
+
 ## Step 1 — Pull the top 100 by items sold (last 30 days)
 
 Run, via `run-analytics-query`:
@@ -86,7 +100,8 @@ Run this when the user asks to sync/update/refresh the list against current sale
 
 A top-100 product is "on the list" if its normalized key (Step 3) matches any normalized existing
 entry, strikethrough or not — don't re-add something just because it's already been struck
-through.
+through. Also skip anything whose normalized key is in **Permanently excluded products** above,
+regardless of its current presence or rank.
 
 **Insert every top-100 product that has no match anywhere in the list**, at the strikethrough
 boundary: immediately after the last strikethrough entry and before the first normal-text entry.
