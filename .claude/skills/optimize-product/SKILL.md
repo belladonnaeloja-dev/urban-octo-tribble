@@ -2712,3 +2712,20 @@ you earned "done".
   three images instead of forty-seven. After every late upsert, re-query
   `theme.files` for size and checksumMd5 before reporting done, since
   themeFilesUpsert returns an empty body on success and on a silent no-op alike.
+  (10) Winning-ad pass, SnapBlocks (2026-10-13). The ad arrived after the page
+  was built, which is exactly what the blocking ask in Inputs now prevents.
+  What the analysis needed: the Higgsfield scene analysis took 31 minutes, not
+  3 to 5, so start it first and read the frames yourself meanwhile (ffmpeg at
+  1 fps and 4 fps into a contact sheet, then one Read of the sheet). A music-only
+  ad gives an empty transcript (ElevenLabs Scribe, language probability 0.12);
+  the angle then lives entirely in shot order and dwell time, so tabulate seconds
+  per theme and rank by that. The virality dashboard is a 3D viewer; its per
+  second activity array and hook_score / sustain fields are readable from the
+  HTML with a regex, no browser needed. When the ad's angle differs from the
+  research angle (here "builds a real house alone" vs "screen-time relief"), the
+  re-rank touches more than copy: the hero image's BAKED headline, the gallery
+  slot after the hero, the benefit images and the featured review all carried the
+  old angle and had to move. Grep the rendered page for the old angle's key words
+  afterwards. When Higgsfield reports "Out of credits", the ElevenLabs creative
+  tools (creative_attach_reference_file + creative_edit_image with
+  gpt-image-2.5-sunburst) edit an existing tile in place from a public URL.
