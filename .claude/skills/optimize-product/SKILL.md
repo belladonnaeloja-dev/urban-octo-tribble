@@ -2747,3 +2747,26 @@ you earned "done".
   store that publishes several PagePilot pages a day, the drift returns within
   hours. Also note the Shopify connector can silently re-point to another store
   between sessions; read `get-shop-info` before touching any theme id.
+  (12) PistonPlay, Modlia (2026-10-14): when both image providers run dry mid-run
+  (Higgsfield at 0 credits, ElevenLabs free tier caps daily image generations and
+  returns `free_tier_image_limit_reached` after a handful), the winning ad itself
+  is the best fallback. Extract full-resolution frames with ffmpeg at 0.4 to 0.6 s
+  steps across the product-footage part of the ad, pick one frame per distinct
+  scene, and build the tiles as Pillow composites (square crops, white caption
+  band, SOIR 1 / SOIR 2 splits, three-step diagram, Vu dans band, offer panel).
+  Real footage of the operator's own unit beats a render for honesty, and the
+  "no photo used twice" rule is kept by mapping each frame timestamp to exactly
+  one slot before composing. Leave the fully prompted generation nodes on the
+  ElevenLabs flow and hand the flow id over, so the operator can run them later.
+  Two mechanics worth keeping: a hue-shift recolour (HSV red hue, S > 90, V > 40,
+  V * 0.3) of a studio-background render gives a credible black variant, but
+  fails on wood or warm backgrounds; and Shopify staged-upload POST policies can
+  be rebuilt locally from the key, date and expiry (identical JSON, slashes
+  escaped), so only the uuid and signature per file need transcribing from the
+  mutation result. Also: the research memo found the live 35,99 EUR SKU might be
+  a static resin ornament while the ad shows a running electric unit; write the
+  copy to the ad's product, state every hard spec once (specs row + FAQ), and put
+  a per-SKU confirmation list at the top of the hand-off instead of blocking.
+  Check `themes.role` right before writing: the SnapBlocks draft had been
+  published as MAIN between runs, so the PistonPlay draft had to be a fresh
+  duplicate of the new MAIN.
