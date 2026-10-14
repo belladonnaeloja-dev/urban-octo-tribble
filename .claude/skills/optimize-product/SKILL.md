@@ -2729,3 +2729,21 @@ you earned "done".
   afterwards. When Higgsfield reports "Out of credits", the ElevenLabs creative
   tools (creative_attach_reference_file + creative_edit_image with
   gpt-image-2.5-sunburst) edit an existing tile in place from a public URL.
+  (11) Sync check before publish, SnapBlocks (2026-10-14). Two days after the
+  duplicate, the live theme had gained 10 PagePilot product templates (one per
+  page the operator published in PagePilot, 175 to 182 KB each, all assigned to
+  live products). Publishing the draft would have dropped those 10 pages to the
+  default template. Check `theme.updatedAt` on MAIN against the draft's
+  createdAt first; if it moved, list both themes' files (filename, checksumMd5,
+  updatedAt; 250 per page, about 1 300 files on this store) and diff. Shopify
+  has no cross-theme copy (`themeFilesCopy` is same-theme only), and a 180 KB
+  template is too big to round-trip through the GraphQL body, so the fix is the
+  rebase recipe: `themeDuplicate` MAIN again and re-apply only your own files
+  from disk (15 files, one staged-upload batch, one upsert), then verify
+  checksums and the rendered page on the NEW theme id. Name the new theme with
+  "(rebased)", point every verify script at the new id, and tell the operator
+  to delete the stale draft, since the MCP cannot delete themes and the store
+  sits at the 20-theme limit. Rebase as close to publish time as possible: on a
+  store that publishes several PagePilot pages a day, the drift returns within
+  hours. Also note the Shopify connector can silently re-point to another store
+  between sessions; read `get-shop-info` before touching any theme id.
