@@ -6,8 +6,9 @@ description: >-
   Amazon (most-asked questions, negative-review themes, review photos) plus
   dropshipping competitors (pricing, angles), Pinterest virality, and the store's
   winning ads, which the skill always asks the operator to add before starting
-  (Higgsfield video analysis derives the ranked benefit priority that orders the
-  whole page); (1) rebuild
+  (the ads' main marketing angle becomes the page's main angle, and Higgsfield
+  video analysis derives the ranked benefit priority that orders the whole
+  page); (1) rebuild
   the DESCRIPTION in the store's native language (hero, USPs, social proof,
   problem/solution, how-it-works, mandatory comparison table, reviews, Amazon-
   backed FAQ, objection-refutation, customer review photos, Pinterest-viral low-
@@ -87,9 +88,11 @@ generalise it away, and do not drop it because this product seems different.
   Definition-of-Done pass (ask once per product, not once per session). Phase 0
   does not start until the operator has either attached the ads or explicitly
   said there are none for this product. Analyze every ad provided (see
-  "Winning-ad analysis" in Phase 0); the ads' benefit hierarchy dictates the
-  order of USPs, benefit sections and gallery images. Only an explicit "no ads"
-  answer unlocks the research-only ordering.
+  "Winning-ad analysis" in Phase 0); the ads' MAIN MARKETING ANGLE becomes the
+  page's main angle (see the global rule "The winning ad's angle IS the page's
+  angle") and the ads' benefit hierarchy dictates the order of USPs, benefit
+  sections and gallery images. Only an explicit "no ads" answer unlocks the
+  research-only angle and ordering.
 
 ## Global rules
 
@@ -128,6 +131,39 @@ generalise it away, and do not drop it because this product seems different.
     should usually be product vs THE EXPENSIVE HUMAN OPTION (roofer, plumber,
     detailer, salon), not product vs a generic rival, when the winning ad's money
     angle is "do it yourself instead of paying someone".
+- **THE WINNING AD'S ANGLE IS THE PAGE'S ANGLE.** Operator instruction, stated
+  verbatim on the SnapBlocks run: *"analyze this winning ad and define what is
+  the main marketing angle. Use that as the main focus of the optimized product
+  page"*, then made a standing rule for every run (*"update the skill to make it
+  use the marketing angle of the winning ads"*). The ad already proved which
+  promise makes this product's buyers click; the page's job is to keep that
+  promise, not to invent a better one from research. So, once the ads are
+  analyzed, write ONE sentence that names the main angle in the customer's
+  words (SnapBlocks: "Sa première vraie maison, construite tout seul dès 3
+  ans"; PistonPlay: "Montez-le, lancez-le, et entendez un moteur tourner sur
+  votre bureau"), put it in the ad-analysis file, and then make it the spine of
+  the page:
+  - the product TITLE's benefit clause, the hero's baked headline, USP bullet 1,
+    the problem section's headline, benefit block 1, the featured review, the
+    stat block's first line, the CTA and closing headlines and the Pinterest bar
+    all state or echo that same angle;
+  - the ad's ranked benefits (what it leads with, dwells on, peaks on) give the
+    order of the remaining USPs, benefit blocks and gallery tiles; research
+    angles come AFTER the ad's, never before, even when research looks richer;
+  - the gallery slot right after the hero shows the ad's payoff moment (the
+    house standing, the engine running), and the UGC captions and reviews use
+    the ad's scene vocabulary;
+  - keep the ad's money/time framing too: if the ad sells "do it yourself
+    instead of paying someone", the comparison column is the paid human option.
+  Honesty still wins over the ad: when the ad shows something the shipped
+  product does not do (PistonPlay's B-roll was a petrol engine), keep the
+  angle's emotion (the start, the sound) and drop the false feature, then say so
+  in the hand-off. When several ads were added, the angle that leads in the
+  most ads wins and the others become secondary benefits. When the operator
+  explicitly says there are no ads, derive the angle from research and label it
+  as such in the report. Before reporting done, grep the RENDERED page: the
+  angle's key words must appear in the title, the first H2 and the closing H2,
+  and no heading may still carry the pre-ad angle.
 - **A heading or subhead must be DELIVERED by the content under it.** An operator
   flagged an objection section headed *"Why ours and not the cheap ones?"* with the
   subhead *"We read the bad reviews on the budget rods. Here is what we did about
@@ -590,11 +626,17 @@ let the findings drive Phase 1. Cover:
   URL, then `curl -X PUT --data-binary @file`, then `media_confirm` with
   type "video"), run `video_analysis_create` (poll `video_analysis_status`) for a
   scene-by-scene breakdown, and `virality_predictor` (poll `job_display`) for
-  hook/sustain/engagement scores. From the scenes, extract a RANKED top-5 benefit
-  list (what the ad leads with, what it dwells on, what its emotional peak sells).
-  That ranking then dictates: the order of the hero USP bullets, the order and
-  count of the benefit sections, and the gallery image order (each top benefit gets
-  its matching graphic as early as possible). Also mine the ad for angles (e.g. two
+  hook/sustain/engagement scores. From the scenes, write the ad-analysis file with
+  four things, in this order: (a) a shot-by-shot table (time, what is shown, what
+  it sells, dwell time); (b) ONE sentence naming the MAIN MARKETING ANGLE in the
+  buyer's words, which becomes the page's angle (global rule "The winning ad's
+  angle IS the page's angle"); (c) a RANKED top-5 benefit list (what the ad leads
+  with, what it dwells on, what its emotional peak sells); (d) honesty flags: any
+  shot that shows a feature the shipped product does not have. The angle sentence
+  drives the title, hero, USP 1, problem headline, first benefit block, featured
+  review, CTA and closing; the ranking then dictates the order of the remaining
+  USP bullets, the order and count of the benefit sections, and the gallery image
+  order (each top benefit gets its matching graphic as early as possible). Also mine the ad for angles (e.g. two
   floats on screen = seed the multibuy tier) and report the creative findings
   (hook strength, where engagement peaks) to the human as ad-iteration advice.
   Decode the ad filename too, operators often encode cost/BER numbers in it.
@@ -1777,6 +1819,7 @@ the reason. Never delete a line to make the list pass.
 ## A. Page sections (read the RENDERED page, not your HTML)
 [ ] A1  trust bar
 [ ] A2  benefit-led hero + USP bullets, ordered by winning-ad/research priority
+[ ] A2b title, first H2, featured review, CTA and closing H2 all carry the winning ad's main angle (grep the rendered page for its key words; no heading left on the pre-ad angle)
 [ ] A3  featured review
 [ ] A4  "as seen in" marquee, logos localized to the STORE country
 [ ] A5  Pinterest-viral / low-stock
