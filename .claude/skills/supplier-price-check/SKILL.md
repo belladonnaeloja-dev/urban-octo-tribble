@@ -108,15 +108,26 @@ Keep the source order (sheet row order) when appending; do not sort the user's t
 
 ## Step 5 — Log every decision in `Run log`
 
-Append one row per candidate from Step 3 (including the skipped ones) to the `Run log` tab:
+Append one row per variant of every product that is **new this run** (not already known per
+Step 3), whether it was added or skipped, to the `Run log` tab:
 
 | Run date | Name in store | Variant | Service Point | Other supplier | Difference | Action |
 |---|---|---|---|---|---|---|
 
-`Action` is one of `added`, `skipped: negative difference`, `skipped: difference under 1 EUR`,
-`skipped: already on sheet`, `skipped: logged before`. Logging the skipped ones is what keeps the
+`Action` is one of `added`, `skipped: negative difference`, `skipped: difference under 1 EUR`.
+Rows written by hand or by earlier clean-ups may also read `removed: negative difference` or
+`removed: difference under 1 EUR`; treat any row in the log as "known", whatever its action.
+
+Do not log variants of products that were already known: about 100 of them qualify every week,
+and logging them would bury the useful rows. Logging the skipped new ones is what keeps the
 weekly runs honest: the user can see why something did not appear, and the log doubles as the
-memory that stops deleted products from coming back.
+memory that stops deleted or rejected products from coming back. A product skipped once (for
+example because Service Point was cheaper) stays skipped in later weeks even if its prices move;
+the user can delete its log rows to have it reconsidered.
+
+Both tab reads in Step 3 can come back inline rather than as a file. Work from the inline text
+directly, or match the source products against the known names by brand (the word before `™`)
+and then confirm the full names, rather than re-typing the whole log into a file.
 
 ## Step 6 — Report
 
