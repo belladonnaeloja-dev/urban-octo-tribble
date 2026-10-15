@@ -889,6 +889,21 @@ never the product, it is that the photo is too well composed. A UGC photo that
 looks like a photographer took it has already failed. Bake ALL of this into every
 UGC prompt:
 
+- **SHOT ON A PHONE, PREFERABLY AS A SELFIE OR GROUP SELFIE. Operator standing
+  rule (PistonPlay, 2026-10-15): *"Moving forward for ugc and feedback review
+  photos it's a lot better to make the photo to be taken from a mobile phone."*
+  Open every UGC and review-photo prompt with the camera, before the scene:
+  "front-camera smartphone selfie, arm's length, slight wide-angle stretch,
+  phone grain, flat ambient exposure" for people shots (one arm out of frame
+  holding the phone, the other hand holding the product up toward the lens,
+  faces cheek to cheek for a group selfie), or "rear-camera phone snapshot
+  taken one-handed from standing height" for product-only shots. A third-person
+  eye-level composition with a shallow depth of field is a photographer's
+  photo, and the operator rejected three of them in one run (a father and
+  daughter at a table, a birthday dinner, an office desk) as "not realistic"
+  even though the scene and the clutter were right. The selfie also solves the
+  product-size problem by itself: a product held up toward a phone lens is
+  large in frame, so the 12 cm engine stopped looking like a 4 cm toy.
 - **Messy real environment, named explicitly.** Not "a home" but a specific
   lived-in scene with clutter you list by name: cluttered bathroom counter with
   toothbrush cup and shampoo bottles, unmade bed with a folded jumper and a
@@ -2840,3 +2855,17 @@ you earned "done".
   identical through the same `image_references` crop on every call. Also check
   `get-shop-info` on every reconnect: the connector moved to Nestilia overnight
   without any action on this side.
+  (14) PistonPlay v2 follow-ups (2026-10-15): three photo corrections in a row,
+  all on realism rather than content. (a) A review photo of a 60th birthday
+  shot at eye level from across the table looked staged; the replacement that
+  passed was an old man caught mid-unwrap, glasses pushed up, torn ribbon paper
+  on the table, blurred family shoulder in the foreground. (b) Two UGC tiles and
+  the hand-scale gallery tile showed the engine too small; re-render with an
+  explicit size cue in the prompt ("about 12 cm, as long as the smartphone next
+  to it, fills half the frame width") and a foreground placement. (c) The
+  father-and-daughter UGC shot was only accepted once redone as an arm's-length
+  front-camera selfie (rule above). All three swaps went through `fileUpdate`
+  on the existing shop-file ids, so the template, the captions and the preview
+  link never changed. The operator also removed the hand-scale gallery tile
+  afterwards: when the size is already stated in the FAQ, specs and comparison,
+  a scale tile is optional, not a required slot.
