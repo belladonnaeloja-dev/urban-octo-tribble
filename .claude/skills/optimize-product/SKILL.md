@@ -2813,3 +2813,30 @@ you earned "done".
   Check `themes.role` right before writing: the SnapBlocks draft had been
   published as MAIN between runs, so the PistonPlay draft had to be a fresh
   duplicate of the new MAIN.
+  (13) PistonPlay v2, Modlia (2026-10-15): the operator scrapped run 1 and asked
+  for a restart with one instruction, "use the marketing angle from the winning
+  ad". Run 1 had kept the ad's benefits but led with a desk-piece framing ("le V8
+  qui démarre sur votre bureau") because the best-selling SKU was pre-assembled;
+  the ad's own three verbs (assemble, start, hear the engine sound) had been
+  demoted to benefit 2. Lesson: when the ad sells an experience (build it, start
+  it) and the price list leads with the shortcut version (pre-assembled), the
+  page still leads with the ad's experience and positions the shortcut as "the
+  same moment, the evening it arrives"; never let the variant order rewrite the
+  angle. Before the restart, ask two closed questions and nothing else: what must
+  change versus run 1, and which product facts the page may claim (the operator
+  confirmed motor + sound on every SKU in one click, which run 1 had hedged for a
+  day). Reverting a scrapped run is cheap when the pre-run state was recorded:
+  original title, option values, media ids and CDN urls restore in four
+  mutations (8 of 9 old images were still on the CDN, the ninth came from the
+  local copy); only shop files cannot be deleted through the connector
+  (`fileDelete` needs write_files), so list them for the operator. On the
+  rebuild, public render URLs (Higgsfield cloudfront, ElevenLabs signed URLs
+  valid 2 h) go straight into `fileCreate` / `productCreateMedia` as
+  `originalSource`, which removes the whole staged-upload transcription for
+  images; only theme text files still need staging. For "no two photos show the
+  same person", alternate generators per people shot (gpt_image_2_5 for
+  product and text tiles, nano_banana_2 and seedream_v4_5 for people) and give
+  every prompt its own age, hair, clothing, setting and pose; the product stays
+  identical through the same `image_references` crop on every call. Also check
+  `get-shop-info` on every reconnect: the connector moved to Nestilia overnight
+  without any action on this side.
