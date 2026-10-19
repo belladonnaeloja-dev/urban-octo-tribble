@@ -2869,3 +2869,33 @@ you earned "done".
   link never changed. The operator also removed the hand-scale gallery tile
   afterwards: when the size is already stated in the FAQ, specs and comparison,
   a scale tile is optional, not a required slot.
+- **Learnings from Clip'nBun / Modlia (2026-10-19, synthetic claw-clip bun, 15 shades, no ads).**
+  (1) With "no ads", the angle comes from the research agent's ranking of competitor ads by
+  reach plus the dominant 5-star reviewer profile: speed ("en quelques secondes") led on
+  Meta reach, fine hair led in reviews, so the page angle combined both in one customer
+  sentence. Say in the report that the angle is research-derived.
+  (2) Hairpieces: the category's 1-3 star themes are colour mismatch (about 40 %),
+  "smaller and flatter than the photo", slipping, doll-like shine and shedding. Answer each
+  in the objection block and FAQ: nuancier plus "between two shades, take the lighter",
+  12 to 15 cm with the curls fluffed, an elastic-tied ponytail under the claw, dry shampoo
+  for shine. Never write cheveux naturels/humains, indétectable, hypoallergénique,
+  "convient aux cheveux courts" or a heat limit above the lowest listing (120 °C).
+  (3) Check the shade chart's labels against the variant option names. Here the chart said
+  "Brun clair / Brun-blond" while the picker said "Châtain clair / Mélange châtain-blond",
+  on a product whose number-one complaint is colour mismatch. Retype the chart labels with
+  Pillow (Inter SemiBold, letter-spaced, auto-fit to the card) and trim the option values
+  to the same words.
+  (4) Rebrand a flat-cream infographic without halos: replace the background with an
+  ADDITIVE shift (out = gradient + (pixel - bg)) everywhere outside the card rectangles,
+  and keep the card interiors untouched. A distance threshold leaves glow halos around
+  every card and visible patches where you painted over text.
+  (5) Per-shade references: crop the product half of each shade tile (blond, auburn,
+  black, grey) plus the cleanest cutout, upload them once, and pass the matching one on
+  every render of that shade. For a back-of-head product the realistic phone shots are a
+  mirror selfie with the head turned, a partner's snapshot from behind, or a car-seat shot;
+  a front selfie hides the product. Reject renders where the bun turns into a smooth
+  twist with the claw on top, and any low neckline.
+  (6) A supplier tile can carry a stale price ("19,99 €" while the product sells at
+  26,99 €) or a competitor watermark ("ByCheri."). A one-change gpt_image_2_5 edit with the
+  tile as reference, then fileUpdate on the same id, fixes both in place, including the
+  live section that references the tile.
