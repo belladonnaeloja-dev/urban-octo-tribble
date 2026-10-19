@@ -2899,3 +2899,20 @@ you earned "done".
   26,99 €) or a competitor watermark ("ByCheri."). A one-change gpt_image_2_5 edit with the
   tile as reference, then fileUpdate on the same id, fixes both in place, including the
   live section that references the tile.
+  (7) Operator correction after delivery, verbatim: *"photos of the products are wrong please
+  refer to the attached photos"*. The operator's own photos showed a LONG NARROW comb-style
+  claw (about 10 cm, straight spine, many short teeth) under a LOOSE, oval bun of big smooth
+  waves with long strands, shipped in a clear zip bag. My renders had a short butterfly
+  claw with a spring and a tight round bun of ringlets, because the "cleanest cutout" I
+  chose came from a supplier comparison graphic, and the supplier shade tiles themselves
+  mix two clip types. Rules: (a) when the operator answers "use the supplier photos",
+  still check that every supplier tile shows the SAME construction (clip type, texture,
+  shape) before picking a reference, and ask which one is real if they disagree; (b) the
+  operator's own photos, once given, are the authority on every render: pass them as the
+  shape/clip reference and a shade crop ONLY for colour, with "ignore its clip" when that
+  crop shows another clip; (c) write the construction as negatives too ("NOT a butterfly
+  claw, NO visible spring, NOT tight ringlets, NOT a neat round bun"); (d) show the real
+  packaging (here a clear zip bag with a small brand sticker) rather than an invented box
+  when the operator has shown it; (e) swap every product tile in place with fileUpdate on
+  the same ids, gallery and section files alike, then pixel-diff the CDN copy against the
+  new render (0.0 means swapped) instead of trusting fileStatus READY.
