@@ -2916,3 +2916,17 @@ you earned "done".
   when the operator has shown it; (e) swap every product tile in place with fileUpdate on
   the same ids, gallery and section files alike, then pixel-diff the CDN copy against the
   new render (0.0 means swapped) instead of trusting fileStatus READY.
+  (8) Second operator correction, verbatim: *"UGC and other photos, the clip should not be
+  seen when the hair accessory is already worn on the hair"*. Eleven of thirteen worn
+  renders showed the comb clip on the outside of the bun, because I had passed the
+  operator's "how it is worn" photo as a reference, and that photo was taken mid-clip
+  with the teeth showing. A worn hairpiece sells only if it reads as the wearer's own
+  hair. Rules: (a) for any render where the product is WORN, pass only a colour/texture
+  crop, never a reference that shows the attachment from outside, and add "the clip is
+  COMPLETELY HIDDEN underneath and inside the bun; no part of any clip, teeth, spine,
+  plastic or metal is visible anywhere, only hair"; (b) show the clip only where the
+  product is NOT worn (contents, packaging, in hand, in palm, the "clip amovible" tile,
+  the how-it-works step where it is being placed); (c) the same applies to any worn
+  accessory with a hidden fixing (wig combs, extension wefts, clip-in fringes, hidden
+  magnetic clasps); (d) after the re-roll, also scan the supplier worn tiles, and do not
+  mistake decorative hair pins for the clip.
