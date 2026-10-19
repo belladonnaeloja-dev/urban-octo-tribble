@@ -2929,4 +2929,11 @@ you earned "done".
   the how-it-works step where it is being placed); (c) the same applies to any worn
   accessory with a hidden fixing (wig combs, extension wefts, clip-in fringes, hidden
   magnetic clasps); (d) after the re-roll, also scan the supplier worn tiles, and do not
-  mistake decorative hair pins for the clip.
+  mistake decorative hair pins for the clip. (e) The KEPT original customer photos need the same
+  check: the operator came back with *"Inès C. and Aurélie Q. still shows a clip on the
+  bun"* because I only re-rendered my own images. Two more kept photos had the same
+  problem. Fix a real customer photo by retouching only the clip area
+  (gpt_image_2_5 edit of the photo itself, then feather-blend an ellipse around the clip
+  into the original so every other pixel stays the customer's), never by re-rendering
+  the whole photo. Shopify re-encodes JPEGs, so verify by comparing the clip area of the
+  CDN copy against the edit and the original, not by a 0.0 whole-image diff.
