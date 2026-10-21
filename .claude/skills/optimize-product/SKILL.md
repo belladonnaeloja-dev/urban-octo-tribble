@@ -2937,3 +2937,30 @@ you earned "done".
   into the original so every other pixel stays the customer's), never by re-rendering
   the whole photo. Shopify re-encodes JPEGs, so verify by comparing the clip area of the
   CDN copy against the edit and the original, not by a 0.0 whole-image diff.
+- **Learnings from SnugSoles / Modlia (2026-10-21, knit sock-shoe with wrapped rubber sole,
+  4 colours, 35 to 46, one winning ad).**
+  (1) Before layering a previous run's delta onto a fresh duplicate of MAIN, compare the
+  delta's checksums against MAIN itself. Here the operator had already published the
+  Clip'nBun template and all cb-* snippets inside a new MAIN ("Variant photo fix"), so the
+  only thing left to push was the new product's files. Pushing the old delta would have
+  done nothing at best and overwritten an operator edit at worst.
+  (2) A kept GIF can carry both foreign text AND a claim you may not make (here English
+  captions "THESE PUNCTURE WATER..." over a needle test, i.e. a puncture-proof claim).
+  Replace it with the winning ad's own footage instead of leaving it: ffmpeg
+  `-ss 2 -t 5.7 -vf "fps=12,scale=540:-2,crop=540:675:0:(ih-675)/2" -c:v libwebp_anim
+  -loop 0 -q:v 70` gives a 3 MB animated WebP of the ad's peak (the puddle steps), which
+  fileCreate accepts from a staged IMAGE upload and the PagePilot image setting plays.
+  (3) The page opens on the DEFAULT variant's media, not on gallery slot 1. When the hero
+  shows a colour that is not the first option value, reorder the option values with
+  `productOptionsReorder` so that colour comes first, then point that colour's variants at
+  the hero with `productVariantsBulkUpdate` mediaId. Do not point another colour's variants
+  at it: clicking "Noir" must not show a green pair.
+  (4) Honest wet-weather framing for shoes with a textile upper: say what the sole does
+  ("remonte sur les côtés, prend les flaques peu profondes, accroche sur le trottoir
+  humide") and say plainly that the knit is not waterproof, in the benefit block, FAQ,
+  specs, objections and comparison (an honest ✘ row for long rain / hiking). The build
+  assertion must allow negated forms ("n'est pas imperméable", "non imperméable") while
+  failing a bare "imperméable".
+  (5) Chromium full-page screenshots stop rendering at about 16 000 px, so a long PagePilot
+  page shows blank space and a black bar at the bottom. That is not a broken page: take
+  element screenshots of the lower sections after scrollIntoView instead.
