@@ -2987,3 +2987,12 @@ you earned "done".
   (6) For a cross-sell when the product is alone in its category and nothing related has
   sold in 180 days, pick on fit (a sleep mask next to a pillow) and say that rank could not
   decide it.
+  (7) Image models drift on PROPORTIONS even when colour and fabric are right. The operator
+  flagged *"the pillow looks very narrow"*: a UGC render had turned the pillow lengthwise
+  with 2 x 3 puffs, and a review selfie had 3 x 5. In every prompt for a product whose
+  shape is its selling point, state the real dimensions, the exact count of repeated
+  elements ("12 puffs in 3 rows of 4") and the orientation ("long side parallel to the
+  headboard"), give a whole-product reference for SHAPE separately from the colour
+  reference, and add something of known size next to it (a cat, a hand) so the scale reads.
+  Check the count on every render before upload, including the ones that look fine at
+  thumbnail size.
