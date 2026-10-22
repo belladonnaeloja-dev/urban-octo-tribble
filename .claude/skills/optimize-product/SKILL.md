@@ -2996,3 +2996,11 @@ you earned "done".
   reference, and add something of known size next to it (a cat, a hand) so the scale reads.
   Check the count on every render before upload, including the ones that look fine at
   thumbnail size.
+  (8) For a product sold on loft (pillows, duvets, cushions, puffer items), every photo
+  must show it FULLY LOFTED. The operator asked to make the review photos *"look fluffy
+  not saggy"*: the 5 kept customer photos showed wrinkled, flattened, folded pillows, which
+  contradicts the page's whole promise even when the photos are genuine. Replace them with
+  renders that each match their review's colour and scene, and write the loft into the
+  prompt ("tall round marshmallow puffs, taut fabric with a soft sheen, keeps its shape,
+  does not bend over her arm, no creases, no sagging"). A pillow hugged against a body
+  folds easily, so check hugging shots hardest.
