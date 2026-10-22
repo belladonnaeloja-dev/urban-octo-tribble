@@ -2964,3 +2964,26 @@ you earned "done".
   (5) Chromium full-page screenshots stop rendering at about 16 000 px, so a long PagePilot
   page shows blank space and a black bar at the bottom. That is not a broken page: take
   element screenshots of the lower sections after scrollIntoView instead.
+- **Learnings from DreamPuff / Modlia (2026-10-22, quilted "puff" pillow, 5 colours, one
+  winning ad).**
+  (1) Transcribe the ad's voiceover (ElevenLabs Scribe) before writing the angle. The
+  frames only showed a woman pressing a pillow; the words gave the angle ("cold marshmallow
+  pillow", "you literally just melt into it") and the peak line the page now echoes.
+  (2) At the 20-theme cap, do not duplicate. Update the previous run's UNPUBLISHED draft
+  instead: list every file on MAIN and on the draft, compare, and port only the files that
+  differ (here 5 templates the operator had added to live since). Rename the draft so it
+  names every product it carries, and tell the operator to publish that one theme.
+  (3) Templates downloaded from a theme come back pretty-printed, so their md5 never
+  matches the stored minified file. Compare parsed JSON, and verify a port by the checksum
+  of the bytes you uploaded.
+  (4) French textile labelling: « soie » (silk) on a polyester shell is banned by EU Reg
+  1007/2011, so « soie glacée » goes even when the supplier and competitors use it.
+  « Frais au contact » is honest for a smooth shell; « rafraîchissant », « régule la
+  température » and anything all-night are not. Composition percentages (90 % polyester)
+  are labels, not social proof: exempt them from the 90-99 % assertion with a lookahead.
+  (5) A soft pillow page must say who it is NOT for (stomach sleepers, people who want a
+  firm, high pillow) in the comparison, FAQ and objections. It reads as honest and cuts
+  returns.
+  (6) For a cross-sell when the product is alone in its category and nothing related has
+  sold in 180 days, pick on fit (a sleep mask next to a pillow) and say that rank could not
+  decide it.
