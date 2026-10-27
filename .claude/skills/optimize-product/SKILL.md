@@ -3030,3 +3030,16 @@ you earned "done".
   (7) The new MAIN can already carry the previous run's drafts (SnugSoles + DreamPuff files were
   live with build checksums), so there is no sibling draft to merge. Check MAIN's snippet
   prefixes first and duplicate fresh when the theme count allows.
+  (8) Operator correction on two review photos: *"the stroke of the wiped water is not
+  proportional to the size and angle of the product"*. A cleaning cloth leaves exactly ONE
+  dry track: as wide as the cloth's leading edge, in the direction of the stroke, ending at
+  the cloth, with straight parallel edges and a thin line of pushed droplets along them.
+  The generator instead clears a whole half of the surface, fans the track out or draws it
+  at an angle the hand could not have made. Spell out the physics in every wipe prompt: the
+  cloth's size ("folded into a 15 cm square, pressed flat, edges horizontal and vertical"),
+  the stroke direction ("one straight horizontal stroke from the left edge of the frame"),
+  and the track ("ONE straight band EXACTLY as tall as the cloth, from the frame edge to the
+  cloth, crisp parallel edges; droplets everywhere else; it does not widen, taper, curve or
+  tilt"). Render two stroke directions per scene and keep the more believable one. Then
+  check EVERY wipe image on the page against the same rule, not just the ones named
+  (here the benefit-1 window had the same fault).
