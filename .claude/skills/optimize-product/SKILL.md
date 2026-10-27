@@ -3004,3 +3004,29 @@ you earned "done".
   prompt ("tall round marshmallow puffs, taut fabric with a soft sheen, keeps its shape,
   does not bend over her arm, no creases, no sagging"). A pillow hugged against a body
   folds easily, so check hugging shots hardest.
+- **Learnings from StreakOff / Modlia (2026-10-27, streak-free microfibre cloth, 3 sizes, 10 per
+  order, one music-only winning ad).**
+  (1) `productCreateMedia` is deprecated on the 2026-10 Admin API and the MCP refuses to send it.
+  Add gallery media with `productUpdate(product:{id, title}, media:[CreateMediaInput])`, which
+  appends exactly like the old call and can set the title in the same request.
+  `productReorderMedia` still works, and the omit-the-last-item rule still holds.
+  (2) A music-only ad (Scribe returns empty text) still gives the angle: read the frames at 2 fps,
+  sum the seconds per theme, and name the one verb every shot repeats. Here every shot was "a WET
+  surface, ONE wipe, comes out DRY with no streak", so the angle became "Un passage, zéro trace".
+  (3) Cleaning-product claims a French page must not make: "zéro produit chimique", "100 %
+  écologique", "écoresponsable", "biodégradable", "anti-bactérien", "réutilisable à l'infini",
+  any wash count without supplier proof, and "enlève le calcaire". The honest replacements:
+  "juste de l'eau, sans spray ni détergent" for everyday marks, "dégraissez d'abord" for baked
+  grease, and "séchez les gouttes après la douche" instead of any limescale claim. Rewrite the
+  supplier tiles that bake these claims in (one-change gpt_image_2_5 text edit, fileUpdate in
+  place, including any tile the live template uses).
+  (4) Asking the model for "ten folded cloths" put the brand logo on every cloth. When the real
+  product is plain, say "COMPLETELY PLAIN: NOTHING printed on the cloths, NO logo, NO label".
+  (5) A size-comparison tile for flat textiles is more honest built in Pillow than generated:
+  draw the three rectangles at one px-per-cm scale with a synthetic microfibre texture, then
+  label them; generators exaggerate the size steps.
+  (6) Small CJK labels hide under appliance icons in supplier collages. Zoom into every icon
+  row; a ring-median fill plus a 2 px feathered blend removes them without a re-roll.
+  (7) The new MAIN can already carry the previous run's drafts (SnugSoles + DreamPuff files were
+  live with build checksums), so there is no sibling draft to merge. Check MAIN's snippet
+  prefixes first and duplicate fresh when the theme count allows.
