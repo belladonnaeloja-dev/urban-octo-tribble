@@ -1,6 +1,6 @@
 ---
 name: kalodata-modlia-cards
-description: 'Create Asana product-test cards for Modlia (the French store) from the "Kalodata Modlia (FR)" tab of the winning-products master log — only for rows the operator ticked in the unlabelled checkbox column W, by default the 5 most recent ticks. Dedupes against the whole FR board ("1D. Pinterest - FR") on Kalodata product ID, source-listing id and name; coins a unique two-word ™ house brand name checked against every Pinterest board (DE/SE/NL/US/old FR) and the four stores; writes the house-template notes (marketing angle, kalodata link, USD TikTok Shop France proof line, source, verbatim Note) plus a risk line; creates the cards in section "1B. Copy PP (Aireen)" and reports back. Use when the user asks to card / create Asana tasks for the ticked Kalodata FR products, push approved Modlia products to Asana, "make cards for the last N ticks", or similar. Not for the US "Kalodata Winning Products" tab or the "Winning Products" tab.'
+description: 'Create Asana product-test cards for Modlia (the French store) from the "Kalodata Modlia (FR)" tab of the winning-products master log — only for rows the operator ticked in the unlabelled checkbox column V, by default the 5 most recent ticks. Dedupes against the whole FR board ("1D. Pinterest - FR") on Kalodata product ID, source-listing id and name; coins a unique two-word ™ house brand name checked against every Pinterest board (DE/SE/NL/US/old FR) and the four stores; writes the house-template notes (marketing angle, kalodata link, USD TikTok Shop France proof line, source, and a Note price = competitor price in EUR minus 1 € rounded to the nearest .99, also written to the sheet's Selling price /Offer column) plus a risk line; creates the cards in section "1B. Copy PP (Aireen)" and reports back. Use when the user asks to card / create Asana tasks for the ticked Kalodata FR products, push approved Modlia products to Asana, "make cards for the last N ticks", or similar. Not for the US "Kalodata Winning Products" tab or the "Winning Products" tab.'
 ---
 
 # Kalodata Modlia (FR) → Asana product-test cards
@@ -16,7 +16,9 @@ The market is **TikTok Shop France**, not US, and the destination is the French 
 only. Kalodata rows carry **no WinningHunter link, no Meta ads-library link and no AliExpress
 supplier**, so those lines are left blank for the creative and sourcing steps that follow.
 
-**Read-only on the sheet.** Never write back: never tick or untick `W`, never fill `V`.
+**The sheet is read-only except for one cell per carded row:** the computed selling price in
+`U` (`Selling price /Offer`, step 3b). Never tick or untick `V`, never write any other column,
+and never overwrite a `U` cell the operator has already filled.
 
 ## Sources
 
@@ -43,33 +45,33 @@ bottom. Not the `Kalodata Winning Products` tab (US TikTok Shop, feeds DE / SE /
 | `L` | Commission % | affiliate pull; 0% often means no creator army behind it |
 | `M` | Kalodata product ID | **dedupe key #1** — unique per listing |
 | `N` | Kalodata link (verified via sitemap) | the `kalodata:` line (carries `region=FR`) |
-| `O` | Source | labels `Q` (Amazon, …) — often **empty** |
-| `P` | Reference price | risk check only — does **not** go in the Note |
-| `Q` | PAGEPILOT URL | **the source listing URL** — see the warning below. **Dedupe key #2** |
-| `R` | Link status (all opened + live) | whether the research run opened it, or `Not sourced (FR trend list)` |
-| `S` | Angle / note | the run's own angle *and* its recorded risk — read it |
-| `T` | TikTok store page | the `competitor's link:` line — often **empty** |
-| `U` | Date added | |
-| `V` | Selling price /Offer | **the whole `Note:` line** — the colleague fills this in |
-| **`W`** | *(no header text)* | **the checkbox — this is the filter** |
+| `O` | Reference price | risk check only — does **not** go in the Note |
+| `P` | PAGEPILOT URL | **the source listing URL** — see the warning below. **Dedupe key #2** |
+| `Q` | Link status (all opened + live) | whether the research run opened it, or `Not sourced (FR trend list)` |
+| `R` | Angle / note | the run's own angle *and* its recorded risk — read it |
+| `S` | TikTok store page | the `competitor's link:` line — often **empty** |
+| `T` | Date added | |
+| `U` | Selling price /Offer | **the whole `Note:` line** — computed in step 3b and written here, unless the operator already filled it |
+| **`V`** | *(no header text)* | **the checkbox — this is the filter** |
 
 Traps in that table:
 
-- **`Q` is labelled `PAGEPILOT URL` but holds the source listing**, e.g. the Amazon page the
-  research run priced against (`O` says which site it is). Do not go looking for a pagepilot.io
-  link there.
-- **Many rows are unsourced.** Rows from the operator's FR trend list have `R` = `Not sourced (FR
-  trend list)` and empty `D`, `O`, `P`, `Q`, `T`. Leave those lines bare on the card — never
+- **`P` is labelled `PAGEPILOT URL` but holds the source listing**, e.g. the Amazon page the
+  research run priced against. There is no longer a `Source` column, so take the site label
+  (`amazon.fr`, …) from the URL host or from `Q`. Do not go looking for a pagepilot.io link there.
+- **Many rows are unsourced.** Rows from the operator's FR trend list have `Q` = `Not sourced (FR
+  trend list)` and empty `D`, `O`, `P`, `S`. Leave those lines bare on the card — never
   invent a source or a seller — and flag it on the `risk:` line (step 6).
-- **`W` has no header text.** `W1` is itself an unticked checkbox, so it reads `FALSE`, not a
-  name. Identify it as the **rightmost column whose cells are booleans**, and confirm `W1` comes
-  back as a boolean `False` rather than text before you trust it.
+- **`V` has no header text.** `V1` is empty (as of 2026-10-29; it used to be an unticked
+  checkbox). Identify the checkbox as the **rightmost column whose cells from row 2 down are
+  all booleans**, and check that no column to its right holds booleans before you trust it.
 - **Revenue is in USD even though the market is France.** Kalodata reports TikTok Shop France in
   dollars; copy the figures as the sheet has them and label them `USD, TikTok Shop France`.
 
-**Re-read row 1 before trusting a single one of these letters.** Sibling tabs have had columns
-inserted mid-flight, shifting everything rightward; assume this one can too. Map by header
-**name**; resolve `W` by type, as above.
+**Re-read row 1 before trusting a single one of these letters.** Columns move: sibling tabs have
+had columns inserted mid-flight, and this tab lost its `Source` column (between `N` and
+`Reference price`) in October 2026, shifting everything after it one letter left. Map by header
+**name**; resolve `V` by type, as above.
 
 If the Google Sheets MCP is down (`CONNECTION_CLOSED`), these read-only export URLs still work for
 anyone with view access:
@@ -95,7 +97,7 @@ anyone with view access:
 
 Start by reading row 1 and the checkbox column. **The batch is the five most recent ticks**,
 wherever they sit. Find the last row with a product in column `C`, walk **bottom-up** skipping
-blank rows, and collect rows whose checkbox in `W` is true until you have **5**. Ticks can be
+blank rows, and collect rows whose checkbox in `V` is true until you have **5**. Ticks can be
 spread across several runs.
 
 - Match the checkbox **case-insensitively and type-tolerantly**: an `UNFORMATTED_VALUE` read
@@ -119,15 +121,15 @@ Keep this response — step 4 reuses it. Then match a sheet row against a task i
 hit:
 
 1. the **Kalodata product ID** from `M` appears in the task notes — the strongest key;
-2. the **source listing URL** from `Q` appears in the notes (compare on the ASIN / item id, not
-   the whole URL) — only when `Q` is not empty;
+2. the **source listing URL** from `P` appears in the notes (compare on the ASIN / item id, not
+   the whole URL) — only when `P` is not empty;
 3. the task name equals `<column C>` or `TEST - <column C>`, case-insensitively.
 
 A product already carded on another board (DE / SE / NL / US) for a different store is **not** a
 duplicate here — Modlia needs its own FR card. Do, however, mention the match in the report so
 the page builder can reuse the existing page and images.
 
-Do **not** dedupe on the TikTok store page in `T`: one seller can appear on several rows with
+Do **not** dedupe on the TikTok store page in `S`: one seller can appear on several rows with
 different products.
 
 Tell the operator the arithmetic before you write anything — "5 ticks found: rows 3, 5, 7, 9,
@@ -136,13 +138,38 @@ large (more than 10), confirm before creating.
 
 ### 3. Pull the details
 
-- `V` ("Selling price /Offer") must be read as a **`FORMATTED_VALUE`, never as a formula**, so
-  `34€` stays `34€`. The `Note:` line is the operator's text verbatim.
-- `N`, `Q` and `T` may be stored as `=HYPERLINK(url,"label")` — read them with a formula read
+- `U` ("Selling price /Offer") must be read as a **`FORMATTED_VALUE`, never as a formula**, so
+  `34€` stays `34€`. If the operator has already filled it, the `Note:` line is their text
+  verbatim and you do not recompute it. If it is empty, compute it in step 3b.
+- `N`, `P` and `S` may be stored as `=HYPERLINK(url,"label")` — read them with a formula read
   (`valueRenderOption=FORMULA`, or the XLSX export) and handle both shapes.
 - `C` is stored **truncated at roughly 90 characters**, mid-word, and is usually in French. Do
   not treat the cut-off tail as part of the name; open `N` if you need the full title.
 - `E`, `F`, `G`, `H`, `J` feed the `proof:` line. Label them **USD, 7-day, TikTok Shop France**.
+
+### 3b. Compute the selling price (`Note:` line and column `U`)
+
+For every row being carded whose `U` is empty:
+
+1. **Competitor price** = the price on the competitor's link. Use the TikTok store page in `S`
+   when it is filled. When `S` is empty (usual on this tab), use the competitor's TikTok Shop
+   France listing price, `TikTok price` in `H` (the Kalodata listing in `N`). Say on the report
+   which one you used.
+2. **Convert to EUR** at the day's ECB reference rate:
+   `https://api.frankfurter.dev/v1/latest?from=USD&to=EUR`. If that is down, use
+   `https://open.er-api.com/v6/latest/USD` and say so. Use one rate for the whole run and state
+   it, with its date, in the report.
+3. **Subtract 1 €.**
+4. **Round to the nearest `xx.99`**: with `v` = the result of step 3, the price is
+   `round_half_up(v − 0.99) + 0.99` (35.53 → 35.99, 35.49 → 34.99, 6.14 → 5.99). Use exact
+   decimal arithmetic. Flag any row within ~0.05 € of the halfway point, where a small rate move
+   would flip the price.
+5. Write it as `36.99€` (dot decimal, `€` suffix, no space), both on the card's `Note:` line and
+   in that row's `U` cell. Re-read the row first to confirm it is the same product (match `M`)
+   and `U` is still empty, write only the `U` cells of the carded rows (one range per contiguous
+   block, never across rows you are not carding), then read `U` back to confirm.
+
+Example, row 5: $42.85 × 0.89823 = 38.49 € − 1 = 37.49 → **36.99€**.
 
 ### 4. Name the product
 
@@ -158,7 +185,7 @@ followed by `™`:
 
 Rules that make a name usable:
 
-- **Name the benefit, not the category.** Build it from `S` (the run's own angle) and what the
+- **Name the benefit, not the category.** Build it from `R` (the run's own angle) and what the
   TikTok video would show.
 - **Two words, one token, `™` appended.** No spaces, no hyphens, never more than two words.
 - **ASCII only, ~14 characters or fewer.** No é / è / ç / ï / ë — accents fail in the image
@@ -201,11 +228,11 @@ translates for the French store):
 ```
 marketing angle: <one or two sentences: what it is, who it is for, what it is sold on — naming the coined brand; say it is for Modlia (FR)>
 
-competitor's link: <TikTok store page from T — blank if empty>
+competitor's link: <TikTok store page from S — blank if empty>
 kalodata: <url from N>
 proof: <E> rev / <G> units in 7d (USD, TikTok Shop France) · <F> growth · live <J>d · TikTok price <H> · video rev <K>
-source (<O>): <url from Q> @ <P>   ← write "source: not sourced yet" when Q is empty
-Note: <V verbatim, e.g. "1+1: 39.99€" — leave blank if V is empty>
+source (<site, e.g. amazon.fr>): <url from P> @ <O>   ← write "source: not sourced yet" when P is empty
+Note: <U verbatim if the operator filled it, else the step 3b price, e.g. "36.99€">
 
 ad: 
 ad library: 
@@ -220,8 +247,9 @@ NESTILIA:
 Our Store URL: 
 ```
 
-- **`Note:`** holds **only** the `Selling price /Offer` cell (`V`). Usually still empty when you
-  create the card: leave the line bare. Never compute, estimate or back-fill an offer yourself.
+- **`Note:`** holds **only** the selling price: the operator's `U` text verbatim when they filled
+  it, otherwise the step 3b price (the same value you write to `U`). Never invent an offer
+  (`1+1`, bundles); that stays the operator's call.
 - **`ad:` and `ad library:` stay blank.** The creative comes later from the video-research step.
 - **`proof:`** is the whole case for the test, so state the currency and market on the line.
 
@@ -230,34 +258,34 @@ back and confirm it sits on **only** the FR board. Leave assignee and due date e
 operator says otherwise.
 
 Write the **marketing angle** from the product, its category (`B`) and the run's own angle
-(`S`). `K` tells you *how* it sells — near 100% video revenue means the page has to carry a demo;
-a low figure (often LIVE-driven on TikTok Shop France, as `S` usually notes) means the page must
-carry specs and comparison. When `S` is only the generic "Trending on TikTok Shop France" line,
+(`R`). `K` tells you *how* it sells — near 100% video revenue means the page has to carry a demo;
+a low figure (often LIVE-driven on TikTok Shop France, as `R` usually notes) means the page must
+carry specs and comparison. When `R` is only the generic "Trending on TikTok Shop France" line,
 say so and tell the builder to open the Kalodata link — an invented angle is worse than an
 admitted gap.
 
 ### 6. Carry the warnings across
 
 Put them on **one short line at the very end of the notes**, after `Our Store URL:`, prefixed
-`risk:`. Column `S` is where the research run recorded its own concern; read it and carry it
+`risk:`. Column `R` is where the research run recorded its own concern; read it and carry it
 (e.g. "source a 230V EU-plug model for France"). Only write the line when there is a genuine
 concern:
 
-- **Not sourced.** `R` = `Not sourced (FR trend list)` or `Q` empty — the builder must find a
+- **Not sourced.** `Q` = `Not sourced (FR trend list)` or `P` empty — the builder must find a
   supplier before starting. This will be common on this tab.
-- **Approximate source.** `S` saying `APPROXIMATE` means the listing in `Q` is a near-match, not
+- **Approximate source.** `R` saying `APPROXIMATE` means the listing in `P` is a near-match, not
   the same product.
 - **Electrical / EU spec.** US-sourced electrical items are 120V with US plugs; France needs
   230V and EU plugs, and CE marking.
 - **Channel gap.** TikTok Shop France sells on impulse, off a live or a creator; Pinterest sells
   on planned search. Flag products driven by LIVE or one creator (`K` near 100% with a high `L`,
-  or `S` citing a big LIVE share).
+  or `R` citing a big LIVE share).
 - **Licensing and IP.** Characters, team apparel, anything borrowing a real brand.
 - **Regulated claims.** Supplements, cosmetics, medical-adjacent — French and EU advertising
   rules bite on health claims and before/after results.
-- **Hard seasonality.** `S` often carries `[Winter, sell until Feb]` — say how much selling
+- **Hard seasonality.** `R` often carries `[Winter, sell until Feb]` — say how much selling
   window is left.
-- **Thin margin.** Reference price (`P`) against the TikTok price (`H`).
+- **Thin margin.** Reference price (`O`) against the TikTok price (`H`).
 - **Unproven.** `Days live` (`J`) under ~14 days, or a huge growth % on a few days live.
 
 ## Report back
@@ -265,6 +293,8 @@ concern:
 Give a table of what was created — coined name, the sheet row and product it came from, 7-day
 revenue, TikTok price, source status, and a link to each card — then state the warnings you
 attached, name any ticked row you skipped as a duplicate and which FR card it matched, and note
-any product that already has a card on another board so its page can be reused.
+any product that already has a card on another board so its page can be reused. Include each
+row's computed price, the competitor price it came from and the EUR rate (with its date), and
+flag any price that sat near a rounding boundary.
 
 If nothing was ticked, say so plainly and confirm that no cards were created.
