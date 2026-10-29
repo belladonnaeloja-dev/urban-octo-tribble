@@ -163,12 +163,19 @@ For every row being carded whose `U` is empty:
    `round_half_up(v − 0.99) + 0.99` (35.53 → 35.99, 35.49 → 34.99, 6.14 → 5.99). Use exact
    decimal arithmetic. Flag any row within ~0.05 € of the halfway point, where a small rate move
    would flip the price.
-5. Write it as `36.99€` (dot decimal, `€` suffix, no space), both on the card's `Note:` line and
-   in that row's `U` cell. Re-read the row first to confirm it is the same product (match `M`)
+5. **Under 19.99 € → 1+1 offer** (operator's rule, 2026-10-29). If the step 4 price is lower
+   than 19.99 €, multiply it by 2 (no re-rounding: 12.99 → 25.98) and append ` (1+1)`, e.g.
+   `25.98€ (1+1)`. Otherwise the price stands alone, e.g. `36.99€`. Apply the rule once.
+6. Write it with a dot decimal and a `€` suffix, no space before `€`, both on the card's `Note:`
+   line and in that row's `U` cell (the offer sits beside the price in the same cell). Re-read the row first to confirm it is the same product (match `M`)
    and `U` is still empty, write only the `U` cells of the carded rows (one range per contiguous
    block, never across rows you are not carding), then read `U` back to confirm.
 
-Example, row 5: $42.85 × 0.89823 = 38.49 € − 1 = 37.49 → **36.99€**.
+Examples: row 5: $42.85 × 0.89823 = 38.49 € − 1 = 37.49 → **36.99€**. Row 11: $15.79 →
+14.18 € − 1 = 13.18 → 12.99, under 19.99 → **25.98€ (1+1)**.
+
+The operator also sets offers by hand in the same `price (offer)` shape (e.g. `20.99€ (1+2)`).
+Any filled `U` cell is theirs: copy it to the card verbatim and never recompute it.
 
 ### 4. Name the product
 
@@ -247,8 +254,8 @@ Our Store URL:
 ```
 
 - **`Note:`** holds **only** the selling price: the operator's `U` text verbatim when they filled
-  it, otherwise the step 3b price (the same value you write to `U`). Never invent an offer
-  (`1+1`, bundles); that stays the operator's call.
+  it, otherwise the step 3b price (the same value you write to `U`). Never invent any other
+  offer (`1+2`, bundles); only the under-19.99 € `1+1` rule above is automatic.
 - **`ad:` and `ad library:` stay blank.** The creative comes later from the video-research step.
 - **`proof:`** is the whole case for the test, so state the currency and market on the line.
 
