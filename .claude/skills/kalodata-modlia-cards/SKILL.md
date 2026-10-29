@@ -151,10 +151,9 @@ large (more than 10), confirm before creating.
 
 For every row being carded whose `U` is empty:
 
-1. **Competitor price** = the price on the competitor's link. Use the TikTok store page in `S`
-   when it is filled. When `S` is empty (usual on this tab), use the competitor's TikTok Shop
-   France listing price, `TikTok price` in `H` (the Kalodata listing in `N`). Say on the report
-   which one you used.
+1. **Competitor price** = `TikTok price` in `H`, the competitor's TikTok Shop France listing
+   price in USD (operator's rule, 2026-10-29). Use it even when `S` has a store page; do not
+   open the competitor's link for a price.
 2. **Convert to EUR** at the day's ECB reference rate:
    `https://api.frankfurter.dev/v1/latest?from=USD&to=EUR`. If that is down, use
    `https://open.er-api.com/v6/latest/USD` and say so. Use one rate for the whole run and state
