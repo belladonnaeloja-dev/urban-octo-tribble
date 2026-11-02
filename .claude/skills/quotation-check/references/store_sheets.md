@@ -51,6 +51,12 @@ in the tab.
      it, keep the old quote figures and list it under "No quotation" in the
      reply with its xlsx status (e.g. `Stop fullfilment`,
      `Requote - Bidding`, or "not in file").
+   - **Zendrop quotes:** if column E (agent) is `Zendrop`, the quote came
+     from the BER/PMs sheet, not the xlsx. Keep that quote unless the
+     xlsx's lowest quote is lower. If it is lower, use the xlsx quote and set
+     column E to the xlsx supplier. A Zendrop row with no priced xlsx row
+     keeps its quote but still goes under "No quotation" with its status.
+     In the reply, say how many Zendrop quotes were kept.
    - **Selling price:** look up the current Shopify price for every product
      in the tab, including ones outside the top 100, with the same batched
      queries as step 4 of SKILL.md (exact title, minVariantPrice, skip
