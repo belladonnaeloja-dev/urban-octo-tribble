@@ -9,8 +9,9 @@ Every mapped store lives in one spreadsheet, one tab per store:
 | `bycheri` | Zanaro Berlin | DE | 171846471 | 30 |
 | `solundi-com` | Solundi.com | NL | 754982655 | 20 |
 | `ccae3b-2` | Modlia | FR | 1926591558 | 20 |
+| `3d465e-2` | Nestilia | US | 296188178 | 20 |
 
-The sheetIds were checked against the live spreadsheet on 2026-09-28 (FR added 2026-10-07). If
+The sheetIds were checked against the live spreadsheet on 2026-09-28 (FR added 2026-10-07, US added 2026-11-03). If
 a Sheets call reports "No grid with id", look up the real IDs with
 Google Sheets `get_spreadsheet` (fields `sheets.properties.sheetId`,
 `sheets.properties.title`) and fix this table.
@@ -35,6 +36,11 @@ The second "Supplier" column (Zendrop / Service Points) and "Note" are
 maintained by the user by hand. Never overwrite them for a product already
 in the tab.
 
+Nestilia (US tab) sells in USD, so its money headers say `(USD)` instead
+of `(EUR)`. Compare its quotes with the USD Shopify prices as they are; the
+xlsx does not state a currency, so if the user says the quotes are in EUR,
+convert them before computing Quotation %.
+
 ## Update rules (every run)
 
 1. Read the tab first (Google Sheets `get_values`, range `<Tab>!A1:M200`).
@@ -51,6 +57,12 @@ in the tab.
      it, keep the old quote figures and list it under "No quotation" in the
      reply with its xlsx status (e.g. `Stop fullfilment`,
      `Requote - Bidding`, or "not in file").
+   - **Zendrop quotes:** if column E (agent) is `Zendrop`, the quote came
+     from the BER/PMs sheet, not the xlsx. Keep that quote unless the
+     xlsx's lowest quote is lower. If it is lower, use the xlsx quote and set
+     column E to the xlsx supplier. A Zendrop row with no priced xlsx row
+     keeps its quote but still goes under "No quotation" with its status.
+     In the reply, say how many Zendrop quotes were kept.
    - **Selling price:** look up the current Shopify price for every product
      in the tab, including ones outside the top 100, with the same batched
      queries as step 4 of SKILL.md (exact title, minVariantPrice, skip
