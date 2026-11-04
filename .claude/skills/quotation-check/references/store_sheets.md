@@ -9,8 +9,9 @@ Every mapped store lives in one spreadsheet, one tab per store:
 | `bycheri` | Zanaro Berlin | DE | 171846471 | 30 |
 | `solundi-com` | Solundi.com | NL | 754982655 | 20 |
 | `ccae3b-2` | Modlia | FR | 1926591558 | 20 |
+| `3d465e-2` | Nestilia | US | 296188178 | 20 |
 
-The sheetIds were checked against the live spreadsheet on 2026-09-28 (FR added 2026-10-07). If
+The sheetIds were checked against the live spreadsheet on 2026-09-28 (FR added 2026-10-07, US added 2026-11-03). If
 a Sheets call reports "No grid with id", look up the real IDs with
 Google Sheets `get_spreadsheet` (fields `sheets.properties.sheetId`,
 `sheets.properties.title`) and fix this table.
@@ -34,6 +35,11 @@ Orders - Last 90 Days | Supplier | Note
 The second "Supplier" column (Zendrop / Service Points) and "Note" are
 maintained by the user by hand. Never overwrite them for a product already
 in the tab.
+
+Nestilia (US tab) sells in USD, so its money headers say `(USD)` instead
+of `(EUR)`. Compare its quotes with the USD Shopify prices as they are; the
+xlsx does not state a currency, so if the user says the quotes are in EUR,
+convert them before computing Quotation %.
 
 ## Update rules (every run)
 
