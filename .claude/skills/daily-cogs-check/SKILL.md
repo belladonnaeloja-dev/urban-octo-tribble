@@ -103,7 +103,8 @@ only rows of that store with column O ticked, the EUR quote for the
 store's destination (Nestilia → US, column AH), then the BER/PMs sheet
 (store tab, column G "(Best) Agent Price €") for anything not ticked or
 missing. Quotes are per offer, so multiply by the line quantity only.
-Products in neither sheet are listed, never guessed.
+Products in neither sheet get 33% of their EUR selling price, marked as
+such. Never use an unticked quote.
 
 ## Optional: COGS as a share of revenue
 

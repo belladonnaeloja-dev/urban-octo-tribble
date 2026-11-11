@@ -62,8 +62,13 @@ Zanaro Berlin → DE/AT/CH; Solundi → NL/BE; Modlia → FR. The user wants the
   variant rows, take the row whose column B matches the order's variant
   (e.g. ColorClash "80 pieces"). Record the cell (e.g. `USA!G634`) as
   the source.
-- Still not found in either sheet (or G is blank): unpriced, list it.
-  Don't borrow another store's quote unless the user asks.
+- Still not found in either sheet (no ticked quote and G blank/missing):
+  **COGS = 33% of the selling price**, per unit × quantity. Use the EUR
+  selling price from the BER/PMs row (column K "Selling Price Local
+  Currency") when the product has a row there; otherwise the export's
+  `Lineitem price` × the tab's exchange rate (column J, e.g. 0.90 for
+  USA). Mark these lines as "33% of selling price" so they stay
+  distinguishable from real quotes. Don't borrow another store's quote.
 - Count every non-cancelled order, fulfilled or not. In the export, only
   the first line of a multi-line order carries the order fields; the extra
   lines still count.
@@ -73,5 +78,5 @@ Zanaro Berlin → DE/AT/CH; Solundi → NL/BE; Modlia → FR. The user wants the
 CSV per line (Order, Fulfillment, Product, Variant, Qty, Pieces, Quote
 EUR, COGS EUR, Quote status) in the scratchpad, sent with SendUserFile.
 Reply with: total COGS (EUR) of priced lines, priced vs. total lines and
-orders, how much came from each sheet, and the products found in
-neither (no ticked quote and no BER/PMs agent price).
+orders, how much came from each sheet, and how much (and which
+products) came from the 33%-of-selling-price fallback.
