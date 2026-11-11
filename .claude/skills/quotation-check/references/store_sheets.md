@@ -45,9 +45,9 @@ convert them before computing Quotation %.
 
 1. Read the tab first (Google Sheets `get_values`, range `<Tab>!A1:M200`).
 2. Re-check **every** product already in the tab, not only the ones in this
-   run's top 100. Match each one by brand name (the word before ™); where the
-   title has no ™ in its last `|` segment, match on the exact title first so
-   the description text isn't used as the key. Keep columns L and M as they
+   run's top 100. Match each one on its exact title plus every xlsx row with the
+   same brand name (the word before ™, wherever it is in the title), then take
+   `latest_row()`; see `matching_notes.md`. Keep columns L and M as they
    are.
    - **Quote:** look the product up in this run's uploaded xlsx and use its
      latest row that has a price (`latest_row()` in

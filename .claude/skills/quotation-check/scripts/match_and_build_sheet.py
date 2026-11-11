@@ -83,7 +83,14 @@ def main():
         revenue = float(entry[1])
         orders = entry[2] if len(entry) > 2 else None
 
-        cand = by_title.get(title.strip()) or by_key.get(brand_key(title))
+        # Exact-title rows first. Only when none of them carries a price, fall
+        # back to every row for the same brand: the exact row is often an
+        # unpriced "Stop fullfilment" one while the price sits on another
+        # listing of the same product. (Not always merged: a brand can have
+        # several different products, e.g. an arms and a face version.)
+        cand = list(by_title.get(title.strip()) or [])
+        if not any(r.get('lowest') is not None for r in cand):
+            cand += [r for r in by_key.get(brand_key(title), []) if r not in cand]
         if not cand:
             unmatched.append(title)
             continue

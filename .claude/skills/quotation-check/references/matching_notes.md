@@ -32,14 +32,25 @@ the ratio and hide a real problem.
 
 parse_quotation_xlsx.py gives you two lookup dicts:
 
-- by_title: exact title match. Try this first — most rows match exactly,
-  since analytics product_title and the xlsx Product name are usually
-  pulled from the same underlying product.
-- by_brand_key: fallback for when the promo prefix or trailing description
-  text has drifted between when the quote was recorded and now (campaigns
-  get relaunched in different languages, descriptions get rewritten, etc).
-  brand_key() strips all of that down to the distinctive brand name after
-  the last "|" and before the (TM) mark, which is stable across those changes.
+- by_title: exact title match.
+- by_brand_key: every row whose title has the same brand name (the word
+  right before the (TM) mark, wherever it sits in the title). It covers
+  promo prefixes or descriptions that drifted since the quote was recorded
+  (campaigns relaunched in other languages, rewritten descriptions).
+
+Use the exact-title rows first. Only when none of them has a price, add the
+brand rows and take latest_row(): the exact-title row is often an unpriced
+"Stop fullfilment" row while the price sits on another listing of the same
+product. Do not merge brand rows when the exact title already has a price,
+because one brand can cover different products (e.g. SmoothSculpt for skin
+and for arms) or a PRICE TEST / "Kopie" copy with its own bids.
+
+Never key on the last "|" segment alone. Titles such as
+"Slim&Tone(TM) - ... | 1+1 GRATIS TIJDELIJK" end in a promo segment, and
+keying on it made unrelated products (WeldRods, ShineArmor, Slim&Tone) share
+one quote. brand_key() now takes the word before the first (TM) anywhere in
+the title; if a run still shows several different products with the same
+quote, check the xlsx rows by brand before writing.
 
 If a title matches multiple xlsx rows (a product was re-quoted over time),
 latest_row() picks the one with the most recent Quotation approval
