@@ -44,13 +44,25 @@ Zanaro Berlin → DE/AT/CH; Solundi → NL/BE; Modlia → FR. The user wants the
   reference.
 - If several ticked rows exist for one product, use the lowest row (the
   latest request) and say so.
-- Bundles: a variant ending in `1+1 FREE`, `1 pair +1 pair FREE` or
-  containing `2x` ships 2 pieces per unit, so COGS = quote × qty × 2.
+- Bundles: quotes are **per offer**, not per piece (BER/PMs shows it:
+  LymphRelief single €9.46, "1 + 1 FREE" €14.74; column D there is pieces
+  per offer). So COGS = quote × Lineitem quantity, even for `1+1 FREE`,
+  `1 pair +1 pair FREE` or `2x` variants. Don't double.
 - A quote cell with several prices per set size (e.g. FryLite "2-pieceSet
   €18.44 / 4-pieceSet €20.67") — pick the one matching the order's
   variant.
-- Products with no row for that store are unpriced. Don't borrow another
-  store's quote unless the user asks.
+- Products with no ticked row for that store fall back to the **BER/PMs**
+  sheet (https://docs.google.com/spreadsheets/d/1MRyyd2gDbwVOstNetjJsGEF--rVAKcAoYyf6dAVmm3A),
+  on the store's tab (Nestilia → `USA`, gid 1209564048; also `DE`, `NL`,
+  `FR`). Column A = product name, B = variant, D = pieces per offer,
+  **G = "(Best) Agent Price €"** (per offer, use this). Data starts at
+  row 3; the newest products are at the bottom, so read column A, then
+  only the rows you need with `A<r>:G<r>`. For a product with several
+  variant rows, take the row whose column B matches the order's variant
+  (e.g. ColorClash "80 pieces"). Record the cell (e.g. `USA!G634`) as
+  the source.
+- Still not found in either sheet (or G is blank): unpriced, list it.
+  Don't borrow another store's quote unless the user asks.
 - Count every non-cancelled order, fulfilled or not. In the export, only
   the first line of a multi-line order carries the order fields; the extra
   lines still count.

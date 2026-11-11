@@ -100,8 +100,10 @@ to the Zendrop quote request sheet ("use the ticked products", "Euro
 equivalent of the quotations"), price each order line from that sheet
 instead of Zendrop's billed cost. Follow `references/quote_sheet.md`:
 only rows of that store with column O ticked, the EUR quote for the
-store's destination (Nestilia → US, column AH), bundles counted as 2
-pieces, and unpriced products listed, never guessed.
+store's destination (Nestilia → US, column AH), then the BER/PMs sheet
+(store tab, column G "(Best) Agent Price €") for anything not ticked or
+missing. Quotes are per offer, so multiply by the line quantity only.
+Products in neither sheet are listed, never guessed.
 
 ## Optional: COGS as a share of revenue
 
