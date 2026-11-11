@@ -168,6 +168,8 @@ For every row being carded whose `V` is empty:
 5. **Under 19.99 € → 1+1 offer** (operator's rule, 2026-10-29). If the step 4 price is lower
    than 19.99 €, multiply it by 2 (no re-rounding: 12.99 → 25.98) and append ` (1+1)`, e.g.
    `25.98€ (1+1)`. Otherwise the price stands alone, e.g. `36.99€`. Apply the rule once.
+   **Floor (operator's rule, 2026-11-11):** if the doubled 1+1 price is still below 19.99 €,
+   set it to `19.99€ (1+1)` (e.g. 3.99 → 7.98 → **19.99€ (1+1)**).
 6. Write it with a dot decimal and a `€` suffix, no space before `€`, both on the card's `Note:`
    line and in that row's `V` cell (the offer sits beside the price in the same cell). Re-read the row first to confirm it is the same product (match `M`)
    and `V` is still empty, write only the `V` cells of the carded rows (one range per contiguous
@@ -311,8 +313,8 @@ Whenever a run finds a selling price **lower than 19.99 €**, tell the operator
 
 - Open the report with a line **"⚠ Under 19.99 €:"** listing each such row: row number, card
   name, the step 4 price before the 1+1 rule, and what went on the card (e.g. `row 87 ·
-  HeartPages™ · 5.99€ → 11.98€ (1+1)`). Mark any row whose price is **still under 19.99 € after
-  the 1+1** as needing a bigger bundle or a price decision.
+  HeartPages™ · 5.99€ → 11.98€ (1+1)`). Note any row the 19.99€ (1+1) floor was
+  applied to.
 - Include operator-filled `V` cells that are under 19.99 €, and rows where the TikTok price is
   obviously not the real price (e.g. a live-sale deposit) — those get no auto price; say so.
 - Also send a push notification (the `PushNotification` tool, if present), one line under 200
