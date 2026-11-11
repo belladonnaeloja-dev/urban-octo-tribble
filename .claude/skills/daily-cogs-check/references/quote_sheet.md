@@ -88,6 +88,31 @@ Revenue = Subtotal (after discounts) − Refunded Amount; cancelled orders
 are skipped; orders with an Outstanding Balance (unpaid post-purchase
 upsell) are flagged.
 
+## The "Nestilia Daily COGS" workbook (one tab per day)
+
+https://docs.google.com/spreadsheets/d/1njsJamsc3M0tqEjD-_1TnQxYN5XhI0WsWfEtC_8TlIc
+One tab per order day, named `YYYY-MM-DD` (store time), oldest on the
+left. Add each new day as a new tab at the end in this same file (never a
+new file). Easiest: `duplicateSheet` of the latest tab, clear `A15:J` and
+the lines table, then write the new rows; or rebuild with the same layout:
+
+- A1 title, A2 one-line description.
+- Inputs (blue): B5 USD→EUR rate (0.8979), B6 fallback share (0.33).
+- Day total (all formulas): B9 orders `=COUNTA(B15:B..)`, B10 paid €
+  `=SUM(F..)`, B11 COGS € `=SUM(G..)`, B12 COGS % `=IF(B10=0,0,B11/B10)`,
+  B13 orders above 50% `=COUNTIF(H..,">0.5")`.
+- Row 14 header, orders from row 15: Rank `=RANK(H,…)` | Order | Products
+  | Fulfillment | Paid (USD) typed | Paid (EUR) `=E*$B$5` | COGS (EUR)
+  `=SUMIFS(lines COGS, lines Order, B)` | COGS % `=IF(F=0,0,G/F)` | Gross
+  profit `=F-G` | Note (discount code, unpaid upsell, 33% fallback).
+  Then `sortRange` the order rows by column H descending.
+- Two blank rows, "Order lines", header, then one row per export line:
+  Order | Product | Variant | Qty | Selling price (EUR, fallback lines
+  only) | Cost per offer (typed, blue; fallback lines `=$B$6*E`) | COGS
+  `=D*F` | Source cell.
+- COGS % cells: light red at ≥100%, light orange above 50%. Notes on the
+  two table headers give the export file and the pricing order.
+
 ## Output
 
 CSV per line (Order, Fulfillment, Product, Variant, Qty, Pieces, Quote
