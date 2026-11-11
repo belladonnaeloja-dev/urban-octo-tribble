@@ -305,4 +305,18 @@ any product that already has a card on another board so its page can be reused. 
 row's computed price, the competitor price it came from and the EUR rate (with its date), and
 flag any price that sat near a rounding boundary.
 
+### Low-price alert (operator's rule, 2026-11-11)
+
+Whenever a run finds a selling price **lower than 19.99 €**, tell the operator explicitly:
+
+- Open the report with a line **"⚠ Under 19.99 €:"** listing each such row: row number, card
+  name, the step 4 price before the 1+1 rule, and what went on the card (e.g. `row 87 ·
+  HeartPages™ · 5.99€ → 11.98€ (1+1)`). Mark any row whose price is **still under 19.99 € after
+  the 1+1** as needing a bigger bundle or a price decision.
+- Include operator-filled `V` cells that are under 19.99 €, and rows where the TikTok price is
+  obviously not the real price (e.g. a live-sale deposit) — those get no auto price; say so.
+- Also send a push notification (the `PushNotification` tool, if present), one line under 200
+  characters, e.g. `Modlia cards: 2 prices under 19.99€ — row 87 HeartPages 11.98€ (1+1), row 93
+  … — check bundles`. Send it once per run, only when at least one such price was found.
+
 If nothing was ticked, say so plainly and confirm that no cards were created.
