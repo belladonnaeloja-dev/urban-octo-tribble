@@ -73,6 +73,21 @@ Zanaro Berlin → DE/AT/CH; Solundi → NL/BE; Modlia → FR. The user wants the
   the first line of a multi-line order carries the order fields; the extra
   lines still count.
 
+## Computing it
+
+Put every product of the export in a `prices.json` in the scratchpad
+(format in the docstring of `scripts/price_export.py`: `cost` + `source`
+for a quote, `sell_eur` + `source` for the 33% fallback), then run
+
+    python3 scripts/price_export.py <export.csv> prices.json --rate 0.8979 --day <YYYY-MM-DD> --outdir <scratchpad>
+
+`--rate` is USD→EUR from the BER/PMs USA tab ($19.99 = €17.95). The
+script refuses to run if a product has no price, writes the per-line CSV
+and the per-order COGS % ranking (highest first), and prints the summary.
+Revenue = Subtotal (after discounts) − Refunded Amount; cancelled orders
+are skipped; orders with an Outstanding Balance (unpaid post-purchase
+upsell) are flagged.
+
 ## Output
 
 CSV per line (Order, Fulfillment, Product, Variant, Qty, Pieces, Quote
