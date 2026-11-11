@@ -39,9 +39,10 @@ Zanaro Berlin → DE/AT/CH; Solundi → NL/BE; Modlia → FR. The user wants the
 
 - Match on the brand name before ™ (strip the promo prefix), not the full
   title.
-- Only rows with column O = TRUE. A product in the sheet but not ticked is
-  **not** priced — list it as "in sheet, not ticked" with its quote for
-  reference.
+- Only rows with column O = TRUE. **Never use an unticked quote** — not
+  in the total, not as an estimate, not as a "would add €X" figure. A
+  product that is in the sheet but not ticked is treated as not found and
+  goes to the BER/PMs fallback below.
 - If several ticked rows exist for one product, use the lowest row (the
   latest request) and say so.
 - Bundles: quotes are **per offer**, not per piece (BER/PMs shows it:
@@ -72,4 +73,5 @@ Zanaro Berlin → DE/AT/CH; Solundi → NL/BE; Modlia → FR. The user wants the
 CSV per line (Order, Fulfillment, Product, Variant, Qty, Pieces, Quote
 EUR, COGS EUR, Quote status) in the scratchpad, sent with SendUserFile.
 Reply with: total COGS (EUR) of priced lines, priced vs. total lines and
-orders, and the unpriced products split into "not ticked" and "no row".
+orders, how much came from each sheet, and the products found in
+neither (no ticked quote and no BER/PMs agent price).
