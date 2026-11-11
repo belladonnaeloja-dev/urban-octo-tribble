@@ -1,6 +1,6 @@
 ---
 name: daily-cogs-check
-description: Daily COGS checker. Totals the cost of goods sold (product + shipping cost) of every order placed on a given day, per store and across all stores (Zanaro Berlin, Solundi, Modlia, Nestilia), using the Zendrop order costs, and flags every order whose cost is missing or looks wrong (External / agent-fulfilled, unlinked, on hold, zero-cost). Logs one row per store per day to the "Daily COGS" Google Sheet. Use when the user asks to check COGS, total yesterday's COGS, "daily COGS", "what did the orders cost today", cost of goods for a date or date range, or runs this as a scheduled daily task.
+description: Daily COGS checker. Also prices a store's Shopify order export (CSV) from the ticked rows of the Zendrop quote request sheet in EUR. Totals the cost of goods sold (product + shipping cost) of every order placed on a given day, per store and across all stores (Zanaro Berlin, Solundi, Modlia, Nestilia), using the Zendrop order costs, and flags every order whose cost is missing or looks wrong (External / agent-fulfilled, unlinked, on hold, zero-cost). Logs one row per store per day to the "Daily COGS" Google Sheet. Use when the user asks to check COGS, total yesterday's COGS, "daily COGS", "what did the orders cost today", cost of goods for a date or date range, or runs this as a scheduled daily task.
 ---
 
 # Daily COGS check
@@ -92,6 +92,16 @@ range, run the workflow once per day so each day gets its own row.
      order.
    - Orders without COGS (count per store and status), and any warnings.
    - The sheet link.
+
+## Alternative: Shopify order export + quote sheet (EUR)
+
+When the user uploads a Shopify orders export (CSV) for a store and points
+to the Zendrop quote request sheet ("use the ticked products", "Euro
+equivalent of the quotations"), price each order line from that sheet
+instead of Zendrop's billed cost. Follow `references/quote_sheet.md`:
+only rows of that store with column O ticked, the EUR quote for the
+store's destination (Nestilia → US, column AH), bundles counted as 2
+pieces, and unpriced products listed, never guessed.
 
 ## Optional: COGS as a share of revenue
 
