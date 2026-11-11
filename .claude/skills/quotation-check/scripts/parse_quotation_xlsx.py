@@ -58,17 +58,28 @@ def brand_key(title: str) -> str:
     "<promo prefix> | <Brand>(TM) <description>" pattern (prefixes like
     "50% RABATT NUR HEUTE | " or "1+1 GRATIS HEUTE | ", in whatever language
     the campaign is running in that week), so the part worth matching on is
-    the brand name right after the last "|" and before the (TM) mark.
+    the brand name right before the (TM) mark.
+
+    The (TM) can sit in any "|" segment, not only the last one: titles like
+    "Slim&Tone(TM) - ... | 1+1 GRATIS TIJDELIJK" end in a promo segment, and
+    keying on that segment made unrelated products share a key ("1+1 GRATIS
+    ..." -> "") and borrow each other's quotes. So take the word before the
+    first (TM) anywhere in the title, and only fall back to the last segment
+    when there is no (TM) at all.
     """
-    seg = title.split('|')[-1].strip()
-    m = re.match(r"^[^™]*™", seg)  # up to and including (TM)
+    m = re.search(r"([A-Za-z0-9&'.]+)\s*™", title)
     if m:
-        core = m.group(0).replace('™', '').strip()
+        core = m.group(1)
     else:
+        seg = title.split('|')[-1].strip()
         core = seg.split(' - ')[0].strip()
         if re.match(r'^\d', core):
             core = re.split(r'[\d]', core)[0].strip()
     core = re.sub(r'[^A-Za-z0-9&]', '', core)
+    if not core:
+        # Promo-only last segment ("1+1 GRATIS"): use the first word of the
+        # first segment instead so the key is never empty.
+        core = re.sub(r'[^A-Za-z0-9&]', '', title.split('|')[0].split()[0] if title.split() else '')
     return core.lower()
 
 
