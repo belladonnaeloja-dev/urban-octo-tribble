@@ -101,7 +101,7 @@ equivalent of the quotations"), price each order line from that sheet
 instead of Zendrop's billed cost. Follow `references/quote_sheet.md`:
 only rows of that store with column O ticked, the EUR quote for the
 store's destination (Nestilia → US, column AH), then the BER/PMs sheet
-(store tab, column G "(Best) Agent Price €") for anything not ticked or
+(store tab, column H "QP + 2,60", the agent price incl. €2.60) for anything not ticked or
 missing. Quotes are per offer, so multiply by the line quantity only.
 Products in neither sheet get 33% of their EUR selling price, marked as
 such. Never use an unticked quote.

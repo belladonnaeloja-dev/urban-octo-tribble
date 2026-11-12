@@ -56,11 +56,18 @@ Zanaro Berlin → DE/AT/CH; Solundi → NL/BE; Modlia → FR. The user wants the
   sheet (https://docs.google.com/spreadsheets/d/1MRyyd2gDbwVOstNetjJsGEF--rVAKcAoYyf6dAVmm3A),
   on the store's tab (Nestilia → `USA`, gid 1209564048; also `DE`, `NL`,
   `FR`). Column A = product name, B = variant, D = pieces per offer,
-  **G = "(Best) Agent Price €"** (per offer, use this). Data starts at
+  G = "(Best) Agent Price €", **H = "QP + 2,60" (per offer, use this)**. Data starts at
   row 3; the newest products are at the bottom, so read column A, then
-  only the rows you need with `A<r>:G<r>`. For a product with several
+  only the rows you need with `A<r>:L<r>`.
+  **Layout changed on 12 Nov 2026:** G is now the bare agent price and
+  H "QP + 2,60" is G + €2.60; the tab's own quote % (column I) uses H, and
+  H equals what G showed before. Use **H** so days stay comparable (read
+  the header row first; if the columns move again, use the one the
+  tab's quote % is based on). Column K/L give the tab's current USD→EUR
+  rate (12 Nov: about 0.902, e.g. $35.99 = €32.46); use it for `--rate`
+  and the 33% fallback. For a product with several
   variant rows, take the row whose column B matches the order's variant
-  (e.g. ColorClash "80 pieces"). Record the cell (e.g. `USA!G634`) as
+  (e.g. ColorClash "80 pieces"). Record the cell (e.g. `USA!H634`) as
   the source.
 - Still not found in either sheet (no ticked quote and G blank/missing):
   **COGS = 33% of the selling price**, per unit × quantity. Use the EUR
