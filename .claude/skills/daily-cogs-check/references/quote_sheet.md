@@ -120,6 +120,9 @@ the lines table, then write the new rows; or rebuild with the same layout:
 - COGS % cells: light red at ≥100%, light orange above 50%. Notes on the
   two table headers give the export file and the pricing order.
 
+Tab builder: `scripts/build_day_tab.py` produces the rows and the
+formatting batch for a new day tab in this exact layout (see its docstring).
+
 ## Output
 
 CSV per line (Order, Fulfillment, Product, Variant, Qty, Pieces, Quote
