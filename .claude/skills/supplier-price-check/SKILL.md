@@ -1,0 +1,211 @@
+---
+name: supplier-price-check
+description: 'Weekly supplier price comparison for the DE, NL, FR and USA stores: read the "BER/PMs" Google Sheet (DE, NL, FR and USA tabs), compare the Service Point price ("QP + 2,60") against the Zendrop price ("(Best) Agent Price €" inside the ZENDROP block) for every product variant, refresh the two price columns of the rows already on the matching tab of the "Supplier Price Comparison - (Service Point vs Other supplier)" Google Sheet, and append the product variants that are new since the last run with today''s date in column A. Never adds a product where Service Point is cheaper (negative difference) or where the gap is under 1 EUR, never re-adds a product that was added before, and never deletes rows or touches the user''s columns. Use this skill whenever the user asks to run, redo, refresh or schedule the supplier price check, compare Service Point vs Zendrop / "other supplier" prices, update the supplier price comparison sheet, update its prices, add new products to the comparison, or when the weekly Monday Routine fires.'
+---
+
+# Supplier price check (Service Point vs Zendrop, DE, NL, FR and USA)
+
+Compares two supplier prices for every product variant on the DE, NL, FR and USA tabs of the
+sourcing sheet. On the comparison sheet the user curates, it refreshes the Service Point and
+Zendrop prices of the rows already there and appends only the variants that are new since the last
+run. The user prunes that sheet by hand (deleting rows they have handled or disagree with) and
+writes notes in it, so apart from the two price columns this skill is strictly additive: it
+appends new rows and writes a log, and it never deletes, re-orders or rewrites anything else. The
+source sheet is read-only.
+
+## Fixed IDs (this workspace)
+
+| What | Value |
+|---|---|
+| Source spreadsheet "BER/PMs" | `1MRyyd2gDbwVOstNetjJsGEF--rVAKcAoYyf6dAVmm3A`, tabs `DE` (about 5,600 product rows), `NL` (about 3,600), `FR` (about 1,200) and `USA` (about 850) |
+| Target spreadsheet "Supplier Price Comparison - (Service Point vs Other supplier)" | `137yF1r5u8S7rusoAN2L8botzIajBD8NnJa1v6cBnqH0` |
+| Target tab `DE`, with its log `Run log` | sheetIds `105541484` and `777001` |
+| Target tab `NL`, with its log `Run log NL` | sheetIds `302329013` and `777002` |
+| Target tab `FR`, with its log `Run log FR` | sheetIds `302329014` and `777003` |
+| Target tab `USA`, with its log `Run log USA` | sheetIds `302329015` and `777004` |
+
+Run the whole procedure below once per market, in the order DE, NL, FR, USA. Each market reads
+its own source tab, writes to its own target tab and checks and writes only its own log. Never use
+one market's tab or log to decide what is known for another: the same brand often has a German,
+Dutch, French and English listing, and each market needs its own comparison.
+
+Confirm the tab names and sheet IDs with `get_spreadsheet` (fields `sheets.properties`) before
+writing. If a tab was renamed or is missing, stop and ask rather than guessing.
+
+Tools: Google Sheets connector (`get_spreadsheet`, `get_values`, `update_values`,
+`update_formulas`, `update_spreadsheet`) and Google Drive `download_file_content`. Drive
+`read_file_content` is **not** suitable for the source sheet: it silently returns only the first
+~70 rows of each tab. If the Sheets connector is missing, say so and stop; do not create a new
+file instead.
+
+## Step 1 — Read the source tab and the target in full
+
+Read `DE!A1:AK6500` (likewise `NL!`, `FR!` and `USA!`) with `get_values`. The result is large
+and is usually saved to a file; parse that file with Python (`python3 -I`) rather than re-typing
+anything. Row 1 holds group labels (`SP`, `Fulfilled on`, `BESTFULFILL`, `ZENDROP`,
+`SOURCING ALERT`), row 2 holds the column headers, data starts at row 3. Trailing empty rows are
+normal.
+
+Read the target workbook once with Drive `download_file_content` and `exportMimeType` set to the
+xlsx type, and open it with `openpyxl` (`data_only=True`). That gives every target and log tab in
+one file, so nothing has to be re-typed.
+
+If `get_values` fails on the size, read the source the same way (xlsx export, `openpyxl`).
+
+## Step 2 — Locate the columns by header, not by letter
+
+The letters move: in September 2026 DE's "QP + 2,60" was column K, by October it was J; DE's
+Zendrop price moved from W to X in November 2026, and NL gained its own "QP + 2,60" column the
+same month. Resolve the columns from row 2 every run and report the letters you found.
+
+All four tabs now share the same rule:
+
+- **Name in store**: header `Name in store`. **Short name**: `Short product name`. **Variant**:
+  `Variant`. **Product ID**: `Product ID` (on some products it holds the variant label, such as
+  `Upgrade-Version + 12 Stück …`).
+- **Service Point price**: header `QP + 2,60`. This is the quote price plus a 2.60 fee.
+- **Service Point quote present?**: the first header `(Best) Agent Price €` (the one in the
+  Service Point block, left of the BESTFULFILL and ZENDROP groups). When it is empty or 0,
+  `QP + 2,60` shows just the 2.60 fee and must not be treated as a price.
+- **Zendrop price**: the header `(Best) Agent Price €` whose row-1 group label is `ZENDROP`. It is
+  a formula on the Zendrop dollar price, so it shows 0 or `€ -` when no Zendrop quote exists.
+- Ignore the BESTFULFILL block on NL (its own `(Best) Agent Price €`). It is a third supplier and
+  is not part of this comparison.
+
+As of November 2026 the letters were: DE I, J and X; NL G, H and AB; FR G, H and S; USA G, H
+and W (quote present, Service Point, Zendrop). Headers can carry stray spaces, such as
+`" (Best) Agent Price € "` on DE; compare them after trimming.
+
+Row-1 group labels are written only above the first column of a merged block, so carry each label
+to the right until the next label when deciding which group a column belongs to.
+
+If any of these headers cannot be found, stop and tell the user what the header row looks like
+now; do not fall back to letters.
+
+Values can arrive as numbers or as display strings such as `€4,37`, `€ 1.234,50` or `0,87`. Strip
+the `€`, `$` and spaces, drop thousands dots and turn a decimal comma into a point before
+comparing. A lone `-` means no value. All prices compared are in euros, also on the USA tab.
+
+## Step 3 — Refresh the prices of the rows already on the target tab
+
+For every row already on the market's target tab, find its source row and rewrite **only E and
+F** with the current Service Point and Zendrop prices, rounded to 2 decimals.
+
+Match on **Name in store** (normalised: collapse whitespace, lowercase). When the name has several
+source rows, narrow it down in this order and take the first one that leaves candidates: target
+Variant (D) equals source `Product ID`; target Short name and Variant both equal the source's;
+target Short name equals the source's; the name alone. Then take the first candidate, in source
+order, not already used by an earlier target row: rows were appended in source order, so the
+second `GroomStation™` row on the tab belongs to the second `GroomStation™` source row.
+
+- If the source no longer has a Service Point quote or a Zendrop price for that row, keep the old
+  value in that column and list the row in the report.
+- If no source row matches at all, leave the row alone and list it in the report.
+- Never touch A–D, G, H or I. G is the formula `=E{n}-F{n}` and recalculates by itself; H and I
+  are the user's notes.
+- Do not delete a row whose difference is now negative or under 1 EUR. List those rows in the
+  report with their new difference and let the user decide.
+
+Write all of E:F for the tab in one `update_values` call (`E2:F{last}`), keeping unchanged values
+as they are.
+
+## Step 4 — Build the list of new products
+
+A variant qualifies only when all of the following hold:
+
+1. Service Point quote is present (first `(Best) Agent Price €` above 0) and `QP + 2,60` is a number.
+2. Zendrop price is a number greater than 0.
+3. **Difference = Service Point − Zendrop is at least +1.00 EUR.** A negative difference means
+   Service Point is already cheaper; the user does not want those rows on the sheet, ever. A gap
+   under 1 EUR is noise the user asked to leave out.
+
+Only products that are not already known are considered, matching on the normalised **Name in
+store**. Compare at product-name level, not variant level, because the user edits variant labels
+on the target sheet and removes variants they do not want. A product is "known" when its name
+appears in either:
+
+- column B of the market's target tab (rows currently on the sheet), or
+- column B of the market's log tab (everything ever added or deliberately skipped; rows the user
+  later deleted from the target tab must not come back).
+
+A new store listing with a different name (for example `1+1 GRATIS HEUTE | ToePerfect™ …` next
+to an older `ToePerfect™ … | 1+1 GRATIS TEMPORÄR`) counts as a new product. Mention such
+near-duplicates in the report so the user can decide.
+
+## Step 5 — Append the new rows to the market's target tab
+
+Target layout, header in row 1 (keep it exactly; do not add columns):
+
+| A | B | C | D | E | F | G | H | I |
+|---|---|---|---|---|---|---|---|---|
+| Date | Name in store | Short name | Variant | Service Point | Other supplier | Difference | New ServicePoints Price (1 week) | Bella Notes |
+
+1. The first empty row is the last row with a value in column B, plus 1.
+2. Write `A:F` for the new rows with `update_values`: today's date as `yyyy-mm-dd`, Name in
+   store, Short name (empty if none), Variant (as a number when it is one), Service Point and
+   Zendrop prices rounded to 2 decimals.
+3. Write column G with `update_formulas`: `=E{n}-F{n}` for each new row n. The difference is
+   always a formula so the user can edit a price and see it recalculate.
+4. Leave H and I empty; those are the user's columns.
+5. Apply the date format with one `repeatCell` on the new rows of column A
+   (`numberFormat` type `DATE`, pattern `yyyy-mm-dd`) so stray cell formats do not show
+   `mm/dd/yyyy` on some rows. Columns E:G already carry the `[$€]#,##0.00` format for the whole
+   column; if a new row shows plain numbers, apply that format too.
+
+Keep the source order (sheet row order) when appending; do not sort the user's tab.
+
+## Step 6 — Log every decision in the market's log tab
+
+Append one row per variant of every product that is **new this run** (not already known per
+Step 4), whether it was added or skipped, to the market's log tab (`Run log`, `Run log NL`,
+`Run log FR` or `Run log USA`):
+
+| Run date | Name in store | Variant | Service Point | Other supplier | Difference | Action |
+|---|---|---|---|---|---|---|
+
+`Action` is one of `added`, `skipped: negative difference`, `skipped: difference under 1 EUR`.
+Rows written by hand or by earlier clean-ups may also read `removed: negative difference` or
+`removed: difference under 1 EUR`; treat any row in the log as "known", whatever its action.
+Format the new log dates the same way as in Step 5.
+
+Do not log variants of products that were already known: about 100 of them qualify every week,
+and logging them would bury the useful rows. Logging the skipped new ones is what keeps the
+weekly runs honest: the user can see why something did not appear, and the log doubles as the
+memory that stops deleted or rejected products from coming back. A product skipped once (for
+example because Service Point was cheaper) stays skipped in later weeks even if its prices move;
+the user can delete its log rows to have it reconsidered.
+
+## Step 7 — Verify
+
+Export the target again as xlsx and compare every cell you wrote (the refreshed E:F, the new A:F
+rows and the new log rows) against what you meant to write, in Python. Also check that column A
+holds real dates, that column G is a number on every row (no `#REF!` or `#VALUE!`) and that it is
+at least 1.00 on every row added this run. Fix any mismatch before reporting.
+
+## Step 8 — Report
+
+Report each market separately. For each, give: the number of source rows read, which column
+letters held the three price columns this run, how many existing rows changed price, which
+existing rows are now negative or under 1 EUR, how many new variants qualified, how many were
+added and how many were skipped for each reason, and a short list of the added products with
+their difference (largest first). Say "nothing new this week" plainly when that is the case.
+Flag any header or layout change you noticed in the source sheet, since that is the most likely
+way this process breaks.
+
+## Schedule
+
+A Routine named "Supplier price check (weekly)" runs this skill every Monday at 06:00 UTC
+(08:00 Berlin in summer, 07:00 in winter) in a fresh session with the Google Drive and Google
+Sheets connectors. A manual run is the same procedure; nothing in it depends on the day.
+
+## Scope and guard rails
+
+- DE, NL, FR and USA only. The source sheet also has SE, Juleani, Wham and template tabs; leave
+  them alone unless the user extends the skill to another market. A new market gets its own target
+  tab and log tab, copied from an existing pair (`duplicateSheet`, then delete the data rows) so
+  the header and formats match.
+- Never write to the source spreadsheet.
+- On rows already on a target tab, change only E and F. Never delete, reorder or otherwise edit
+  them, even when their difference has turned negative; report those rows instead.
+- Never add a product with a negative difference, even if the user's wording that day is
+  "add everything"; ask first if they seem to want that.
