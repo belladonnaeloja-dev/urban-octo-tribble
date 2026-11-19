@@ -17,8 +17,8 @@ only. Kalodata rows carry **no WinningHunter link, no Meta ads-library link and 
 supplier**, so those lines are left blank for the creative and sourcing steps that follow.
 
 **The sheet is read-only except for one cell per carded row:** the computed selling price in
-`V` (`Selling price /Offer`, step 3b). Never tick or untick `W`, never write any other column,
-and never overwrite a `V` cell the operator has already filled.
+`S` (`Selling price /Offer`, step 3b). Never tick or untick the checkbox (`R`), never write any other column,
+and never overwrite an `S` cell the operator has already filled.
 
 ## Sources
 
@@ -48,24 +48,25 @@ bottom. Not the `Kalodata Winning Products` tab (US TikTok Shop, feeds DE / SE /
 | `O` | Source | labels `Q` (Amazon, …) — gone in late Oct 2026, back from 2026-11-01 |
 | `P` | Reference price | risk check only — does **not** go in the Note |
 | `Q` | PAGEPILOT URL | **the source listing URL** — see the warning below. **Dedupe key #2** |
-| `R` | Link status (all opened + live) | whether the research run opened it, or `Not sourced (FR trend list)` |
-| `S` | Angle / note | the run's own angle *and* its recorded risk — read it |
-| `T` | TikTok store page | the `competitor's link:` line — often **empty** |
-| `U` | Date added | |
-| `V` | Selling price /Offer | **the whole `Note:` line** — computed in step 3b and written here, unless the operator already filled it |
-| **`W`** | *(no header text)* | **the checkbox — this is the filter** |
+| **`R`** | *(no header text)* | **the checkbox — this is the filter** (moved here from `W` on 2026-11-19) |
+| `S` | Selling price /Offer | **the whole `Note:` line** — computed in step 3b and written here, unless the operator already filled it |
+| `T` | Link status (all opened + live) | whether the research run opened it, or `Not sourced (FR trend list)` |
+| `U` | Angle / note | the run's own angle *and* its recorded risk — read it |
+| `V` | TikTok store page | the `competitor's link:` line — often **empty** |
+| `W` | Date added | |
 
 Traps in that table:
 
 - **`Q` is labelled `PAGEPILOT URL` but holds the source listing**, e.g. the Amazon page the
   research run priced against (`O` says which site; if `O` is missing, take it from the URL host).
   Do not go looking for a pagepilot.io link there.
-- **Many rows are unsourced.** Rows from the operator's FR trend list have `R` = `Not sourced (FR
-  trend list)` and empty `D`, `O`, `P`, `Q`, `T`. Leave those lines bare on the card — never
+- **Many rows are unsourced.** Rows from the operator's FR trend list have `T` = `Not sourced (FR
+  trend list)` and empty `D`, `O`, `P`, `Q`, `V`. Leave those lines bare on the card — never
   invent a source or a seller — and flag it on the `risk:` line (step 6).
-- **`W` has no header text.** `W1` is sometimes an unticked checkbox (reads `FALSE`) and
-  sometimes empty; neither is a header. Identify the checkbox as the **rightmost column whose cells from row 2 down are
-  all booleans**, and check that no column to its right holds booleans before you trust it.
+- **`R` has no header text.** `R1` is sometimes an unticked checkbox (reads `FALSE`) and
+  sometimes empty; neither is a header. Identify the checkbox as the **column whose cells from row 2 down are
+  all booleans** (it was the rightmost column until 2026-11-19; now it sits between `Q` and the
+  selling-price column), and check that only one column holds booleans before you trust it.
 - **Revenue is in USD even though the market is France.** Kalodata reports TikTok Shop France in
   dollars; copy the figures as the sheet has them and label them `USD, TikTok Shop France`.
 
@@ -73,7 +74,7 @@ Traps in that table:
 had columns inserted mid-flight, and on this tab the `Source` column (between `N` and
 `Reference price`) disappeared in late October 2026 and came back on 2026-11-01, moving
 everything after it one letter each time. Map by header
-**name**; resolve `W` by type, as above.
+**name**; resolve the checkbox by type, as above.
 
 If the Google Sheets MCP is down (`CONNECTION_CLOSED`), these read-only export URLs still work for
 anyone with view access:
@@ -99,7 +100,7 @@ anyone with view access:
 
 Start by reading row 1 and the checkbox column. **The batch is the five most recent ticks**,
 wherever they sit. Find the last row with a product in column `C`, walk **bottom-up** skipping
-blank rows, and collect rows whose checkbox in `W` is true until you have **5**. Ticks can be
+blank rows, and collect rows whose checkbox column (`R`) is true until you have **5**. Ticks can be
 spread across several runs.
 
 - Match the checkbox **case-insensitively and type-tolerantly**: an `UNFORMATTED_VALUE` read
@@ -131,7 +132,7 @@ A product already carded on another board (DE / SE / NL / US) for a different st
 duplicate here — Modlia needs its own FR card. Do, however, mention the match in the report so
 the page builder can reuse the existing page and images.
 
-Do **not** dedupe on the TikTok store page in `T`: one seller can appear on several rows with
+Do **not** dedupe on the TikTok store page in `V`: one seller can appear on several rows with
 different products.
 
 Tell the operator the arithmetic before you write anything — "5 ticks found: rows 3, 5, 7, 9,
@@ -140,21 +141,21 @@ large (more than 10), confirm before creating.
 
 ### 3. Pull the details
 
-- `V` ("Selling price /Offer") must be read as a **`FORMATTED_VALUE`, never as a formula**, so
+- `S` ("Selling price /Offer") must be read as a **`FORMATTED_VALUE`, never as a formula**, so
   `34€` stays `34€`. If the operator has already filled it, the `Note:` line is their text
   verbatim and you do not recompute it. If it is empty, compute it in step 3b.
-- `N`, `Q` and `T` may be stored as `=HYPERLINK(url,"label")` — read them with a formula read
+- `N`, `Q` and `V` may be stored as `=HYPERLINK(url,"label")` — read them with a formula read
   (`valueRenderOption=FORMULA`, or the XLSX export) and handle both shapes.
 - `C` is stored **truncated at roughly 90 characters**, mid-word, and is usually in French. Do
   not treat the cut-off tail as part of the name; open `N` if you need the full title.
 - `E`, `F`, `G`, `H`, `J` feed the `proof:` line. Label them **USD, 7-day, TikTok Shop France**.
 
-### 3b. Compute the selling price (`Note:` line and column `V`)
+### 3b. Compute the selling price (`Note:` line and column `S`)
 
-For every row being carded whose `V` is empty:
+For every row being carded whose `S` is empty:
 
 1. **Competitor price** = `TikTok price` in `H`, the competitor's TikTok Shop France listing
-   price in USD (operator's rule, 2026-10-29). Use it even when `T` has a store page; do not
+   price in USD (operator's rule, 2026-10-29). Use it even when `V` has a store page; do not
    open the competitor's link for a price.
 2. **Convert to EUR** at the day's ECB reference rate:
    `https://api.frankfurter.dev/v1/latest?from=USD&to=EUR`. If that is down, use
@@ -171,15 +172,15 @@ For every row being carded whose `V` is empty:
    **Floor (operator's rule, 2026-11-11):** if the doubled 1+1 price is still below 19.99 €,
    set it to `19.99€ (1+1)` (e.g. 3.99 → 7.98 → **19.99€ (1+1)**).
 6. Write it with a dot decimal and a `€` suffix, no space before `€`, both on the card's `Note:`
-   line and in that row's `V` cell (the offer sits beside the price in the same cell). Re-read the row first to confirm it is the same product (match `M`)
-   and `V` is still empty, write only the `V` cells of the carded rows (one range per contiguous
-   block, never across rows you are not carding), then read `V` back to confirm.
+   line and in that row's `S` cell (the offer sits beside the price in the same cell). Re-read the row first to confirm it is the same product (match `M`)
+   and `S` is still empty, write only the `S` cells of the carded rows (one range per contiguous
+   block, never across rows you are not carding), then read `S` back to confirm.
 
 Examples: row 5: $42.85 × 0.89823 = 38.49 € − 1 = 37.49 → **36.99€**. Row 11: $15.79 →
 14.18 € − 1 = 13.18 → 12.99, under 19.99 → **25.98€ (1+1)**.
 
 The operator also sets offers by hand in the same `price (offer)` shape (e.g. `20.99€ (1+2)`).
-Any filled `V` cell is theirs: copy it to the card verbatim and never recompute it.
+Any filled `S` cell is theirs: copy it to the card verbatim and never recompute it.
 
 ### 4. Name the product
 
@@ -195,7 +196,7 @@ followed by `™`:
 
 Rules that make a name usable:
 
-- **Name the benefit, not the category.** Build it from `S` (the run's own angle) and what the
+- **Name the benefit, not the category.** Build it from `U` (the run's own angle) and what the
   TikTok video would show.
 - **Two words, one token, `™` appended.** No spaces, no hyphens, never more than two words.
 - **ASCII only, ~14 characters or fewer.** No é / è / ç / ï / ë — accents fail in the image
@@ -257,8 +258,8 @@ NESTILIA:
 Our Store URL: 
 ```
 
-- **`Note:`** holds **only** the selling price: the operator's `V` text verbatim when they filled
-  it, otherwise the step 3b price (the same value you write to `V`). Never invent any other
+- **`Note:`** holds **only** the selling price: the operator's `S` text verbatim when they filled
+  it, otherwise the step 3b price (the same value you write to `S`). Never invent any other
   offer (`1+2`, bundles); only the under-19.99 € `1+1` rule above is automatic.
 - **`ad:` and `ad library:` stay blank.** The creative comes later from the video-research step.
 - **`proof:`** is the whole case for the test, so state the currency and market on the line.
@@ -268,32 +269,32 @@ back and confirm it sits on **only** the FR board. Leave assignee and due date e
 operator says otherwise.
 
 Write the **marketing angle** from the product, its category (`B`) and the run's own angle
-(`S`). `K` tells you *how* it sells — near 100% video revenue means the page has to carry a demo;
-a low figure (often LIVE-driven on TikTok Shop France, as `S` usually notes) means the page must
-carry specs and comparison. When `S` is only the generic "Trending on TikTok Shop France" line,
+(`U`). `K` tells you *how* it sells — near 100% video revenue means the page has to carry a demo;
+a low figure (often LIVE-driven on TikTok Shop France, as `U` usually notes) means the page must
+carry specs and comparison. When `U` is only the generic "Trending on TikTok Shop France" line,
 say so and tell the builder to open the Kalodata link — an invented angle is worse than an
 admitted gap.
 
 ### 6. Carry the warnings across
 
 Put them on **one short line at the very end of the notes**, after `Our Store URL:`, prefixed
-`risk:`. Column `S` is where the research run recorded its own concern; read it and carry it
+`risk:`. Column `U` is where the research run recorded its own concern; read it and carry it
 (e.g. "source a 230V EU-plug model for France"). Only write the line when there is a genuine
 concern:
 
-- **Not sourced.** `R` = `Not sourced (FR trend list)` or `Q` empty — the builder must find a
+- **Not sourced.** `T` = `Not sourced (FR trend list)` or `Q` empty — the builder must find a
   supplier before starting. This will be common on this tab.
-- **Approximate source.** `S` saying `APPROXIMATE` means the listing in `Q` is a near-match, not
+- **Approximate source.** `U` saying `APPROXIMATE` means the listing in `Q` is a near-match, not
   the same product.
 - **Electrical / EU spec.** US-sourced electrical items are 120V with US plugs; France needs
   230V and EU plugs, and CE marking.
 - **Channel gap.** TikTok Shop France sells on impulse, off a live or a creator; Pinterest sells
   on planned search. Flag products driven by LIVE or one creator (`K` near 100% with a high `L`,
-  or `S` citing a big LIVE share).
+  or `U` citing a big LIVE share).
 - **Licensing and IP.** Characters, team apparel, anything borrowing a real brand.
 - **Regulated claims.** Supplements, cosmetics, medical-adjacent — French and EU advertising
   rules bite on health claims and before/after results.
-- **Hard seasonality.** `S` often carries `[Winter, sell until Feb]` — say how much selling
+- **Hard seasonality.** `U` often carries `[Winter, sell until Feb]` — say how much selling
   window is left.
 - **Thin margin.** Reference price (`P`) against the TikTok price (`H`).
 - **Unproven.** `Days live` (`J`) under ~14 days, or a huge growth % on a few days live.
@@ -315,7 +316,7 @@ Whenever a run finds a selling price **lower than 19.99 €**, tell the operator
   name, the step 4 price before the 1+1 rule, and what went on the card (e.g. `row 87 ·
   HeartPages™ · 5.99€ → 11.98€ (1+1)`). Note any row the 19.99€ (1+1) floor was
   applied to.
-- Include operator-filled `V` cells that are under 19.99 €, and rows where the TikTok price is
+- Include operator-filled `S` cells that are under 19.99 €, and rows where the TikTok price is
   obviously not the real price (e.g. a live-sale deposit) — those get no auto price; say so.
 - Also send a push notification (the `PushNotification` tool, if present), one line under 200
   characters, e.g. `Modlia cards: 2 prices under 19.99€ — row 87 HeartPages 11.98€ (1+1), row 93
