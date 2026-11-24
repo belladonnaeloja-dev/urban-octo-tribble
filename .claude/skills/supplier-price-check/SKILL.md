@@ -1,6 +1,6 @@
 ---
 name: supplier-price-check
-description: 'Weekly supplier price comparison for the DE, NL, FR and USA stores: read the "BER/PMs" Google Sheet (DE, NL, FR and USA tabs), compare the Service Point price ("QP + 2,60") against the Zendrop price ("(Best) Agent Price €" inside the ZENDROP block) for every product variant, refresh the two price columns of the rows already on the matching tab of the "Supplier Price Comparison - (Service Point vs Other supplier)" Google Sheet, and append the product variants that are new since the last run with today''s date in column A. Never adds a product where Service Point is cheaper (negative difference) or where the gap is under 1 EUR, never re-adds a product that was added before, sorts each tab by difference (highest first) and removes rows whose difference has turned negative, logging each removal. Use this skill whenever the user asks to run, redo, refresh or schedule the supplier price check, compare Service Point vs Zendrop / "other supplier" prices, update the supplier price comparison sheet, update its prices, add new products to the comparison, or when the weekly Monday Routine fires.'
+description: 'Weekly supplier price comparison for the DE, NL, FR and USA stores: read the "BER/PMs" Google Sheet (DE, NL, FR and USA tabs), compare the Service Point price ("QP + 2,60") against the Zendrop price ("(Best) Agent Price €" inside the ZENDROP block) for every product variant, refresh the two price columns of the rows already on the matching tab of the "Supplier Price Comparison - (Service Point vs Other supplier)" Google Sheet, and append the product variants that are new since the last run with today''s date in column A. Only keeps products where Service Point is at least 3 EUR more expensive: never adds a product with a smaller (or negative) difference, never re-adds a product that was added before, sorts each tab by difference (highest first) and removes rows whose difference has dropped under 3 EUR, logging each removal. Use this skill whenever the user asks to run, redo, refresh or schedule the supplier price check, compare Service Point vs Zendrop / "other supplier" prices, update the supplier price comparison sheet, update its prices, add new products to the comparison, or when the weekly Monday Routine fires.'
 ---
 
 # Supplier price check (Service Point vs Zendrop, DE, NL, FR and USA)
@@ -10,8 +10,8 @@ sourcing sheet. On the comparison sheet the user curates, it refreshes the Servi
 Zendrop prices of the rows already there and appends only the variants that are new since the last
 run. The user prunes that sheet by hand (deleting rows they have handled or disagree with) and
 writes notes in it, so this skill changes existing rows in only three ways: it refreshes the two
-price columns, sorts the tab by difference, and removes rows whose difference has turned negative
-(logging each one first). Otherwise it appends new rows and writes a log, and it never deletes or
+price columns, sorts the tab by difference, and removes rows whose difference has dropped under
+3 EUR (logging each one first, with its notes). Otherwise it appends new rows and writes a log, and it never deletes or
 rewrites anything else. The source sheet is read-only.
 
 ## Fixed IDs (this workspace)
@@ -107,8 +107,8 @@ was still more than 2 EUR away on either price, since that match may be wrong.
 - If no source row matches at all, leave the row alone and list it in the report.
 - Never touch A–D, G, H or I. G is the formula `=E{n}-F{n}` and recalculates by itself; H and I
   are the user's notes.
-- Rows whose difference is now negative are removed in Step 5 (item 7). Rows between 0 and 1 EUR
-  stay on the tab; list them in the report with their new difference and let the user decide.
+- Rows whose difference is now under 3 EUR, negative ones included, are removed in Step 5
+  (item 7).
 
 Write all of E:F for the tab in one `update_values` call (`E2:F{last}`), keeping unchanged values
 as they are.
@@ -119,9 +119,10 @@ A variant qualifies only when all of the following hold:
 
 1. Service Point quote is present (first `(Best) Agent Price €` above 0) and `QP + 2,60` is a number.
 2. Zendrop price is a number greater than 0.
-3. **Difference = Service Point − Zendrop is at least +1.00 EUR.** A negative difference means
-   Service Point is already cheaper; the user does not want those rows on the sheet, ever. A gap
-   under 1 EUR is noise the user asked to leave out.
+3. **Difference = Service Point − Zendrop is at least +3.00 EUR.** A negative difference means
+   Service Point is already cheaper; the user does not want those rows on the sheet, ever. On
+   24 November 2026 the user raised the minimum gap from 1 EUR to 3 EUR: smaller gaps are not
+   worth acting on.
 
 Only products that are not already known are considered, matching on the normalised **Name in
 store**. Compare at product-name level, not variant level, because the user edits variant labels
@@ -159,22 +160,26 @@ Target layout, header in row 1 (keep it exactly; do not add columns):
 6. Sort the tab by difference, highest first: one `sortRange` request over `A2:I{last row}`
    (all nine columns, so the user's notes in H and I stay on their rows) with `sortSpecs`
    `[{"dimensionIndex": 6, "sortOrder": "DESCENDING"}]`. The user asked for the biggest gaps at
-   the top; rows that have turned negative end up at the bottom. Sorting moves the G formulas
+   the top; rows that have dropped under 3 EUR end up at the bottom. Sorting moves the G formulas
    with their rows, so `=E{n}-F{n}` still points at its own row. Before sorting, check that no
    column past I holds data; if one does, widen the range to include it.
-7. Remove the rows whose difference is negative. The user asked for this on 24 November 2026:
-   a negative difference means Service Point is already cheaper, so the row needs no action.
-   After the sort they form one block at the bottom of the tab.
+7. Remove the rows whose difference is under 3 EUR. The user asked for this on 24 November
+   2026: only gaps of 3 EUR and up are worth acting on, and a negative gap means Service Point
+   is already cheaper. After the sort these rows form one block at the bottom of the tab.
    - Only remove a row when both E and F were refreshed from the source this run. If either
      price was kept from last week (Step 3: no quote or no match), leave the row and report it.
    - First append one row per removed row to the market's log tab (Step 6 layout) with today's
-     date, its Name in store, Variant, E, F, difference and the action
-     `removed: negative difference`. The log keeps the product from being added again.
+     date, its Name in store, Variant, E, F, difference, the action
+     (`removed: negative difference` when the difference is below 0, otherwise
+     `removed: difference under 3 EUR`) and, in column H "Notes when removed", the row's H and I
+     values joined with ` | ` (prices written as `€x.xx`). The DE `Run log` already has that
+     column; on another log tab, add it the first time a removed row has notes (append one
+     column, copy G1's format to H1, title it "Notes when removed"). The log keeps the product
+     from being added again and keeps the user's notes.
    - Then read column G of that block once more with `get_values` and check it still holds the
-     same negative values in the same rows; if anything moved, read the tab again and rebuild.
+     same values in the same rows; if anything moved, read the tab again and rebuild.
    - Delete the block with one `deleteDimension` request (`dimension` `ROWS`, 0-based
-     `startIndex`, exclusive `endIndex`). The user's notes in H and I go with the rows; name the
-     rows that had notes in the report, so the user can recover them from version history.
+     `startIndex`, exclusive `endIndex`).
 
 ## Step 6 — Log every decision in the market's log tab
 
@@ -185,9 +190,10 @@ Step 4), whether it was added or skipped, to the market's log tab (`Run log`, `R
 | Run date | Name in store | Variant | Service Point | Other supplier | Difference | Action |
 |---|---|---|---|---|---|---|
 
-`Action` is one of `added`, `skipped: negative difference`, `skipped: difference under 1 EUR`,
-or `removed: negative difference` for rows taken off the tab in Step 5. Rows written by hand or by
-earlier clean-ups may also read `removed: difference under 1 EUR`; treat any row in the log as
+`Action` is one of `added`, `skipped: negative difference`, `skipped: difference under 3 EUR`,
+or, for rows taken off the tab in Step 5, `removed: negative difference` or
+`removed: difference under 3 EUR`. Older rows may also read `skipped: difference under 1 EUR`
+or `removed: difference under 1 EUR` from before the 3 EUR rule; treat any row in the log as
 "known", whatever its action.
 Format the new log dates the same way as in Step 5.
 
@@ -203,8 +209,8 @@ the user can delete its log rows to have it reconsidered.
 Export the target again as xlsx and compare every cell you wrote (the refreshed E:F, the new A:F
 rows and the new log rows) against what you meant to write, in Python. Also check that column A
 holds real dates, that column G is a number on every row (no `#REF!` or `#VALUE!`), that it is
-at least 1.00 on every row added this run, that no negative row is left except ones kept on
-purpose (stale price), that the tab is sorted high to low, and that every row that was there
+at least 3.00 on every row of the tab except ones kept on purpose (stale price), that the tab is
+sorted high to low, and that every row that was there
 before the deletion, other than the removed ones, is still there unchanged. Fix any mismatch
 before reporting.
 
@@ -212,8 +218,9 @@ before reporting.
 
 Report each market separately. For each, give: the number of source rows read, which column
 letters held the three price columns this run, how many existing rows changed price, which rows
-were removed for a negative difference (and which of them had notes), which rows are now under
-1 EUR, how many new variants qualified, how many were
+were removed for dropping under 3 EUR (saying which were negative and that their notes are in
+the log), which under-3 rows were kept because a price could not be refreshed, how many new
+variants qualified, how many were
 added and how many were skipped for each reason, and a short list of the added products with
 their difference (largest first). Say "nothing new this week" plainly when that is the case.
 Flag any header or layout change you noticed in the source sheet, since that is the most likely
@@ -233,7 +240,7 @@ Sheets connectors. A manual run is the same procedure; nothing in it depends on 
   the header and formats match.
 - Never write to the source spreadsheet.
 - On rows already on a target tab, change only E and F, apart from the sort and the removal of
-  negative rows in Step 5. Never delete a row for any other reason (under 1 EUR, no match, no
-  quote); report those rows instead.
-- Never add a product with a negative difference, even if the user's wording that day is
-  "add everything"; ask first if they seem to want that.
+  rows under 3 EUR in Step 5. Never delete a row for any other reason (no match, no quote);
+  report those rows instead.
+- Never add a product with a difference under 3 EUR, negative ones included, even if the user's
+  wording that day is "add everything"; ask first if they seem to want that.
