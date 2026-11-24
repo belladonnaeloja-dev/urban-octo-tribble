@@ -9,9 +9,9 @@ Compares two supplier prices for every product variant on the DE, NL, FR and USA
 sourcing sheet. On the comparison sheet the user curates, it refreshes the Service Point and
 Zendrop prices of the rows already there and appends only the variants that are new since the last
 run. The user prunes that sheet by hand (deleting rows they have handled or disagree with) and
-writes notes in it, so apart from the two price columns this skill is strictly additive: it
-appends new rows and writes a log, and it never deletes, re-orders or rewrites anything else. The
-source sheet is read-only.
+writes notes in it, so apart from the two price columns and the sort by difference this skill is
+strictly additive: it appends new rows and writes a log, and it never deletes or rewrites anything
+else. The source sheet is read-only.
 
 ## Fixed IDs (this workspace)
 
@@ -94,9 +94,12 @@ F** with the current Service Point and Zendrop prices, rounded to 2 decimals.
 Match on **Name in store** (normalised: collapse whitespace, lowercase). When the name has several
 source rows, narrow it down in this order and take the first one that leaves candidates: target
 Variant (D) equals source `Product ID`; target Short name and Variant both equal the source's;
-target Short name equals the source's; the name alone. Then take the first candidate, in source
-order, not already used by an earlier target row: rows were appended in source order, so the
-second `GroomStation™` row on the tab belongs to the second `GroomStation™` source row.
+target Short name equals the source's; the name alone. Among the candidates not already used by
+another target row, take the one whose current Service Point and Zendrop prices are closest to
+the row's old E and F (smallest sum of the two absolute differences). The tabs are sorted by
+difference (Step 5), so sheet order says nothing about which `GroomStation™` row belongs to which
+source row; last week's prices do. Mention in the report any duplicate whose closest candidate
+was still more than 2 EUR away on either price, since that match may be wrong.
 
 - If the source no longer has a Service Point quote or a Zendrop price for that row, keep the old
   value in that column and list the row in the report.
@@ -152,7 +155,12 @@ Target layout, header in row 1 (keep it exactly; do not add columns):
    `mm/dd/yyyy` on some rows. Columns E:G already carry the `[$€]#,##0.00` format for the whole
    column; if a new row shows plain numbers, apply that format too.
 
-Keep the source order (sheet row order) when appending; do not sort the user's tab.
+6. Sort the tab by difference, highest first: one `sortRange` request over `A2:I{last row}`
+   (all nine columns, so the user's notes in H and I stay on their rows) with `sortSpecs`
+   `[{"dimensionIndex": 6, "sortOrder": "DESCENDING"}]`. The user asked for the biggest gaps at
+   the top; rows that have turned negative end up at the bottom. Sorting moves the G formulas
+   with their rows, so `=E{n}-F{n}` still points at its own row. Before sorting, check that no
+   column past I holds data; if one does, widen the range to include it.
 
 ## Step 6 — Log every decision in the market's log tab
 
@@ -205,7 +213,8 @@ Sheets connectors. A manual run is the same procedure; nothing in it depends on 
   tab and log tab, copied from an existing pair (`duplicateSheet`, then delete the data rows) so
   the header and formats match.
 - Never write to the source spreadsheet.
-- On rows already on a target tab, change only E and F. Never delete, reorder or otherwise edit
-  them, even when their difference has turned negative; report those rows instead.
+- On rows already on a target tab, change only E and F, apart from the sort in Step 5. Never
+  delete or otherwise edit them, even when their difference has turned negative; report those
+  rows instead.
 - Never add a product with a negative difference, even if the user's wording that day is
   "add everything"; ask first if they seem to want that.
